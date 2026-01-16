@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\App.xaml
-18296857207
+201293012644
 
-27-379551297
+29-2022948846
 213540609086
-Controls\StatusIndicator.xaml;Controls\StudentCardControl.xaml;Controls\ToolButton.xaml;Styles\Buttons.xaml;Styles\Cards.xaml;Styles\Colors.xaml;Styles\Controls.xaml;Views\ChatWindow.xaml;Views\FileTransferWindow.xaml;Views\LoginWindow.xaml;Views\LogWindow.xaml;Views\MainTeacherWindow.xaml;Views\ManualConnectDialog.xaml;Views\RoleSelectionWindow.xaml;Views\ScreenShareWindow.xaml;Views\StudentNameDialog.xaml;Views\StudentWindow.xaml;Views\TestCreationWindow.xaml;
+Controls\ScreenThumbnailControl.xaml;Controls\StatusIndicator.xaml;Controls\StudentCardControl.xaml;Controls\ToolButton.xaml;Styles\Buttons.xaml;Styles\Cards.xaml;Styles\Colors.xaml;Styles\Controls.xaml;Views\ChatWindow.xaml;Views\FileTransferWindow.xaml;Views\LoginWindow.xaml;Views\LogWindow.xaml;Views\MainTeacherWindow.xaml;Views\ManualConnectDialog.xaml;Views\RoleSelectionWindow.xaml;Views\ScreenShareWindow.xaml;Views\StudentNameDialog.xaml;Views\StudentScreenWindow.xaml;Views\StudentWindow.xaml;Views\TestCreationWindow.xaml;
 
 False
 

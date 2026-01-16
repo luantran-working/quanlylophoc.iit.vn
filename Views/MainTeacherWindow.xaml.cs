@@ -181,5 +181,87 @@ namespace ClassroomManagement.Views
         {
             Close(); // This will trigger the Closing event handler
         }
+
+        private void RefreshScreens_Click(object sender, RoutedEventArgs e)
+        {
+            // Force refresh screen thumbnails
+            RefreshAllScreenThumbnails();
+            ToastService.Instance.ShowInfo("Làm mới", "Đang cập nhật màn hình học sinh...");
+        }
+
+        private void RefreshAllScreenThumbnails()
+        {
+            // Refresh each ScreenThumbnailControl
+            var itemsControl = ScreenGrid;
+            if (itemsControl == null) return;
+
+            foreach (var item in itemsControl.Items)
+            {
+                var container = itemsControl.ItemContainerGenerator.ContainerFromItem(item);
+                if (container != null)
+                {
+                    var control = FindChild<Controls.ScreenThumbnailControl>(container);
+                    control?.UpdateUI();
+                }
+            }
+        }
+
+        private void GridSize_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string tagStr && int.TryParse(tagStr, out int columns))
+            {
+                // Find the UniformGrid and update columns
+                var itemsControl = ScreenGrid;
+                if (itemsControl?.ItemsPanel?.Template != null)
+                {
+                    // We need to access the actual panel
+                    var panel = FindVisualChild<System.Windows.Controls.Primitives.UniformGrid>(itemsControl);
+                    if (panel != null)
+                    {
+                        panel.Columns = columns;
+                    }
+                }
+
+                // Update button styles
+                ResetGridButtonStyles();
+                button.FontWeight = FontWeights.Bold;
+                button.Foreground = FindResource("PrimaryHueMidBrush") as System.Windows.Media.Brush;
+            }
+        }
+
+        private void ResetGridButtonStyles()
+        {
+            var normalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+            Grid2x2Btn.FontWeight = FontWeights.Normal;
+            Grid2x2Btn.Foreground = normalBrush;
+            Grid4x4Btn.FontWeight = FontWeights.Normal;
+            Grid4x4Btn.Foreground = normalBrush;
+            Grid6x6Btn.FontWeight = FontWeights.Normal;
+            Grid6x6Btn.Foreground = normalBrush;
+        }
+
+        private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int childCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T result)
+                    return result;
+
+                var foundChild = FindChild<T>(child);
+                if (foundChild != null)
+                    return foundChild;
+            }
+            return null;
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            return FindChild<T>(parent);
+        }
     }
 }
+

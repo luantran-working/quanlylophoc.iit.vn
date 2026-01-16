@@ -208,56 +208,70 @@
                                     </Grid.ColumnDefinitions>
                                     
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                                Margin="0" Height="32">
+                                        <Button x:Name="RefreshScreensBtn" 
+                                                Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                                Margin="0" Height="32"
+                                                Click="RefreshScreens_Click">
                                             <StackPanel Orientation="Horizontal">
                                                 <materialDesign:PackIcon Kind="Refresh" Width="16" Height="16" VerticalAlignment="Center"/>
                                                 <TextBlock Text="Làm mới" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
                                             </StackPanel>
                                         </Button>
+                                        
+                                        <TextBlock x:Name="ScreenCountText" 
+                                                   Text="{Binding OnlineStudents.Count, StringFormat='Đang hiển thị {0} màn hình'}"
+                                                   VerticalAlignment="Center" Margin="16,0,0,0"
+                                                   Foreground="#666" FontSize="12"/>
                                     </StackPanel>
                                     
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="2x2" Height="32" Padding="8,0"/>
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="4x4" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}" Height="32" Padding="8,0"/>
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="6x6" Height="32" Padding="8,0"/>
+                                        <Button x:Name="Grid2x2Btn" Style="{StaticResource MaterialDesignFlatButton}" 
+                                                Content="2x2" Height="32" Padding="8,0" Tag="2"
+                                                Click="GridSize_Click"/>
+                                        <Button x:Name="Grid4x4Btn" Style="{StaticResource MaterialDesignFlatButton}" 
+                                                Content="4x4" FontWeight="Bold" 
+                                                Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                                Height="32" Padding="8,0" Tag="4"
+                                                Click="GridSize_Click"/>
+                                        <Button x:Name="Grid6x6Btn" Style="{StaticResource MaterialDesignFlatButton}" 
+                                                Content="6x6" Height="32" Padding="8,0" Tag="6"
+                                                Click="GridSize_Click"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
                             
                             <!-- Screen Grid -->
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl Margin="12">
+                                <ItemsControl x:Name="ScreenGrid" 
+                                              ItemsSource="{Binding OnlineStudents}" 
+                                              Margin="12">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <UniformGrid Columns="4"/>
+                                            <UniformGrid x:Name="ScreenGridPanel" Columns="4"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
-                                    
-                                    <!-- Sample Screen Thumbnails -->
-                                    <Border Style="{StaticResource ScreenThumbnailStyle}" Height="120" Margin="4">
-                                        <Grid>
-                                            <Border Background="#212121" CornerRadius="4"/>
-                                            <StackPanel VerticalAlignment="Bottom" Margin="8">
-                                                <TextBlock Text="Nguyễn Văn An" FontSize="11" Foreground="White" Opacity="0.9"/>
-                                            </StackPanel>
-                                            <materialDesign:PackIcon Kind="MonitorScreenshot" Width="32" Height="32" 
-                                                                      Foreground="#888" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                    <!-- Repeating simplified items for demo -->
-                                    <Border Style="{StaticResource ScreenThumbnailStyle}" Height="120" Margin="4">
-                                        <Grid>
-                                            <Border Background="#212121" CornerRadius="4"/>
-                                            <StackPanel VerticalAlignment="Bottom" Margin="8">
-                                                <TextBlock Text="Trần Thị Bình" FontSize="11" Foreground="White" Opacity="0.9"/>
-                                            </StackPanel>
-                                            <materialDesign:PackIcon Kind="MonitorScreenshot" Width="32" Height="32" 
-                                                                      Foreground="#888" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:ScreenThumbnailControl DataContext="{Binding}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </ScrollViewer>
+                            
+                            <!-- Empty State -->
+                            <StackPanel x:Name="NoStudentsPanel" 
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding OnlineStudents.Count, Converter={StaticResource InverseBooleanConverter}, FallbackValue=Visible}">
+                                <materialDesign:PackIcon Kind="MonitorOff" Width="64" Height="64" Foreground="#CCC"/>
+                                <TextBlock Text="Chưa có học sinh nào kết nối" 
+                                           FontSize="16" Foreground="#999" 
+                                           Margin="0,16,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Học sinh sẽ xuất hiện ở đây khi kết nối vào lớp học" 
+                                           FontSize="12" Foreground="#BBB" 
+                                           Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Grid>
                     </TabItem>
                     

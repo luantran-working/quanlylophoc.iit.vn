@@ -83,3 +83,7 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\LogWindow.g.cs
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\ManualConnectDialog.baml
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\ManualConnectDialog.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Controls\ScreenThumbnailControl.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\StudentScreenWindow.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Controls\ScreenThumbnailControl.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\StudentScreenWindow.g.cs
