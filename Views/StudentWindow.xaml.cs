@@ -141,11 +141,13 @@ namespace ClassroomManagement.Views
             {
                 try
                 {
-                    var thumbnail = _screenCapture.CaptureScreenThumbnail(320, 180, 50);
+                    // Capture with 360p quality (640x360) for good detail view
+                    // This provides good balance between quality and bandwidth
+                    var thumbnail = _screenCapture.CaptureScreenThumbnail(640, 360, 75);
                     var (width, height) = ScreenCaptureService.GetScreenSize();
                     await _networkClient.SendScreenDataAsync(thumbnail, width, height);
                     
-                    await Task.Delay(2000); // Every 2 seconds
+                    await Task.Delay(1500); // Every 1.5 seconds for smoother updates
                 }
                 catch (Exception ex)
                 {
@@ -268,16 +270,32 @@ namespace ClassroomManagement.Views
             });
         }
 
+        private LockScreenWindow? _lockScreenWindow;
+
         private void ShowLockScreen()
         {
-            // TODO: Show full-screen lock overlay
-            MessageBox.Show("Máy đang bị khóa bởi giáo viên.", "Thông báo",
-                MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (_lockScreenWindow != null) return;
+            
+            _lockScreenWindow = new LockScreenWindow();
+            _lockScreenWindow.Show();
+            
+            // Log the lock event
+            Services.LogService.Instance.Info("Student", "Screen locked by teacher");
         }
 
         private void HideLockScreen()
         {
-            // TODO: Hide lock overlay
+            if (_lockScreenWindow != null)
+            {
+                _lockScreenWindow.Unlock();
+                _lockScreenWindow = null;
+                
+                // Log the unlock event
+                Services.LogService.Instance.Info("Student", "Screen unlocked by teacher");
+                
+                // Show toast
+                ToastService.Instance.ShowInfo("Đã mở khóa", "Giáo viên đã mở khóa màn hình của bạn");
+            }
         }
 
         private void ShowChatNotification(string sender, string content)
