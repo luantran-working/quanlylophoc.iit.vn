@@ -132,7 +132,8 @@
                                            Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                <controls:StatusIndicator StatusText="25 học sinh đang nline" 
+                                <controls:StatusIndicator x:Name="OnlineCountIndicator"
+                                                           StatusText="{Binding OnlineStudents.Count, StringFormat='{}{0} học sinh đang online'}" 
                                                            DotColor="#A5D6A7" 
                                                            StatusBackground="#FFFFFF20" />
                             </StackPanel>
@@ -149,7 +150,7 @@
                     
                     <!-- Student List -->
                     <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="8,0">
-                        <ItemsControl x:Name="StudentList" ItemsSource="{Binding Students}">
+                        <ItemsControl x:Name="StudentList" ItemsSource="{Binding OnlineStudents}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <controls:StudentCardControl DataContext="{Binding}" Margin="0,4"/>

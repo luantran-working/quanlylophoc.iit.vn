@@ -50,17 +50,28 @@
             
             <!-- Student Info -->
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="{Binding StudentName, FallbackValue='Nguyễn Văn A'}" 
+                <TextBlock Text="{Binding DisplayName, FallbackValue='Học sinh'}" 
                            FontSize="14" FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryTextBrush}"/>
-                <TextBlock FontSize="12" Foreground="{StaticResource SecondaryTextBrush}"
+                <TextBlock FontSize="11" Foreground="{StaticResource SecondaryTextBrush}"
                            Margin="0,2,0,0">
+                    <Run Text="{Binding ComputerName, FallbackValue=''}"/>
+                    <Run Text=" • "/>
+                    <Run Text="{Binding IpAddress, FallbackValue='IP'}"/>
+                </TextBlock>
+                <TextBlock FontSize="11" Margin="0,2,0,0">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="Online"/>
+                            <Setter Property="Text" Value="● Online"/>
+                            <Setter Property="Foreground" Value="#4CAF50"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                                    <Setter Property="Text" Value="Offline"/>
+                                    <Setter Property="Text" Value="○ Offline"/>
+                                    <Setter Property="Foreground" Value="#9E9E9E"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                                    <Setter Property="Text" Value="🔒 Đã khóa"/>
+                                    <Setter Property="Foreground" Value="#F44336"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
