@@ -48,7 +48,7 @@
             </Border>
             
             <!-- Main Message -->
-            <TextBlock Text="MÀN HÌNH ĐÃ BỊ KHÓA" 
+            <TextBlock Text="MÀN HÌNH ĐANG TẠM KHOÁ" 
                        FontSize="48" FontWeight="Bold" 
                        Foreground="White"
                        HorizontalAlignment="Center"
@@ -59,7 +59,7 @@
             </TextBlock>
             
             <!-- Sub Message -->
-            <TextBlock Text="Giáo viên đã tạm khóa máy tính của bạn" 
+            <TextBlock Text="Giáo viên đã tạm khóa máy tính của bạn, vui lòng không thực hiện bất cứ thao tác gì trên máy tính" 
                        FontSize="20" 
                        Foreground="#AAAAAA"
                        HorizontalAlignment="Center"
@@ -70,11 +70,10 @@
                     Padding="24,16" Margin="0,40,0,0"
                     HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Teacher" Width="24" Height="24" 
-                                              Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                    <materialDesign:PackIcon Kind="Teacher" Width="24" Height="24" VerticalAlignment="Center"/>
                     <TextBlock x:Name="TeacherInfoText" 
                                Text="Vui lòng chờ giáo viên mở khóa" 
-                               FontSize="16" Foreground="#CCCCCC"
+                               FontSize="16"
                                Margin="12,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
