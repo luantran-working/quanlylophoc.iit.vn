@@ -47,3 +47,4 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Classroo.E6528606.Up2Date
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\ClassroomManagement.genruntimeconfig.cache
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\ref\ClassroomManagement.dll
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\ClassroomManagement.sourcelink.json
