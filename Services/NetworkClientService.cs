@@ -267,6 +267,9 @@ namespace ClassroomManagement.Services
                 _stream = _tcpClient.GetStream();
                 _log.Network("NetworkClient", $"✓ TCP connection established to {serverIp}:{port}");
 
+                // Mark as connected FIRST so SendMessageAsync works
+                IsConnected = true;
+
                 // Send connect message
                 var connectMsg = new NetworkMessage
                 {
@@ -283,9 +286,12 @@ namespace ClassroomManagement.Services
                 };
                 
                 _log.Debug("NetworkClient", $"Sending Connect message: {DisplayName} ({MachineId})");
-                await SendMessageAsync(connectMsg);
-
-                IsConnected = true;
+                
+                // Send directly to stream (bypass IsConnected check)
+                var json = JsonSerializer.Serialize(connectMsg);
+                var bytes = Encoding.UTF8.GetBytes(json);
+                await _stream.WriteAsync(bytes);
+                _log.Debug("NetworkClient", $"Sent Connect message ({bytes.Length} bytes)");
                 
                 // Start listening for messages
                 _ = ListenForMessagesAsync(_connectionCts.Token);

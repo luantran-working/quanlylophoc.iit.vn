@@ -1,70 +1,68 @@
-[15:06:56.246] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_dbe347
-[15:06:56.351] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:06:56.352] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:06:56.355] [Debug] [NetworkClient] === Network Configuration ===
-[15:06:56.383] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:06:56.384] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:06:56.395] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:07:01.327] [Debug] [NetworkClient] Still searching... (25s remaining)
-[15:07:06.356] [Debug] [NetworkClient] Still searching... (20s remaining)
-[15:07:11.386] [Debug] [NetworkClient] Still searching... (15s remaining)
-[15:10:16.447] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_103d34
-[15:10:16.583] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:10:16.584] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:10:16.586] [Debug] [NetworkClient] === Network Configuration ===
-[15:10:16.618] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:10:16.618] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:10:16.625] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:10:20.194] [Info] [NetworkClient] Disconnecting...
-[15:10:20.196] [Info] [NetworkClient] Disconnected
-[15:10:20.204] [Warning] [NetworkClient] Server discovery timeout after 30 seconds
-[15:10:53.294] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_957bec
-[15:10:53.398] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:10:53.398] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:10:53.400] [Debug] [NetworkClient] === Network Configuration ===
-[15:10:53.429] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:10:53.430] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:10:53.437] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:10:58.370] [Debug] [NetworkClient] Still searching... (25s remaining)
-[15:11:03.402] [Debug] [NetworkClient] Still searching... (20s remaining)
-[15:11:08.434] [Debug] [NetworkClient] Still searching... (15s remaining)
-[15:11:13.471] [Debug] [NetworkClient] Still searching... (10s remaining)
-[15:11:18.503] [Debug] [NetworkClient] Still searching... (5s remaining)
-[15:11:23.534] [Warning] [NetworkClient] Server discovery timeout after 30 seconds
-[15:11:54.914] [Info] [NetworkClient] Disconnecting...
-[15:11:54.918] [Info] [NetworkClient] Disconnected
-[15:11:58.693] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:11:58.695] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:11:58.695] [Debug] [NetworkClient] === Network Configuration ===
-[15:11:58.712] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:11:58.712] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:11:58.713] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:11:58.713] [Info] [NetworkClient] Disconnecting...
-[15:11:58.714] [Info] [NetworkClient] Disconnected
-[15:11:58.745] [Debug] [NetworkClient] Discovery cancelled
-[15:12:00.936] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:12:00.938] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:12:00.939] [Debug] [NetworkClient] === Network Configuration ===
-[15:12:00.953] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:12:00.954] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:12:00.954] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:12:02.250] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:12:02.253] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:12:02.254] [Debug] [NetworkClient] === Network Configuration ===
-[15:12:02.271] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:12:02.271] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:12:02.271] [Debug] [NetworkClient] UDP listener bound to port 5001
-[15:12:02.322] [Error] [NetworkClient] Error during discovery
-Exception: The CancellationTokenSource has been disposed.
-StackTrace:    at System.Threading.CancellationTokenSource.get_Token()
-   at ClassroomManagement.Services.NetworkClientService.DiscoverServerAsync(Int32 timeoutSeconds) in C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Services\NetworkClientService.cs:line 95
-[15:12:02.392] [Error] [NetworkClient] Error during discovery
-Exception: The CancellationTokenSource has been disposed.
-StackTrace:    at System.Threading.CancellationTokenSource.get_Token()
-   at ClassroomManagement.Services.NetworkClientService.DiscoverServerAsync(Int32 timeoutSeconds) in C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Services\NetworkClientService.cs:line 95
-[15:12:03.420] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
-[15:12:03.422] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
-[15:12:03.422] [Debug] [NetworkClient] === Network Configuration ===
-[15:12:03.437] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
-[15:12:03.437] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
-[15:12:03.438] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:25:47.588] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_9cff50
+[15:25:47.704] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:25:47.705] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:25:47.706] [Debug] [NetworkClient] === Network Configuration ===
+[15:25:47.738] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:25:47.746] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:25:50.759] [Debug] [NetworkClient] Waiting for broadcast... (27s remaining)
+[15:25:53.761] [Debug] [NetworkClient] Waiting for broadcast... (24s remaining)
+[15:25:56.765] [Debug] [NetworkClient] Waiting for broadcast... (21s remaining)
+[15:25:59.767] [Debug] [NetworkClient] Waiting for broadcast... (18s remaining)
+[15:26:02.769] [Debug] [NetworkClient] Waiting for broadcast... (15s remaining)
+[15:26:05.772] [Debug] [NetworkClient] Waiting for broadcast... (12s remaining)
+[15:26:08.776] [Debug] [NetworkClient] Waiting for broadcast... (9s remaining)
+[15:26:11.779] [Debug] [NetworkClient] Waiting for broadcast... (6s remaining)
+[15:26:14.782] [Debug] [NetworkClient] Waiting for broadcast... (3s remaining)
+[15:26:17.784] [Debug] [NetworkClient] Waiting for broadcast... (-0s remaining)
+[15:26:17.788] [Warning] [NetworkClient] Server discovery timeout after 30 seconds
+[15:26:37.385] [Info] [NetworkClient] Connecting to server at 192.168.1.11:5000...
+[15:26:37.389] [Debug] [NetworkClient] Starting TCP connect...
+[15:26:37.403] [Network] [NetworkClient] ✓ TCP connection established to 192.168.1.11:5000
+[15:26:37.444] [Debug] [NetworkClient] Sending Connect message: Test (DESKTOP-KM0UQ2H_PC-01_9cff50)
+[15:26:37.449] [Warning] [NetworkClient] Cannot send message: not connected
+[15:26:37.453] [Debug] [NetworkClient] Started message listener
+[15:26:37.458] [Debug] [NetworkClient] Started heartbeat
+[15:26:37.462] [Info] [NetworkClient] ✓ Successfully connected to server
+[15:26:37.588] [Debug] [NetworkClient] Sent ScreenData (9629 bytes)
+[15:26:39.663] [Debug] [NetworkClient] Sent ScreenData (9561 bytes)
+[15:26:41.762] [Debug] [NetworkClient] Sent ScreenData (9505 bytes)
+[15:26:43.832] [Debug] [NetworkClient] Sent ScreenData (9455 bytes)
+[15:26:45.923] [Debug] [NetworkClient] Sent ScreenData (9423 bytes)
+[15:26:48.002] [Debug] [NetworkClient] Sent ScreenData (9411 bytes)
+[15:26:50.072] [Debug] [NetworkClient] Sent ScreenData (9367 bytes)
+[15:26:52.141] [Debug] [NetworkClient] Sent ScreenData (9413 bytes)
+[15:26:54.223] [Debug] [NetworkClient] Sent ScreenData (9320 bytes)
+[15:26:56.327] [Debug] [NetworkClient] Sent ScreenData (9428 bytes)
+[15:26:58.397] [Debug] [NetworkClient] Sent ScreenData (9320 bytes)
+[15:27:00.466] [Debug] [NetworkClient] Sent ScreenData (9381 bytes)
+[15:27:02.536] [Debug] [NetworkClient] Sent ScreenData (9265 bytes)
+[15:27:04.602] [Debug] [NetworkClient] Sent ScreenData (9310 bytes)
+[15:27:06.686] [Debug] [NetworkClient] Sent ScreenData (9308 bytes)
+[15:27:08.759] [Debug] [NetworkClient] Sent ScreenData (9386 bytes)
+[15:27:10.841] [Debug] [NetworkClient] Sent ScreenData (9368 bytes)
+[15:27:12.926] [Debug] [NetworkClient] Sent ScreenData (9354 bytes)
+[15:27:15.001] [Debug] [NetworkClient] Sent ScreenData (9418 bytes)
+[15:27:17.084] [Debug] [NetworkClient] Sent ScreenData (9351 bytes)
+[15:27:19.175] [Debug] [NetworkClient] Sent ScreenData (9333 bytes)
+[15:27:21.267] [Debug] [NetworkClient] Sent ScreenData (9351 bytes)
+[15:27:23.352] [Debug] [NetworkClient] Sent ScreenData (9373 bytes)
+[15:27:25.439] [Debug] [NetworkClient] Sent ScreenData (9613 bytes)
+[15:27:27.511] [Debug] [NetworkClient] Sent ScreenData (9496 bytes)
+[15:27:29.591] [Debug] [NetworkClient] Sent ScreenData (9347 bytes)
+[15:27:31.674] [Debug] [NetworkClient] Sent ScreenData (9330 bytes)
+[15:27:33.780] [Debug] [NetworkClient] Sent ScreenData (9171 bytes)
+[15:27:35.855] [Debug] [NetworkClient] Sent ScreenData (9265 bytes)
+[15:27:37.938] [Debug] [NetworkClient] Sent ScreenData (9272 bytes)
+[15:27:40.037] [Debug] [NetworkClient] Sent ScreenData (9149 bytes)
+[15:27:42.107] [Debug] [NetworkClient] Sent ScreenData (9238 bytes)
+[15:27:44.191] [Debug] [NetworkClient] Sent ScreenData (9271 bytes)
+[15:27:46.277] [Debug] [NetworkClient] Sent ScreenData (9244 bytes)
+[15:27:48.347] [Debug] [NetworkClient] Sent ScreenData (9277 bytes)
+[15:27:50.430] [Debug] [NetworkClient] Sent ScreenData (9245 bytes)
+[15:27:52.537] [Debug] [NetworkClient] Sent ScreenData (9293 bytes)
+[15:27:54.602] [Debug] [NetworkClient] Sent ScreenData (9205 bytes)
+[15:27:56.685] [Debug] [NetworkClient] Sent ScreenData (9197 bytes)
+[15:27:58.768] [Debug] [NetworkClient] Sent ScreenData (9324 bytes)
+[15:27:59.395] [Info] [NetworkClient] Disconnecting...
+[15:27:59.397] [Debug] [NetworkClient] Sent Disconnect (147 bytes)
+[15:27:59.401] [Info] [NetworkClient] Disconnected

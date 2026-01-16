@@ -295,6 +295,11 @@ namespace ClassroomManagement.Services
                 {
                     OnlineStudents.Add(student);
                     StudentConnected?.Invoke(this, student);
+                    
+                    // Show toast notification
+                    ToastService.Instance.ShowSuccess(
+                        "Học sinh kết nối",
+                        $"{student.DisplayName} đã tham gia lớp học\nIP: {e.IpAddress}");
                 }
             });
         }
@@ -310,6 +315,11 @@ namespace ClassroomManagement.Services
                 {
                     OnlineStudents.Remove(student);
                     StudentDisconnected?.Invoke(this, student);
+                    
+                    // Show toast notification
+                    ToastService.Instance.ShowWarning(
+                        "Học sinh ngắt kết nối",
+                        $"{student.DisplayName} đã rời khỏi lớp học");
                 }
             });
         }

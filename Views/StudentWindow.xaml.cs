@@ -112,6 +112,11 @@ namespace ClassroomManagement.Views
                 _isConnected = true;
                 UpdateConnectionStatus($"Đã kết nối - {className}");
                 
+                // Show toast notification
+                ToastService.Instance.ShowSuccess(
+                    "Kết nối thành công",
+                    $"Đã kết nối đến {className}\nServer: {serverIp}:{port}");
+                
                 // Start sending screen thumbnails periodically
                 _ = SendScreenDataAsync();
             }
