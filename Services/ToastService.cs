@@ -14,6 +14,7 @@ namespace ClassroomManagement.Services
     {
         private static ToastService? _instance;
         public static ToastService Instance => _instance ??= new ToastService();
+        private readonly LogService _log = LogService.Instance;
 
         public enum ToastType
         {
@@ -28,36 +29,64 @@ namespace ClassroomManagement.Services
         /// </summary>
         public void Show(string title, string message, ToastType type = ToastType.Info, int durationMs = 3000)
         {
-            Application.Current?.Dispatcher?.Invoke(async () =>
+            _log.Debug("ToastService", $"Showing toast: {title} - {message}");
+            
+            try
             {
-                var mainWindow = Application.Current.MainWindow;
-                if (mainWindow == null) return;
-
-                // Find or create toast container
-                var container = FindToastContainer(mainWindow);
-                if (container == null) return;
-
-                // Create toast
-                var toast = CreateToast(title, message, type);
-                container.Children.Add(toast);
-
-                // Animate in
-                var slideIn = new DoubleAnimation(50, 0, TimeSpan.FromMilliseconds(200));
-                var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
-                toast.RenderTransform = new TranslateTransform();
-                toast.RenderTransform.BeginAnimation(TranslateTransform.XProperty, slideIn);
-                toast.BeginAnimation(UIElement.OpacityProperty, fadeIn);
-
-                // Wait and animate out
-                await Task.Delay(durationMs);
-
-                var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300));
-                fadeOut.Completed += (s, e) =>
+                Application.Current?.Dispatcher?.Invoke(async () =>
                 {
-                    container.Children.Remove(toast);
-                };
-                toast.BeginAnimation(UIElement.OpacityProperty, fadeOut);
-            });
+                    try
+                    {
+                        var mainWindow = Application.Current.MainWindow;
+                        if (mainWindow == null)
+                        {
+                            _log.Warning("ToastService", "MainWindow is null");
+                            return;
+                        }
+
+                        _log.Debug("ToastService", $"MainWindow type: {mainWindow.GetType().Name}");
+
+                        // Find or create toast container
+                        var container = FindOrCreateToastContainer(mainWindow);
+                        if (container == null)
+                        {
+                            _log.Warning("ToastService", "Could not find or create ToastContainer");
+                            return;
+                        }
+
+                        _log.Debug("ToastService", $"Toast container found, adding toast");
+
+                        // Create toast
+                        var toast = CreateToast(title, message, type);
+                        container.Children.Add(toast);
+
+                        // Animate in
+                        var slideIn = new DoubleAnimation(50, 0, TimeSpan.FromMilliseconds(200));
+                        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
+                        toast.RenderTransform = new TranslateTransform();
+                        toast.RenderTransform.BeginAnimation(TranslateTransform.XProperty, slideIn);
+                        toast.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+
+                        // Wait and animate out
+                        await Task.Delay(durationMs);
+
+                        var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300));
+                        fadeOut.Completed += (s, e) =>
+                        {
+                            try { container.Children.Remove(toast); } catch { }
+                        };
+                        toast.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error("ToastService", "Error showing toast", ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.Error("ToastService", "Error invoking on dispatcher", ex);
+            }
         }
 
         public void ShowSuccess(string title, string message, int durationMs = 3000)
@@ -80,11 +109,17 @@ namespace ClassroomManagement.Services
             Show(title, message, ToastType.Warning, durationMs);
         }
 
-        private StackPanel? FindToastContainer(Window window)
+        private StackPanel? FindOrCreateToastContainer(Window window)
         {
             // Try to find existing container
             var container = FindChildByName<StackPanel>(window, "ToastContainer");
-            if (container != null) return container;
+            if (container != null)
+            {
+                _log.Debug("ToastService", "Found existing ToastContainer");
+                return container;
+            }
+
+            _log.Debug("ToastService", "Creating new ToastContainer");
 
             // Create new container in the window
             if (window.Content is Grid grid)
@@ -101,9 +136,26 @@ namespace ClassroomManagement.Services
                 Grid.SetColumnSpan(container, 100);
                 Panel.SetZIndex(container, 9999);
                 grid.Children.Add(container);
+                _log.Debug("ToastService", "ToastContainer created and added to Grid");
+                return container;
+            }
+            else if (window.Content is Panel panel)
+            {
+                container = new StackPanel
+                {
+                    Name = "ToastContainer",
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(0, 80, 20, 0),
+                    Width = 320
+                };
+                Panel.SetZIndex(container, 9999);
+                panel.Children.Add(container);
+                _log.Debug("ToastService", "ToastContainer created and added to Panel");
                 return container;
             }
 
+            _log.Warning("ToastService", $"Window content is not Grid or Panel: {window.Content?.GetType().Name}");
             return null;
         }
 

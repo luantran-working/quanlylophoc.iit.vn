@@ -283,25 +283,46 @@ namespace ClassroomManagement.Services
         // Event Handlers
         private void OnClientConnected(object? sender, ClientConnectedEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            var log = LogService.Instance;
+            log.Info("SessionManager", $"OnClientConnected triggered: {e.ClientName} ({e.ClientId}) from {e.IpAddress}");
+            
+            try
             {
-                var student = _db.GetOrCreateStudent(
-                    e.ClientId, 
-                    e.ClientName, 
-                    e.ClientInfo?.ComputerName ?? "", 
-                    e.IpAddress);
-
-                if (student != null)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    OnlineStudents.Add(student);
-                    StudentConnected?.Invoke(this, student);
+                    log.Debug("SessionManager", "Inside Dispatcher.Invoke");
                     
-                    // Show toast notification
-                    ToastService.Instance.ShowSuccess(
-                        "Học sinh kết nối",
-                        $"{student.DisplayName} đã tham gia lớp học\nIP: {e.IpAddress}");
-                }
-            });
+                    var student = _db.GetOrCreateStudent(
+                        e.ClientId, 
+                        e.ClientName ?? "Unknown", 
+                        e.ClientInfo?.ComputerName ?? "", 
+                        e.IpAddress);
+
+                    log.Debug("SessionManager", $"GetOrCreateStudent result: {student?.DisplayName ?? "null"}");
+
+                    if (student != null)
+                    {
+                        OnlineStudents.Add(student);
+                        log.Info("SessionManager", $"Student added to OnlineStudents. Count: {OnlineStudents.Count}");
+                        
+                        StudentConnected?.Invoke(this, student);
+                        
+                        // Show toast notification
+                        log.Debug("SessionManager", "Calling ToastService.ShowSuccess...");
+                        ToastService.Instance.ShowSuccess(
+                            "Học sinh kết nối",
+                            $"{student.DisplayName} đã tham gia lớp học\nIP: {e.IpAddress}");
+                    }
+                    else
+                    {
+                        log.Warning("SessionManager", "GetOrCreateStudent returned null!");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                log.Error("SessionManager", "Error in OnClientConnected", ex);
+            }
         }
 
         private void OnClientDisconnected(object? sender, ClientDisconnectedEventArgs e)
