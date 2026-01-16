@@ -47,8 +47,9 @@ namespace ClassroomManagement.Services
 
         /// <summary>
         /// Chụp màn hình với kích thước thu nhỏ (thumbnail)
+        /// maxWidth 480 cho list view (360p equivalent), 960 cho detail view (720p equivalent)
         /// </summary>
-        public byte[] CaptureScreenThumbnail(int maxWidth = 320, int maxHeight = 180, int quality = 60)
+        public byte[] CaptureScreenThumbnail(int maxWidth = 480, int maxHeight = 270, int quality = 70)
         {
             var screenWidth = (int)SystemParameters.PrimaryScreenWidth;
             var screenHeight = (int)SystemParameters.PrimaryScreenHeight;
@@ -65,6 +66,8 @@ namespace ClassroomManagement.Services
             using var thumbnail = new Bitmap(thumbWidth, thumbHeight);
             using var thumbGraphics = Graphics.FromImage(thumbnail);
             thumbGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            thumbGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            thumbGraphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             thumbGraphics.DrawImage(fullBitmap, 0, 0, thumbWidth, thumbHeight);
 
             return CompressToJpeg(thumbnail, quality);

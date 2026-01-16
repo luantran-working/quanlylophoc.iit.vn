@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using ClassroomManagement.Models;
 using ClassroomManagement.Services;
 
@@ -16,11 +17,37 @@ namespace ClassroomManagement.Controls
     {
         private Student? _student;
         private readonly LogService _log = LogService.Instance;
+        private readonly DispatcherTimer _refreshTimer;
 
         public ScreenThumbnailControl()
         {
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;
+            
+            // Setup auto-refresh timer (500ms)
+            _refreshTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
+            _refreshTimer.Tick += RefreshTimer_Tick;
+            
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _refreshTimer.Start();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _refreshTimer.Stop();
+        }
+
+        private void RefreshTimer_Tick(object? sender, EventArgs e)
+        {
+            UpdateUI();
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -29,9 +56,6 @@ namespace ClassroomManagement.Controls
             {
                 _student = student;
                 UpdateUI();
-                
-                // Subscribe to property changes if needed
-                // For now, we'll use a timer or manual refresh
             }
         }
 
@@ -70,10 +94,9 @@ namespace ClassroomManagement.Controls
                         ScreenImage.Source = bitmap;
                         PlaceholderPanel.Visibility = Visibility.Collapsed;
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        _log.Warning("ScreenThumbnail", $"Failed to load image: {ex.Message}");
-                        PlaceholderPanel.Visibility = Visibility.Visible;
+                        // Ignore image load errors during rapid updates
                     }
                 }
                 else

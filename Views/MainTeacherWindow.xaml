@@ -241,10 +241,13 @@
                             </Border>
                             
                             <!-- Screen Grid -->
-                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                          Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToVisibilityConverter}}">
                                 <ItemsControl x:Name="ScreenGrid" 
                                               ItemsSource="{Binding OnlineStudents}" 
-                                              Margin="12">
+                                              Margin="12"
+                                              VerticalAlignment="Top"
+                                              HorizontalAlignment="Stretch">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <UniformGrid x:Name="ScreenGridPanel" Columns="4"/>
@@ -263,7 +266,7 @@
                                         Grid.Row="1"
                                         HorizontalAlignment="Center" 
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding OnlineStudents.Count, Converter={StaticResource InverseBooleanConverter}, FallbackValue=Visible}">
+                                        Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToInverseVisibilityConverter}}">
                                 <materialDesign:PackIcon Kind="MonitorOff" Width="64" Height="64" Foreground="#CCC"/>
                                 <TextBlock Text="Chưa có học sinh nào kết nối" 
                                            FontSize="16" Foreground="#999" 
