@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "6zxY8UvRPlw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\admin\\.nuget\\packages\\materialdesigncolors\\3.1.0\\materialdesigncolors.3.1.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\materialdesignthemes\\5.1.0\\materialdesignthemes.5.1.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.39\\microsoft.xaml.behaviors.wpf.1.1.39.nupkg.sha512"
+  ],
+  "logs": []
+}

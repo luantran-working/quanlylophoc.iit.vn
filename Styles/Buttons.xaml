@@ -1,0 +1,85 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    
+    <!-- Primary Action Button Style -->
+    <Style x:Key="PrimaryActionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="24,0"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4"/>
+        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp1"/>
+    </Style>
+    
+    <!-- Teacher Button Style -->
+    <Style x:Key="TeacherButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryActionButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <!-- Student Button Style -->
+    <Style x:Key="StudentButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryActionButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <!-- Icon Button Style -->
+    <Style x:Key="IconButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="Padding" Value="6"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource AppPrimaryBrush}"/>
+                <Setter Property="Background" Value="#F5F5F5"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- Tool Button Style -->
+    <Style x:Key="ToolButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+        <Setter Property="Height" Value="56"/>
+        <Setter Property="Margin" Value="0,4"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+    
+    <!-- Sidebar Tool Button -->
+    <Style x:Key="SidebarToolButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+        <Setter Property="Height" Value="56"/>
+        <Setter Property="Margin" Value="0,4"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4"/>
+        <Setter Property="Foreground" Value="#424242"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#F5F5F5"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- Toggle Button Style -->
+    <Style x:Key="ActionToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="4"/>
+    </Style>
+    
+    <!-- Tab Button Style -->
+    <Style x:Key="TabButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignTabRadioButtonBottom}">
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4,4,0,0"/>
+    </Style>
+    
+</ResourceDictionary>

@@ -1,0 +1,27 @@
+<UserControl x:Class="ClassroomManagement.Controls.StatusIndicator"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="24" d:DesignWidth="120"
+             x:Name="StatusControl">
+    
+    <Border CornerRadius="12" 
+            Padding="10,4"
+            Background="{Binding StatusBackground, ElementName=StatusControl, FallbackValue=#E8F5E9}">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <!-- Status Dot -->
+            <Ellipse Width="8" Height="8" 
+                     Fill="{Binding DotColor, ElementName=StatusControl, FallbackValue=#4CAF50}"
+                     Margin="0,0,6,0"/>
+            
+            <!-- Status Text -->
+            <TextBlock Text="{Binding StatusText, ElementName=StatusControl, FallbackValue='Online'}"
+                       FontSize="12" FontWeight="Medium"
+                       Foreground="{Binding TextColor, ElementName=StatusControl, FallbackValue=#2E7D32}"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+    </Border>
+</UserControl>

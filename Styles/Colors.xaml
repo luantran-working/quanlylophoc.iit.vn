@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Unified Primary Colors (Blue Theme) -->
+    <Color x:Key="AppPrimaryColor">#1976D2</Color>
+    <Color x:Key="AppSecondaryColor">#1565C0</Color>
+    <Color x:Key="AppAccentColor">#42A5F5</Color>
+    
+    <!-- Mapping Old Keys to New Unified Colors -->
+    <Color x:Key="TeacherPrimaryColor">#1976D2</Color>
+    <Color x:Key="TeacherSecondaryColor">#1565C0</Color>
+    <Color x:Key="TeacherAccentColor">#42A5F5</Color>
+    
+    <Color x:Key="StudentPrimaryColor">#1976D2</Color>
+    <Color x:Key="StudentSecondaryColor">#1565C0</Color>
+    <Color x:Key="StudentAccentColor">#42A5F5</Color>
+    
+    <!-- Background Colors -->
+    <Color x:Key="DarkBackgroundColor">#121212</Color>
+    <Color x:Key="LightBackgroundColor">#FAFAFA</Color>
+    <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="DarkCardBackgroundColor">#1E1E1E</Color>
+    
+    <!-- Status Colors (Keep distinctive usually) -->
+    <Color x:Key="OnlineColor">#2E7D32</Color>
+    <Color x:Key="OfflineColor">#757575</Color>
+    <Color x:Key="WarningColor">#EF6C00</Color>
+    <Color x:Key="ErrorColor">#C62828</Color>
+    
+    <!-- Text Colors -->
+    <Color x:Key="PrimaryTextColor">#212121</Color>
+    <Color x:Key="SecondaryTextColor">#616161</Color>
+    <Color x:Key="LightTextColor">#FFFFFF</Color>
+    
+    <!-- SolidColorBrushes -->
+    <SolidColorBrush x:Key="AppPrimaryBrush" Color="{StaticResource AppPrimaryColor}"/>
+    <SolidColorBrush x:Key="TeacherPrimaryBrush" Color="{StaticResource TeacherPrimaryColor}"/>
+    <SolidColorBrush x:Key="TeacherSecondaryBrush" Color="{StaticResource TeacherSecondaryColor}"/>
+    <SolidColorBrush x:Key="TeacherAccentBrush" Color="{StaticResource TeacherAccentColor}"/>
+    
+    <SolidColorBrush x:Key="StudentPrimaryBrush" Color="{StaticResource StudentPrimaryColor}"/>
+    <SolidColorBrush x:Key="StudentSecondaryBrush" Color="{StaticResource StudentSecondaryColor}"/>
+    <SolidColorBrush x:Key="StudentAccentBrush" Color="{StaticResource StudentAccentColor}"/>
+    
+    <SolidColorBrush x:Key="OnlineBrush" Color="{StaticResource OnlineColor}"/>
+    <SolidColorBrush x:Key="OfflineBrush" Color="{StaticResource OfflineColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
+    <SolidColorBrush x:Key="LightTextBrush" Color="{StaticResource LightTextColor}"/>
+    
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
+    
+    <!-- Flat Brushes replacing Gradients (Using SolidColorBrush where possible, but keeping Keys) -->
+    <!-- Note: Switched to SolidColorBrush for simplicity as most UI elements accept Brush -->
+    <SolidColorBrush x:Key="MainGradientBrush" Color="#1976D2"/>
+    <SolidColorBrush x:Key="TeacherGradientBrush" Color="#1976D2"/>
+    <SolidColorBrush x:Key="StudentGradientBrush" Color="#1976D2"/>
+    <SolidColorBrush x:Key="SidebarGradientBrush" Color="#212121"/>
+    
+</ResourceDictionary>

@@ -1,0 +1,208 @@
+<Window x:Class="ClassroomManagement.Views.ChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Chat nhóm" 
+        Height="600" Width="450"
+        MinHeight="500" MinWidth="380"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- ============================================ -->
+        <!-- HEADER -->
+        <!-- ============================================ -->
+        <Border Grid.Row="0" Padding="16">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource AppPrimaryColor}"/>
+            </Border.Background>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Back Button -->
+                <Button Grid.Column="0" Style="{StaticResource MaterialDesignIconButton}" 
+                        Foreground="White" Click="BackButton_Click">
+                    <materialDesign:PackIcon Kind="ArrowLeft" Width="24" Height="24"/>
+                </Button>
+                
+                <!-- Chat Info -->
+                <StackPanel Grid.Column="1" Margin="12,0">
+                    <TextBlock Text="Chat nhóm - Lớp 10A1" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="25 thành viên online" FontSize="12" Foreground="#BBDEFB"/>
+                </StackPanel>
+                
+                <!-- Menu -->
+                <Button Grid.Column="2" Style="{StaticResource MaterialDesignIconButton}" Foreground="White">
+                    <materialDesign:PackIcon Kind="DotsVertical" Width="24" Height="24"/>
+                </Button>
+            </Grid>
+        </Border>
+        
+        <!-- ============================================ -->
+        <!-- CHAT MESSAGES -->
+        <!-- ============================================ -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12">
+            <StackPanel x:Name="ChatMessages">
+                
+                <!-- System Message -->
+                <Border HorizontalAlignment="Center" Margin="0,8">
+                    <TextBlock Text="Hôm nay, 10:00 AM" FontSize="11" Foreground="#9E9E9E"/>
+                </Border>
+                
+                <!-- Received Message -->
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" 
+                            Background="#E3F2FD" VerticalAlignment="Top" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="Account" Width="20" Height="20" 
+                                                  Foreground="#2196F3"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Trần Văn Bình (GV)" FontSize="11" FontWeight="SemiBold" 
+                                   Foreground="#2196F3" Margin="0,0,0,4"/>
+                        <Border Style="{StaticResource ReceivedMessageBubbleStyle}" Margin="0">
+                            <TextBlock Text="Chào các em! Hôm nay chúng ta sẽ học về hàm số bậc 2." 
+                                       TextWrapping="Wrap" FontSize="14"/>
+                        </Border>
+                        <TextBlock Text="10:01 AM" FontSize="10" Foreground="#9E9E9E" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Sent Message -->
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Right">
+                        <Border Style="{StaticResource SentMessageBubbleStyle}" Margin="0">
+                            <TextBlock Text="Dạ vâng thầy ạ! Em đã chuẩn bị bài rồi ạ." 
+                                       TextWrapping="Wrap" FontSize="14" Foreground="White"/>
+                        </Border>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
+                            <TextBlock Text="10:02 AM" FontSize="10" Foreground="#9E9E9E"/>
+                            <materialDesign:PackIcon Kind="CheckAll" Width="14" Height="14" 
+                                                      Foreground="#4CAF50" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Another Received Message -->
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" 
+                            Background="#E8F5E9" VerticalAlignment="Top" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="Account" Width="20" Height="20" 
+                                                  Foreground="#4CAF50"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Nguyễn Thị Mai" FontSize="11" FontWeight="SemiBold" 
+                                   Foreground="#4CAF50" Margin="0,0,0,4"/>
+                        <Border Style="{StaticResource ReceivedMessageBubbleStyle}" Margin="0">
+                            <TextBlock Text="Thầy ơi, em có thắc mắc về bài tập số 5 ạ 🙋" 
+                                       TextWrapping="Wrap" FontSize="14"/>
+                        </Border>
+                        <TextBlock Text="10:05 AM" FontSize="10" Foreground="#9E9E9E" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Teacher Reply -->
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" 
+                            Background="#E3F2FD" VerticalAlignment="Top" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="Account" Width="20" Height="20" 
+                                                  Foreground="#2196F3"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Trần Văn Bình (GV)" FontSize="11" FontWeight="SemiBold" 
+                                   Foreground="#2196F3" Margin="0,0,0,4"/>
+                        <Border Style="{StaticResource ReceivedMessageBubbleStyle}" Margin="0">
+                            <TextBlock Text="Được rồi Mai, thầy sẽ giải thích lại bài tập đó nhé. Các em chú ý theo dõi!" 
+                                       TextWrapping="Wrap" FontSize="14"/>
+                        </Border>
+                        <TextBlock Text="10:06 AM" FontSize="10" Foreground="#9E9E9E" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- ============================================ -->
+        <!-- MESSAGE INPUT -->
+        <!-- ============================================ -->
+        <Border Grid.Row="2" Background="White" Padding="12">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="-2" Opacity="0.1" Color="Black" Direction="90"/>
+            </Border.Effect>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Attachment Button -->
+                <Button Grid.Column="0" Style="{StaticResource MaterialDesignIconButton}" 
+                        Width="40" Height="40" ToolTip="Đính kèm file">
+                    <materialDesign:PackIcon Kind="Attachment" Width="22" Height="22" Foreground="#757575"/>
+                </Button>
+                
+                <!-- Text Input -->
+                <Border Grid.Column="1" Background="#F5F5F5" CornerRadius="20" Margin="8,0">
+                    <TextBox x:Name="MessageInput" 
+                             Style="{StaticResource MaterialDesignTextBox}"
+                             materialDesign:HintAssist.Hint="Nhập tin nhắn..."
+                             BorderThickness="0"
+                             Background="Transparent"
+                             Padding="16,10"
+                             VerticalAlignment="Center"
+                             KeyDown="MessageInput_KeyDown"/>
+                </Border>
+                
+                <!-- Send Button -->
+                <Button Grid.Column="2" 
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Background="{StaticResource AppPrimaryBrush}"
+                        Click="SendMessage_Click"
+                        ToolTip="Gửi tin nhắn">
+                    <materialDesign:PackIcon Kind="Send" Width="20" Height="20"/>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
