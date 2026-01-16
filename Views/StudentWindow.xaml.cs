@@ -66,25 +66,67 @@ namespace ClassroomManagement.Views
             
             if (serverInfo != null)
             {
-                UpdateConnectionStatus($"Đang kết nối đến {serverInfo.ClassName}...");
-                
-                var connected = await _networkClient.ConnectAsync(serverInfo.ServerIp, serverInfo.ServerPort);
-                if (connected)
+                await TryConnectToServer(serverInfo.ServerIp, serverInfo.ServerPort, serverInfo.ClassName);
+            }
+            else
+            {
+                // Show manual connect dialog
+                await ShowManualConnectDialog();
+            }
+        }
+
+        private async Task ShowManualConnectDialog()
+        {
+            var dialog = new ManualConnectDialog();
+            dialog.Owner = this;
+            
+            if (dialog.ShowDialog() == true)
+            {
+                if (dialog.ContinueSearching)
                 {
-                    _isConnected = true;
-                    UpdateConnectionStatus($"Đã kết nối - {serverInfo.ClassName}");
-                    
-                    // Start sending screen thumbnails periodically
-                    _ = SendScreenDataAsync();
+                    // User wants to continue auto-discovery
+                    await ConnectToServerAsync();
                 }
-                else
+                else if (!string.IsNullOrEmpty(dialog.ServerIp))
                 {
-                    ShowConnectionError("Không thể kết nối đến phòng học.");
+                    // User entered IP manually
+                    await TryConnectToServer(dialog.ServerIp, 5000, "Phòng học");
                 }
             }
             else
             {
-                ShowConnectionError("Không tìm thấy phòng học trong mạng LAN.\nĐảm bảo giáo viên đã khởi động phiên học.");
+                // User cancelled, go back to role selection
+                var roleWindow = new RoleSelectionWindow();
+                roleWindow.Show();
+                Close();
+            }
+        }
+
+        private async Task TryConnectToServer(string serverIp, int port, string className)
+        {
+            UpdateConnectionStatus($"Đang kết nối đến {serverIp}...");
+            
+            var connected = await _networkClient.ConnectAsync(serverIp, port);
+            if (connected)
+            {
+                _isConnected = true;
+                UpdateConnectionStatus($"Đã kết nối - {className}");
+                
+                // Start sending screen thumbnails periodically
+                _ = SendScreenDataAsync();
+            }
+            else
+            {
+                Dispatcher.Invoke(async () =>
+                {
+                    MessageBox.Show(
+                        $"Không thể kết nối đến {serverIp}:{port}\n\nKiểm tra:\n- Firewall trên máy giáo viên\n- Cùng mạng WiFi/LAN\n- Giáo viên đã khởi động phiên học",
+                        "Lỗi kết nối",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    
+                    await ShowManualConnectDialog();
+                });
             }
         }
 

@@ -81,3 +81,5 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\StudentNameDialog.g.cs
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\LogWindow.baml
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\LogWindow.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\ManualConnectDialog.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\Views\ManualConnectDialog.g.cs

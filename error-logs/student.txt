@@ -1,0 +1,70 @@
+[15:06:56.246] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_dbe347
+[15:06:56.351] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:06:56.352] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:06:56.355] [Debug] [NetworkClient] === Network Configuration ===
+[15:06:56.383] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:06:56.384] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:06:56.395] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:07:01.327] [Debug] [NetworkClient] Still searching... (25s remaining)
+[15:07:06.356] [Debug] [NetworkClient] Still searching... (20s remaining)
+[15:07:11.386] [Debug] [NetworkClient] Still searching... (15s remaining)
+[15:10:16.447] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_103d34
+[15:10:16.583] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:10:16.584] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:10:16.586] [Debug] [NetworkClient] === Network Configuration ===
+[15:10:16.618] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:10:16.618] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:10:16.625] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:10:20.194] [Info] [NetworkClient] Disconnecting...
+[15:10:20.196] [Info] [NetworkClient] Disconnected
+[15:10:20.204] [Warning] [NetworkClient] Server discovery timeout after 30 seconds
+[15:10:53.294] [Info] [NetworkClient] Initialized with MachineId: DESKTOP-KM0UQ2H_PC-01_957bec
+[15:10:53.398] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:10:53.398] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:10:53.400] [Debug] [NetworkClient] === Network Configuration ===
+[15:10:53.429] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:10:53.430] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:10:53.437] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:10:58.370] [Debug] [NetworkClient] Still searching... (25s remaining)
+[15:11:03.402] [Debug] [NetworkClient] Still searching... (20s remaining)
+[15:11:08.434] [Debug] [NetworkClient] Still searching... (15s remaining)
+[15:11:13.471] [Debug] [NetworkClient] Still searching... (10s remaining)
+[15:11:18.503] [Debug] [NetworkClient] Still searching... (5s remaining)
+[15:11:23.534] [Warning] [NetworkClient] Server discovery timeout after 30 seconds
+[15:11:54.914] [Info] [NetworkClient] Disconnecting...
+[15:11:54.918] [Info] [NetworkClient] Disconnected
+[15:11:58.693] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:11:58.695] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:11:58.695] [Debug] [NetworkClient] === Network Configuration ===
+[15:11:58.712] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:11:58.712] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:11:58.713] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:11:58.713] [Info] [NetworkClient] Disconnecting...
+[15:11:58.714] [Info] [NetworkClient] Disconnected
+[15:11:58.745] [Debug] [NetworkClient] Discovery cancelled
+[15:12:00.936] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:12:00.938] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:12:00.939] [Debug] [NetworkClient] === Network Configuration ===
+[15:12:00.953] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:12:00.954] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:12:00.954] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:12:02.250] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:12:02.253] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:12:02.254] [Debug] [NetworkClient] === Network Configuration ===
+[15:12:02.271] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:12:02.271] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:12:02.271] [Debug] [NetworkClient] UDP listener bound to port 5001
+[15:12:02.322] [Error] [NetworkClient] Error during discovery
+Exception: The CancellationTokenSource has been disposed.
+StackTrace:    at System.Threading.CancellationTokenSource.get_Token()
+   at ClassroomManagement.Services.NetworkClientService.DiscoverServerAsync(Int32 timeoutSeconds) in C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Services\NetworkClientService.cs:line 95
+[15:12:02.392] [Error] [NetworkClient] Error during discovery
+Exception: The CancellationTokenSource has been disposed.
+StackTrace:    at System.Threading.CancellationTokenSource.get_Token()
+   at ClassroomManagement.Services.NetworkClientService.DiscoverServerAsync(Int32 timeoutSeconds) in C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Services\NetworkClientService.cs:line 95
+[15:12:03.420] [Info] [NetworkClient] Starting server discovery (timeout: 30s)...
+[15:12:03.422] [Network] [NetworkClient] Listening for UDP broadcasts on port 5001
+[15:12:03.422] [Debug] [NetworkClient] === Network Configuration ===
+[15:12:03.437] [Debug] [NetworkClient]   Ethernet: 192.168.0.110 / 255.255.255.0 (Type: Ethernet)
+[15:12:03.437] [Debug] [NetworkClient]   Loopback Pseudo-Interface 1: 127.0.0.1 / 255.0.0.0 (Type: Loopback)
+[15:12:03.438] [Debug] [NetworkClient] UDP listener bound to port 5001

@@ -18,8 +18,10 @@ namespace ClassroomManagement.Services
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
         private UdpClient? _udpListener;
-        private CancellationTokenSource? _cts;
+        private CancellationTokenSource? _discoveryCts;
+        private CancellationTokenSource? _connectionCts;
         private readonly LogService _log = LogService.Instance;
+        private bool _isDiscovering = false;
         
         public string MachineId { get; private set; }
         public string DisplayName { get; set; } = "Học sinh";
@@ -43,97 +45,125 @@ namespace ClassroomManagement.Services
         }
 
         /// <summary>
+        /// Hủy discovery đang chạy
+        /// </summary>
+        public void CancelDiscovery()
+        {
+            try
+            {
+                _discoveryCts?.Cancel();
+                _udpListener?.Close();
+            }
+            catch { }
+        }
+
+        /// <summary>
         /// Tìm Server trong mạng LAN bằng UDP
         /// </summary>
         public async Task<ServerDiscoveryInfo?> DiscoverServerAsync(int timeoutSeconds = 30)
         {
+            // Prevent multiple simultaneous discoveries
+            if (_isDiscovering)
+            {
+                _log.Warning("NetworkClient", "Discovery already in progress, cancelling previous...");
+                CancelDiscovery();
+                await Task.Delay(500);
+            }
+
+            _isDiscovering = true;
             _log.Info("NetworkClient", $"Starting server discovery (timeout: {timeoutSeconds}s)...");
             _log.Network("NetworkClient", $"Listening for UDP broadcasts on port 5001");
             
             // Log network info
             LogNetworkInfo();
             
-            _cts = new CancellationTokenSource();
+            // Create new CTS for this discovery
+            _discoveryCts = new CancellationTokenSource();
+            var ct = _discoveryCts.Token;
 
             try
             {
+                // Create UDP listener with proper configuration
                 _udpListener = new UdpClient();
                 _udpListener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _udpListener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+                _udpListener.Client.ReceiveTimeout = 3000; // 3 second timeout for each receive attempt
                 _udpListener.Client.Bind(new IPEndPoint(IPAddress.Any, 5001));
-                _udpListener.EnableBroadcast = true;
                 
                 _log.Debug("NetworkClient", "UDP listener bound to port 5001");
             }
             catch (SocketException ex)
             {
-                _log.Error("NetworkClient", $"Failed to bind UDP port 5001", ex);
-                
-                // Try alternative port
-                try
-                {
-                    _udpListener = new UdpClient(0);
-                    _udpListener.EnableBroadcast = true;
-                    _log.Warning("NetworkClient", "Bound to alternative UDP port");
-                }
-                catch (Exception ex2)
-                {
-                    _log.Error("NetworkClient", "Failed to create UDP listener", ex2);
-                    return null;
-                }
+                _log.Error("NetworkClient", $"Failed to bind UDP port 5001: {ex.SocketErrorCode}", ex);
+                _isDiscovering = false;
+                return null;
             }
             catch (Exception ex)
             {
                 _log.Error("NetworkClient", "Error creating UDP listener", ex);
+                _isDiscovering = false;
                 return null;
             }
 
-            var endTime = DateTime.Now.AddSeconds(timeoutSeconds);
-            int attemptCount = 0;
+            var startTime = DateTime.Now;
+            var endTime = startTime.AddSeconds(timeoutSeconds);
 
             try
             {
-                while (DateTime.Now < endTime && !_cts.Token.IsCancellationRequested)
+                while (DateTime.Now < endTime && !ct.IsCancellationRequested)
                 {
-                    attemptCount++;
-                    
-                    // Check for available data with polling
-                    if (_udpListener.Available > 0)
+                    try
                     {
-                        try
+                        // Use ReceiveAsync with timeout
+                        var receiveTask = _udpListener.ReceiveAsync(ct).AsTask();
+                        var timeoutTask = Task.Delay(3000, ct);
+                        
+                        var completedTask = await Task.WhenAny(receiveTask, timeoutTask);
+                        
+                        if (completedTask == receiveTask && !receiveTask.IsFaulted && !receiveTask.IsCanceled)
                         {
-                            var endpoint = new IPEndPoint(IPAddress.Any, 0);
-                            var data = _udpListener.Receive(ref endpoint);
-                            var json = Encoding.UTF8.GetString(data);
+                            var result = await receiveTask;
+                            var json = Encoding.UTF8.GetString(result.Buffer);
                             
-                            _log.Network("NetworkClient", $"UDP packet received from {endpoint.Address}:{endpoint.Port}");
+                            _log.Network("NetworkClient", $"UDP packet received from {result.RemoteEndPoint.Address}:{result.RemoteEndPoint.Port}");
                             _log.Debug("NetworkClient", $"Packet content: {json}");
                             
-                            var serverInfo = JsonSerializer.Deserialize<ServerDiscoveryInfo>(json);
-                            if (serverInfo != null && !string.IsNullOrEmpty(serverInfo.ServerIp))
+                            try
                             {
-                                _log.Info("NetworkClient", $"Server found: {serverInfo.ClassName} at {serverInfo.ServerIp}:{serverInfo.ServerPort}");
-                                ServerDiscovered?.Invoke(this, serverInfo);
-                                return serverInfo;
+                                var serverInfo = JsonSerializer.Deserialize<ServerDiscoveryInfo>(json);
+                                if (serverInfo != null && !string.IsNullOrEmpty(serverInfo.ServerIp))
+                                {
+                                    _log.Info("NetworkClient", $"✓ Server found: {serverInfo.ClassName} at {serverInfo.ServerIp}:{serverInfo.ServerPort}");
+                                    ServerDiscovered?.Invoke(this, serverInfo);
+                                    return serverInfo;
+                                }
+                            }
+                            catch (JsonException jsonEx)
+                            {
+                                _log.Warning("NetworkClient", $"Failed to parse server info: {jsonEx.Message}");
                             }
                         }
-                        catch (JsonException jsonEx)
+                        else
                         {
-                            _log.Warning("NetworkClient", $"Failed to parse server info: {jsonEx.Message}");
-                        }
-                        catch (Exception recvEx)
-                        {
-                            _log.Warning("NetworkClient", $"Error receiving UDP: {recvEx.Message}");
+                            var elapsed = (DateTime.Now - startTime).TotalSeconds;
+                            var remaining = timeoutSeconds - elapsed;
+                            _log.Debug("NetworkClient", $"Waiting for broadcast... ({remaining:F0}s remaining)");
                         }
                     }
-                    
-                    // Log progress every 5 seconds
-                    if (attemptCount % 50 == 0)
+                    catch (OperationCanceledException)
                     {
-                        var remaining = (endTime - DateTime.Now).TotalSeconds;
-                        _log.Debug("NetworkClient", $"Still searching... ({remaining:F0}s remaining)");
+                        break;
                     }
-                    
-                    await Task.Delay(100, _cts.Token);
+                    catch (SocketException sockEx)
+                    {
+                        _log.Warning("NetworkClient", $"UDP receive error: {sockEx.SocketErrorCode} - {sockEx.Message}");
+                        await Task.Delay(500, ct);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warning("NetworkClient", $"Error receiving UDP: {ex.Message}");
+                        await Task.Delay(500, ct);
+                    }
                 }
                 
                 _log.Warning("NetworkClient", $"Server discovery timeout after {timeoutSeconds} seconds");
@@ -150,9 +180,18 @@ namespace ClassroomManagement.Services
             {
                 try { _udpListener?.Close(); } catch { }
                 _udpListener = null;
+                _isDiscovering = false;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Kết nối trực tiếp đến server theo IP
+        /// </summary>
+        public async Task<bool> ConnectDirectAsync(string serverIp, int port = 5000)
+        {
+            return await ConnectAsync(serverIp, port);
         }
 
         private void LogNetworkInfo()
@@ -162,7 +201,8 @@ namespace ClassroomManagement.Services
             {
                 foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
                 {
-                    if (ni.OperationalStatus == OperationalStatus.Up)
+                    if (ni.OperationalStatus == OperationalStatus.Up &&
+                        ni.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                     {
                         var ipProps = ni.GetIPProperties();
                         foreach (var addr in ipProps.UnicastAddresses)
@@ -193,17 +233,28 @@ namespace ClassroomManagement.Services
             {
                 ServerIp = serverIp;
                 ServerPort = port;
-                _cts = new CancellationTokenSource();
+                
+                // Create new CTS for connection
+                _connectionCts?.Cancel();
+                _connectionCts = new CancellationTokenSource();
 
                 _tcpClient = new TcpClient();
                 _tcpClient.ReceiveTimeout = 30000;
                 _tcpClient.SendTimeout = 10000;
                 
                 // Connect with timeout
+                _log.Debug("NetworkClient", "Starting TCP connect...");
                 var connectTask = _tcpClient.ConnectAsync(serverIp, port);
                 if (await Task.WhenAny(connectTask, Task.Delay(10000)) != connectTask)
                 {
                     _log.Error("NetworkClient", $"Connection timeout after 10 seconds");
+                    return false;
+                }
+
+                // Check if connect task threw an exception
+                if (connectTask.IsFaulted)
+                {
+                    _log.Error("NetworkClient", $"Connection failed: {connectTask.Exception?.InnerException?.Message}");
                     return false;
                 }
                 
@@ -214,7 +265,7 @@ namespace ClassroomManagement.Services
                 }
                 
                 _stream = _tcpClient.GetStream();
-                _log.Network("NetworkClient", $"TCP connection established to {serverIp}:{port}");
+                _log.Network("NetworkClient", $"✓ TCP connection established to {serverIp}:{port}");
 
                 // Send connect message
                 var connectMsg = new NetworkMessage
@@ -237,18 +288,18 @@ namespace ClassroomManagement.Services
                 IsConnected = true;
                 
                 // Start listening for messages
-                _ = ListenForMessagesAsync(_cts.Token);
+                _ = ListenForMessagesAsync(_connectionCts.Token);
 
                 // Start heartbeat
-                _ = HeartbeatAsync(_cts.Token);
+                _ = HeartbeatAsync(_connectionCts.Token);
 
                 Connected?.Invoke(this, EventArgs.Empty);
-                _log.Info("NetworkClient", "Successfully connected to server");
+                _log.Info("NetworkClient", "✓ Successfully connected to server");
                 return true;
             }
             catch (SocketException sockEx)
             {
-                _log.Error("NetworkClient", $"Socket error connecting to {serverIp}:{port}", sockEx);
+                _log.Error("NetworkClient", $"Socket error connecting to {serverIp}:{port}: {sockEx.SocketErrorCode}", sockEx);
                 return false;
             }
             catch (Exception ex)
@@ -283,7 +334,7 @@ namespace ClassroomManagement.Services
             }
             finally
             {
-                _cts?.Cancel();
+                try { _connectionCts?.Cancel(); } catch { }
                 IsConnected = false;
                 try { _stream?.Close(); } catch { }
                 try { _tcpClient?.Close(); } catch { }
@@ -308,7 +359,10 @@ namespace ClassroomManagement.Services
                     }
                     catch (Exception readEx)
                     {
-                        _log.Warning("NetworkClient", $"Read error: {readEx.Message}");
+                        if (!ct.IsCancellationRequested)
+                        {
+                            _log.Warning("NetworkClient", $"Read error: {readEx.Message}");
+                        }
                         break;
                     }
                     
@@ -361,12 +415,11 @@ namespace ClassroomManagement.Services
             switch (message.Type)
             {
                 case MessageType.ConnectAck:
-                    _log.Info("NetworkClient", "Received ConnectAck from server");
+                    _log.Info("NetworkClient", "✓ Received ConnectAck from server");
                     break;
                     
                 case MessageType.Heartbeat:
                     // Server is alive
-                    _log.Debug("NetworkClient", "Heartbeat received");
                     break;
 
                 case MessageType.ScreenShare:
@@ -423,7 +476,6 @@ namespace ClassroomManagement.Services
                             Type = MessageType.Heartbeat,
                             SenderId = MachineId
                         });
-                        _log.Debug("NetworkClient", "Heartbeat sent");
                     }
                 }
                 catch (OperationCanceledException) { break; }
@@ -447,7 +499,10 @@ namespace ClassroomManagement.Services
                 var json = JsonSerializer.Serialize(message);
                 var bytes = Encoding.UTF8.GetBytes(json);
                 await _stream.WriteAsync(bytes);
-                _log.Debug("NetworkClient", $"Sent {message.Type} ({bytes.Length} bytes)");
+                if (message.Type != MessageType.Heartbeat)
+                {
+                    _log.Debug("NetworkClient", $"Sent {message.Type} ({bytes.Length} bytes)");
+                }
             }
             catch (Exception ex)
             {
@@ -540,9 +595,11 @@ namespace ClassroomManagement.Services
 
         public void Dispose()
         {
+            CancelDiscovery();
             Disconnect();
-            _cts?.Dispose();
-            _udpListener?.Dispose();
+            try { _discoveryCts?.Dispose(); } catch { }
+            try { _connectionCts?.Dispose(); } catch { }
+            try { _udpListener?.Dispose(); } catch { }
         }
     }
 }

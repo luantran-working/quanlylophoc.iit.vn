@@ -1,0 +1,89 @@
+<Window x:Class="ClassroomManagement.Views.ManualConnectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Kết nối thủ công" 
+        Height="280" Width="400"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+    
+    <Border CornerRadius="12" Background="White"
+            BorderBrush="#E0E0E0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Opacity="0.15" ShadowDepth="5"/>
+        </Border.Effect>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}" 
+                    CornerRadius="12,12,0,0" Padding="20,14"
+                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="Lan" 
+                                                  Width="24" Height="24"
+                                                  Foreground="White"
+                                                  VerticalAlignment="Center"/>
+                        <TextBlock Text="Kết nối thủ công" 
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="White" Margin="10,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Foreground="White" Opacity="0.8"
+                            HorizontalAlignment="Right"
+                            Click="CloseButton_Click">
+                        <materialDesign:PackIcon Kind="Close" Width="18" Height="18"/>
+                    </Button>
+                </Grid>
+            </Border>
+            
+            <!-- Form -->
+            <StackPanel Grid.Row="1" Margin="24,16">
+                <TextBlock Text="Không tìm thấy server tự động?" 
+                           Foreground="#757575" FontSize="12" Margin="0,0,0,12"/>
+                
+                <TextBlock Text="Địa chỉ IP Server (Giáo viên)" FontWeight="Medium" 
+                           Foreground="#424242" Margin="0,0,0,6"/>
+                <TextBox x:Name="IpTextBox"
+                         materialDesign:HintAssist.Hint="Ví dụ: 192.168.0.100"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         FontSize="14" Padding="10,8"
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                         materialDesign:TextFieldAssist.LeadingIcon="Ip"
+                         KeyDown="IpTextBox_KeyDown"/>
+                
+                <TextBlock x:Name="ErrorText" 
+                           Foreground="#F44336" FontSize="11"
+                           Margin="0,6,0,0" Visibility="Collapsed"/>
+                
+                <Grid Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="0" Content="Tiếp tục tìm" 
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="0,0,8,0" Height="36"
+                            Click="ContinueSearch_Click"/>
+                    
+                    <Button Grid.Column="1" Content="Kết nối" 
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{StaticResource AppPrimaryBrush}"
+                            Foreground="White" Height="36"
+                            Click="ConnectButton_Click"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

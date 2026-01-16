@@ -70,6 +70,11 @@ namespace ClassroomManagement.Views
             if (success)
             {
                 _isSessionStarted = true;
+                
+                // Update UI with class name and server IP
+                ClassNameText.Text = className;
+                ServerIpText.Text = _session.NetworkServer.ServerIp;
+                
                 UpdateStatusBar();
             }
             else

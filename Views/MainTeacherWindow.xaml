@@ -54,14 +54,25 @@
                     </StackPanel>
                 </StackPanel>
                 
-                <!-- Center - Class Info -->
+                <!-- Center - Class Info & Server IP -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Border Background="#F5F5F7" CornerRadius="4" Padding="16,8">
+                    <Border Background="#F5F5F7" CornerRadius="4" Padding="16,8" Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="GoogleClassroom" Width="20" Height="20" 
                                                       Foreground="{StaticResource AppPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="Lớp 10A1 - Toán học" FontSize="14" FontWeight="SemiBold" 
+                            <TextBlock x:Name="ClassNameText" Text="Lớp học" FontSize="14" FontWeight="SemiBold" 
                                        Foreground="#424242" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- Server IP for manual connection -->
+                    <Border Background="#E3F2FD" CornerRadius="4" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Lan" Width="18" Height="18" 
+                                                      Foreground="#1976D2" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="IP: " FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ServerIpText" Text="---.---.---.---" FontSize="12" FontWeight="Bold" 
+                                       Foreground="#1565C0" VerticalAlignment="Center"/>
+                            <TextBlock Text=":5000" FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
