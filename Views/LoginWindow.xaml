@@ -1,0 +1,119 @@
+<Window x:Class="ClassroomManagement.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Đăng nhập Giáo viên" 
+        Height="450" Width="400"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+    
+    <Border CornerRadius="16" Background="White"
+            BorderBrush="#E0E0E0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Opacity="0.15" ShadowDepth="5"/>
+        </Border.Effect>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}" 
+                    CornerRadius="16,16,0,0" Padding="24,20"
+                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="64" Height="64" CornerRadius="32" 
+                                Background="White" Margin="0,0,0,12"
+                                HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="School" 
+                                                      Width="36" Height="36"
+                                                      Foreground="{StaticResource AppPrimaryBrush}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Đăng nhập Giáo viên" 
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- Close Button -->
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Foreground="White" Opacity="0.8"
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Click="CloseButton_Click"
+                            ToolTip="Đóng">
+                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                    </Button>
+                </Grid>
+            </Border>
+            
+            <!-- Login Form -->
+            <StackPanel Grid.Row="1" Margin="32,24">
+                <!-- Username -->
+                <TextBlock Text="Tên đăng nhập" FontWeight="Medium" 
+                           Foreground="#424242" Margin="0,0,0,8"/>
+                <TextBox x:Name="UsernameTextBox"
+                         materialDesign:HintAssist.Hint="Nhập tên đăng nhập"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         FontSize="14" Padding="12,10"
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                         materialDesign:TextFieldAssist.LeadingIcon="Account"/>
+                
+                <!-- Password -->
+                <TextBlock Text="Mật khẩu" FontWeight="Medium" 
+                           Foreground="#424242" Margin="0,16,0,8"/>
+                <PasswordBox x:Name="PasswordBox"
+                             materialDesign:HintAssist.Hint="Nhập mật khẩu"
+                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                             FontSize="14" Padding="12,10"
+                             materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                             materialDesign:TextFieldAssist.LeadingIcon="Lock"
+                             KeyDown="PasswordBox_KeyDown"/>
+                
+                <!-- Error Message -->
+                <TextBlock x:Name="ErrorText" 
+                           Foreground="#F44336" FontSize="12"
+                           Margin="0,12,0,0" Visibility="Collapsed"/>
+                
+                <!-- Login Button -->
+                <Button x:Name="LoginButton"
+                        Content="ĐĂNG NHẬP" 
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="{StaticResource AppPrimaryBrush}"
+                        Foreground="White"
+                        FontWeight="Bold" FontSize="14"
+                        Height="48" Margin="0,24,0,0"
+                        Click="LoginButton_Click"/>
+                
+                <!-- Default credentials hint -->
+                <Border Background="#FFF3E0" CornerRadius="8" 
+                        Padding="12" Margin="0,20,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Information" 
+                                                      Foreground="#FF9800"
+                                                      VerticalAlignment="Center"/>
+                            <TextBlock Text="Tài khoản mặc định:" 
+                                       FontWeight="Medium" Foreground="#E65100"
+                                       Margin="8,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock Text="Tên đăng nhập: admin" 
+                                   Foreground="#424242" FontSize="12" Margin="28,4,0,0"/>
+                        <TextBlock Text="Mật khẩu: 123456" 
+                                   Foreground="#424242" FontSize="12" Margin="28,2,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

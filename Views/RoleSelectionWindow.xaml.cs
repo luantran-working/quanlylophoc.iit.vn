@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
+using ClassroomManagement.Services;
 
 namespace ClassroomManagement.Views
 {
@@ -31,20 +31,33 @@ namespace ClassroomManagement.Views
             Application.Current.Shutdown();
         }
 
-
-
         private void TeacherLogin_Click(object sender, RoutedEventArgs e)
         {
-            var teacherWindow = new MainTeacherWindow();
-            teacherWindow.Show();
-            this.Close();
+            // Mở cửa sổ đăng nhập
+            var loginWindow = new LoginWindow();
+            loginWindow.Owner = this;
+            
+            if (loginWindow.ShowDialog() == true && loginWindow.IsLoggedIn)
+            {
+                // Đăng nhập thành công, mở màn hình Giáo viên
+                var teacherWindow = new MainTeacherWindow();
+                teacherWindow.Show();
+                this.Close();
+            }
         }
 
         private void StudentJoin_Click(object sender, RoutedEventArgs e)
         {
-            var studentWindow = new StudentWindow();
-            studentWindow.Show();
-            this.Close();
+            // Mở cửa sổ nhập tên học sinh
+            var nameDialog = new StudentNameDialog();
+            nameDialog.Owner = this;
+            
+            if (nameDialog.ShowDialog() == true)
+            {
+                var studentWindow = new StudentWindow(nameDialog.StudentName);
+                studentWindow.Show();
+                this.Close();
+            }
         }
     }
 }
