@@ -388,6 +388,13 @@
                 
                 <!-- Actions -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#2196F3" Height="30" Padding="8,0"
+                            Click="OpenLogWindow_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Console" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Debug Log" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#757575" Height="30" Padding="8,0">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Cog" Width="16" Height="16" VerticalAlignment="Center"/>

@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
@@ -18,6 +19,7 @@ namespace ClassroomManagement.Services
         private NetworkStream? _stream;
         private UdpClient? _udpListener;
         private CancellationTokenSource? _cts;
+        private readonly LogService _log = LogService.Instance;
         
         public string MachineId { get; private set; }
         public string DisplayName { get; set; } = "Học sinh";
@@ -37,6 +39,7 @@ namespace ClassroomManagement.Services
         public NetworkClientService()
         {
             MachineId = GetMachineId();
+            _log.Info("NetworkClient", $"Initialized with MachineId: {MachineId}");
         }
 
         /// <summary>
@@ -44,42 +47,139 @@ namespace ClassroomManagement.Services
         /// </summary>
         public async Task<ServerDiscoveryInfo?> DiscoverServerAsync(int timeoutSeconds = 30)
         {
+            _log.Info("NetworkClient", $"Starting server discovery (timeout: {timeoutSeconds}s)...");
+            _log.Network("NetworkClient", $"Listening for UDP broadcasts on port 5001");
+            
+            // Log network info
+            LogNetworkInfo();
+            
             _cts = new CancellationTokenSource();
-            _udpListener = new UdpClient(5001);
-            _udpListener.EnableBroadcast = true;
+
+            try
+            {
+                _udpListener = new UdpClient();
+                _udpListener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _udpListener.Client.Bind(new IPEndPoint(IPAddress.Any, 5001));
+                _udpListener.EnableBroadcast = true;
+                
+                _log.Debug("NetworkClient", "UDP listener bound to port 5001");
+            }
+            catch (SocketException ex)
+            {
+                _log.Error("NetworkClient", $"Failed to bind UDP port 5001", ex);
+                
+                // Try alternative port
+                try
+                {
+                    _udpListener = new UdpClient(0);
+                    _udpListener.EnableBroadcast = true;
+                    _log.Warning("NetworkClient", "Bound to alternative UDP port");
+                }
+                catch (Exception ex2)
+                {
+                    _log.Error("NetworkClient", "Failed to create UDP listener", ex2);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error creating UDP listener", ex);
+                return null;
+            }
 
             var endTime = DateTime.Now.AddSeconds(timeoutSeconds);
+            int attemptCount = 0;
 
             try
             {
                 while (DateTime.Now < endTime && !_cts.Token.IsCancellationRequested)
                 {
+                    attemptCount++;
+                    
+                    // Check for available data with polling
                     if (_udpListener.Available > 0)
                     {
-                        var endpoint = new IPEndPoint(IPAddress.Any, 5001);
-                        var data = _udpListener.Receive(ref endpoint);
-                        var json = Encoding.UTF8.GetString(data);
-                        
-                        var serverInfo = JsonSerializer.Deserialize<ServerDiscoveryInfo>(json);
-                        if (serverInfo != null)
+                        try
                         {
-                            ServerDiscovered?.Invoke(this, serverInfo);
-                            return serverInfo;
+                            var endpoint = new IPEndPoint(IPAddress.Any, 0);
+                            var data = _udpListener.Receive(ref endpoint);
+                            var json = Encoding.UTF8.GetString(data);
+                            
+                            _log.Network("NetworkClient", $"UDP packet received from {endpoint.Address}:{endpoint.Port}");
+                            _log.Debug("NetworkClient", $"Packet content: {json}");
+                            
+                            var serverInfo = JsonSerializer.Deserialize<ServerDiscoveryInfo>(json);
+                            if (serverInfo != null && !string.IsNullOrEmpty(serverInfo.ServerIp))
+                            {
+                                _log.Info("NetworkClient", $"Server found: {serverInfo.ClassName} at {serverInfo.ServerIp}:{serverInfo.ServerPort}");
+                                ServerDiscovered?.Invoke(this, serverInfo);
+                                return serverInfo;
+                            }
+                        }
+                        catch (JsonException jsonEx)
+                        {
+                            _log.Warning("NetworkClient", $"Failed to parse server info: {jsonEx.Message}");
+                        }
+                        catch (Exception recvEx)
+                        {
+                            _log.Warning("NetworkClient", $"Error receiving UDP: {recvEx.Message}");
                         }
                     }
-                    await Task.Delay(100);
+                    
+                    // Log progress every 5 seconds
+                    if (attemptCount % 50 == 0)
+                    {
+                        var remaining = (endTime - DateTime.Now).TotalSeconds;
+                        _log.Debug("NetworkClient", $"Still searching... ({remaining:F0}s remaining)");
+                    }
+                    
+                    await Task.Delay(100, _cts.Token);
+                }
+                
+                _log.Warning("NetworkClient", $"Server discovery timeout after {timeoutSeconds} seconds");
+            }
+            catch (OperationCanceledException)
+            {
+                _log.Debug("NetworkClient", "Discovery cancelled");
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error during discovery", ex);
+            }
+            finally
+            {
+                try { _udpListener?.Close(); } catch { }
+                _udpListener = null;
+            }
+
+            return null;
+        }
+
+        private void LogNetworkInfo()
+        {
+            _log.Debug("NetworkClient", "=== Network Configuration ===");
+            try
+            {
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus == OperationalStatus.Up)
+                    {
+                        var ipProps = ni.GetIPProperties();
+                        foreach (var addr in ipProps.UnicastAddresses)
+                        {
+                            if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
+                            {
+                                _log.Debug("NetworkClient", 
+                                    $"  {ni.Name}: {addr.Address} / {addr.IPv4Mask} (Type: {ni.NetworkInterfaceType})");
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Discovery error: {ex.Message}");
+                _log.Warning("NetworkClient", $"Could not enumerate network interfaces: {ex.Message}");
             }
-            finally
-            {
-                _udpListener?.Close();
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -87,6 +187,8 @@ namespace ClassroomManagement.Services
         /// </summary>
         public async Task<bool> ConnectAsync(string serverIp, int port = 5000)
         {
+            _log.Info("NetworkClient", $"Connecting to server at {serverIp}:{port}...");
+            
             try
             {
                 ServerIp = serverIp;
@@ -94,9 +196,25 @@ namespace ClassroomManagement.Services
                 _cts = new CancellationTokenSource();
 
                 _tcpClient = new TcpClient();
-                await _tcpClient.ConnectAsync(serverIp, port);
+                _tcpClient.ReceiveTimeout = 30000;
+                _tcpClient.SendTimeout = 10000;
+                
+                // Connect with timeout
+                var connectTask = _tcpClient.ConnectAsync(serverIp, port);
+                if (await Task.WhenAny(connectTask, Task.Delay(10000)) != connectTask)
+                {
+                    _log.Error("NetworkClient", $"Connection timeout after 10 seconds");
+                    return false;
+                }
+                
+                if (!_tcpClient.Connected)
+                {
+                    _log.Error("NetworkClient", "TCP client not connected after ConnectAsync");
+                    return false;
+                }
+                
                 _stream = _tcpClient.GetStream();
-                IsConnected = true;
+                _log.Network("NetworkClient", $"TCP connection established to {serverIp}:{port}");
 
                 // Send connect message
                 var connectMsg = new NetworkMessage
@@ -112,8 +230,12 @@ namespace ClassroomManagement.Services
                         IpAddress = GetLocalIP()
                     })
                 };
+                
+                _log.Debug("NetworkClient", $"Sending Connect message: {DisplayName} ({MachineId})");
                 await SendMessageAsync(connectMsg);
 
+                IsConnected = true;
+                
                 // Start listening for messages
                 _ = ListenForMessagesAsync(_cts.Token);
 
@@ -121,11 +243,17 @@ namespace ClassroomManagement.Services
                 _ = HeartbeatAsync(_cts.Token);
 
                 Connected?.Invoke(this, EventArgs.Empty);
+                _log.Info("NetworkClient", "Successfully connected to server");
                 return true;
+            }
+            catch (SocketException sockEx)
+            {
+                _log.Error("NetworkClient", $"Socket error connecting to {serverIp}:{port}", sockEx);
+                return false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Connect error: {ex.Message}");
+                _log.Error("NetworkClient", $"Error connecting to server", ex);
                 return false;
             }
         }
@@ -135,6 +263,8 @@ namespace ClassroomManagement.Services
         /// </summary>
         public void Disconnect()
         {
+            _log.Info("NetworkClient", "Disconnecting...");
+            
             try
             {
                 if (IsConnected && _stream != null)
@@ -147,13 +277,17 @@ namespace ClassroomManagement.Services
                     SendMessageAsync(disconnectMsg).Wait(1000);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                _log.Warning("NetworkClient", $"Error sending disconnect: {ex.Message}");
+            }
             finally
             {
                 _cts?.Cancel();
                 IsConnected = false;
-                _stream?.Close();
-                _tcpClient?.Close();
+                try { _stream?.Close(); } catch { }
+                try { _tcpClient?.Close(); } catch { }
+                _log.Info("NetworkClient", "Disconnected");
                 Disconnected?.Invoke(this, "User disconnected");
             }
         }
@@ -161,17 +295,32 @@ namespace ClassroomManagement.Services
         private async Task ListenForMessagesAsync(CancellationToken ct)
         {
             var buffer = new byte[1024 * 256]; // 256KB buffer for screen data
+            _log.Debug("NetworkClient", "Started message listener");
 
             try
             {
                 while (!ct.IsCancellationRequested && _stream != null && _tcpClient?.Connected == true)
                 {
-                    var bytesRead = await _stream.ReadAsync(buffer, ct);
-                    if (bytesRead == 0) break;
+                    int bytesRead;
+                    try
+                    {
+                        bytesRead = await _stream.ReadAsync(buffer, ct);
+                    }
+                    catch (Exception readEx)
+                    {
+                        _log.Warning("NetworkClient", $"Read error: {readEx.Message}");
+                        break;
+                    }
+                    
+                    if (bytesRead == 0)
+                    {
+                        _log.Network("NetworkClient", "Server closed connection (0 bytes received)");
+                        break;
+                    }
 
                     var json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    _log.Debug("NetworkClient", $"Received {bytesRead} bytes");
                     
-                    // Handle multiple messages in buffer
                     try
                     {
                         var message = JsonSerializer.Deserialize<NetworkMessage>(json);
@@ -180,22 +329,26 @@ namespace ClassroomManagement.Services
                             HandleMessage(message);
                         }
                     }
-                    catch (JsonException)
+                    catch (JsonException jsonEx)
                     {
-                        // May have partial message, handle appropriately
+                        _log.Warning("NetworkClient", $"JSON parse error: {jsonEx.Message}");
                     }
                 }
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException) 
+            {
+                _log.Debug("NetworkClient", "Message listener cancelled");
+            }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Listen error: {ex.Message}");
+                _log.Error("NetworkClient", "Error in message listener", ex);
             }
             finally
             {
                 if (IsConnected)
                 {
                     IsConnected = false;
+                    _log.Warning("NetworkClient", "Connection lost");
                     Disconnected?.Invoke(this, "Connection lost");
                 }
             }
@@ -203,29 +356,47 @@ namespace ClassroomManagement.Services
 
         private void HandleMessage(NetworkMessage message)
         {
+            _log.Debug("NetworkClient", $"Handling message type: {message.Type}");
+            
             switch (message.Type)
             {
+                case MessageType.ConnectAck:
+                    _log.Info("NetworkClient", "Received ConnectAck from server");
+                    break;
+                    
                 case MessageType.Heartbeat:
                     // Server is alive
+                    _log.Debug("NetworkClient", "Heartbeat received");
                     break;
 
                 case MessageType.ScreenShare:
                     if (message.Payload != null)
                     {
-                        var imageData = Convert.FromBase64String(message.Payload);
-                        ScreenShareReceived?.Invoke(this, imageData);
+                        try
+                        {
+                            var imageData = Convert.FromBase64String(message.Payload);
+                            _log.Debug("NetworkClient", $"Screen share frame received: {imageData.Length} bytes");
+                            ScreenShareReceived?.Invoke(this, imageData);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warning("NetworkClient", $"Error decoding screen share: {ex.Message}");
+                        }
                     }
                     break;
 
                 case MessageType.ScreenShareStop:
+                    _log.Info("NetworkClient", "Screen share stopped");
                     ScreenShareReceived?.Invoke(this, Array.Empty<byte>());
                     break;
 
                 case MessageType.LockScreen:
+                    _log.Info("NetworkClient", "Screen lock command received");
                     ScreenLocked?.Invoke(this, EventArgs.Empty);
                     break;
 
                 case MessageType.UnlockScreen:
+                    _log.Info("NetworkClient", "Screen unlock command received");
                     ScreenUnlocked?.Invoke(this, EventArgs.Empty);
                     break;
 
@@ -237,35 +408,50 @@ namespace ClassroomManagement.Services
 
         private async Task HeartbeatAsync(CancellationToken ct)
         {
+            _log.Debug("NetworkClient", "Started heartbeat");
+            
             while (!ct.IsCancellationRequested && IsConnected)
             {
                 try
                 {
                     await Task.Delay(10000, ct); // Every 10 seconds
-                    await SendMessageAsync(new NetworkMessage
+                    
+                    if (IsConnected)
                     {
-                        Type = MessageType.Heartbeat,
-                        SenderId = MachineId
-                    });
+                        await SendMessageAsync(new NetworkMessage
+                        {
+                            Type = MessageType.Heartbeat,
+                            SenderId = MachineId
+                        });
+                        _log.Debug("NetworkClient", "Heartbeat sent");
+                    }
                 }
                 catch (OperationCanceledException) { break; }
-                catch { }
+                catch (Exception ex)
+                {
+                    _log.Warning("NetworkClient", $"Heartbeat error: {ex.Message}");
+                }
             }
         }
 
         public async Task SendMessageAsync(NetworkMessage message)
         {
-            if (_stream == null || !IsConnected) return;
+            if (_stream == null || !IsConnected)
+            {
+                _log.Warning("NetworkClient", "Cannot send message: not connected");
+                return;
+            }
 
             try
             {
                 var json = JsonSerializer.Serialize(message);
                 var bytes = Encoding.UTF8.GetBytes(json);
                 await _stream.WriteAsync(bytes);
+                _log.Debug("NetworkClient", $"Sent {message.Type} ({bytes.Length} bytes)");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Send error: {ex.Message}");
+                _log.Error("NetworkClient", $"Send error", ex);
             }
         }
 
@@ -312,24 +498,37 @@ namespace ClassroomManagement.Services
                 SenderName = DisplayName
             };
             await SendMessageAsync(message);
+            _log.Info("NetworkClient", $"Raise hand: {raise}");
         }
 
         private static string GetMachineId()
         {
-            // Use a combination of machine name and MAC address for unique ID
+            // Use a combination of machine name and a stable identifier
             var machineName = Environment.MachineName;
-            var guid = Guid.NewGuid().ToString("N")[..8]; // For uniqueness across sessions
-            return $"{machineName}_{guid}";
+            var userName = Environment.UserName;
+            return $"{machineName}_{userName}_{Guid.NewGuid().ToString("N")[..6]}";
         }
 
         private static string GetLocalIP()
         {
             try
             {
+                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
+                socket.Connect("8.8.8.8", 65530);
+                var endPoint = socket.LocalEndPoint as IPEndPoint;
+                if (endPoint != null)
+                {
+                    return endPoint.Address.ToString();
+                }
+            }
+            catch { }
+
+            try
+            {
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 foreach (var ip in host.AddressList)
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    if (ip.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(ip))
                     {
                         return ip.ToString();
                     }

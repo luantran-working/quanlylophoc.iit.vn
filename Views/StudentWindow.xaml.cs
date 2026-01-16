@@ -338,5 +338,12 @@ namespace ClassroomManagement.Views
                     MessageBoxImage.Information);
             }
         }
+
+        private void OpenLogWindow_Click(object sender, RoutedEventArgs e)
+        {
+            var logWindow = new LogWindow();
+            logWindow.Owner = this;
+            logWindow.Show();
+        }
     }
 }

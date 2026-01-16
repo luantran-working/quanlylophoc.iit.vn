@@ -165,6 +165,13 @@ namespace ClassroomManagement.Views
                 "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void OpenLogWindow_Click(object sender, RoutedEventArgs e)
+        {
+            var logWindow = new LogWindow();
+            logWindow.Owner = this;
+            logWindow.Show();
+        }
+
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             Close(); // This will trigger the Closing event handler

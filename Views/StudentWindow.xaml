@@ -345,18 +345,28 @@
                 </StackPanel>
                 
                 <!-- Help Button -->
-                <Button Grid.Column="1" 
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        Background="#FF9800"
-                        Click="RequestHelp_Click"
-                        ToolTip="Yêu cầu giáo viên trợ giúp"
-                        Height="32"
-                        materialDesign:ButtonAssist.CornerRadius="4">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="HelpCircle" Width="18" Height="18" VerticalAlignment="Center"/>
-                        <TextBlock Text="Yêu cầu trợ giúp" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                    </StackPanel>
-                </Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="#2196F3"
+                            Click="OpenLogWindow_Click"
+                            Height="32" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Console" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Debug Log" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="#FF9800"
+                            Click="RequestHelp_Click"
+                            ToolTip="Yêu cầu giáo viên trợ giúp"
+                            Height="32"
+                            materialDesign:ButtonAssist.CornerRadius="4">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="HelpCircle" Width="18" Height="18" VerticalAlignment="Center"/>
+                            <TextBlock Text="Yêu cầu trợ giúp" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>
