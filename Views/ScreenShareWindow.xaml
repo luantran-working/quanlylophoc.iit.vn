@@ -204,7 +204,7 @@
                     </Button>
                     <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="Con trỏ laser">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Laser" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="Crosshairs" Width="20" Height="20" VerticalAlignment="Center"/>
                             <TextBlock Text="Laser" Margin="8,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>

@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\Views\\ScreenShareWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\ScreenShareWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ScreenShareWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\Views\\ScreenShareWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\ScreenShareWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\Views\\ScreenShareWindow.xaml.cs",
+              "RelativeToolTip": "Views\\ScreenShareWindow.xaml.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACEAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-19T02:42:27.55Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\App.xaml",
+              "RelativeDocumentMoniker": "App.xaml",
+              "ToolTip": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\App.xaml",
+              "RelativeToolTip": "App.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-01-19T02:41:00.899Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

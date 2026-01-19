@@ -1,0 +1,17 @@
+﻿  Determining projects to restore...
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+  All projects are up-to-date for restore.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement_cd5hm3hg_wpftmp.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Views\MainTeacherWindow.xaml.cs(266,22): error CS0111: Type 'MainTeacherWindow' already defines a member called 'StartPresentation_Click' with the same parameter types [C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement_cd5hm3hg_wpftmp.csproj]
+
+Build FAILED.
+
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement_cd5hm3hg_wpftmp.csproj : warning NU1510: PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\Views\MainTeacherWindow.xaml.cs(266,22): error CS0111: Type 'MainTeacherWindow' already defines a member called 'StartPresentation_Click' with the same parameter types [C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\ClassroomManagement_cd5hm3hg_wpftmp.csproj]
+    3 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.92

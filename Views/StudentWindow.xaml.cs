@@ -234,18 +234,27 @@ namespace ClassroomManagement.Views
         {
             Dispatcher.Invoke(() =>
             {
-                if (imageData.Length > 0)
+                try
                 {
-                    // Show screen share
-                    var bitmap = ScreenCaptureService.BytesToBitmapImage(imageData);
-                    // ScreenShareImage.Source = bitmap;
-                    // ScreenSharePlaceholder.Visibility = Visibility.Collapsed;
+                    if (imageData.Length > 0)
+                    {
+                        // Show screen share
+                        var bitmap = ScreenCaptureService.BytesToBitmapImage(imageData);
+                        PresentationImage.Source = bitmap;
+                        PresentationImage.Visibility = Visibility.Visible;
+                        NoPresentationPlaceholder.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        // Hide screen share (stream stopped)
+                        PresentationImage.Source = null;
+                        PresentationImage.Visibility = Visibility.Collapsed;
+                        NoPresentationPlaceholder.Visibility = Visibility.Visible;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Hide screen share
-                    // ScreenShareImage.Source = null;
-                    // ScreenSharePlaceholder.Visibility = Visibility.Visible;
+                    Services.LogService.Instance.Warning("Student", $"Error displaying screen share: {ex.Message}");
                 }
             });
         }

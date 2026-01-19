@@ -110,21 +110,19 @@ namespace ClassroomManagement.Views
             // TODO: Implement notification system
         }
 
-        private async void StartPresentation_Click(object sender, RoutedEventArgs e)
+        private void StartPresentation_Click(object sender, RoutedEventArgs e)
         {
-            if (_session.IsScreenSharing)
-            {
-                await _session.StopScreenShareAsync();
-                // Update button text
-            }
-            else
+            try
             {
                 var screenShareWindow = new ScreenShareWindow();
                 screenShareWindow.Owner = this;
                 screenShareWindow.Show();
-                
-                // Start screen sharing in background
-                _ = _session.StartScreenShareAsync();
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Instance.Error("MainTeacher", "Failed to open ScreenShareWindow", ex);
+                MessageBox.Show($"Lỗi khi mở cửa sổ trình chiếu: {ex.Message}",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -264,4 +262,3 @@ namespace ClassroomManagement.Views
         }
     }
 }
-
