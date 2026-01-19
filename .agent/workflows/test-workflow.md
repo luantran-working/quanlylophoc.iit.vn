@@ -258,19 +258,20 @@ Tạo bài kiểm tra trắc nghiệm, gửi đến học sinh và tự động 
 
 ## Phím tắt (Khi làm bài)
 
-| Phím | Chức năng |
-|------|-----------|
-| `1-4` hoặc `A-D` | Chọn đáp án |
-| `←` | Câu trước |
-| `→` | Câu sau |
-| `Enter` | Xác nhận và sang câu sau |
-| `Ctrl + Enter` | Nộp bài |
+| Phím             | Chức năng                |
+| ---------------- | ------------------------ |
+| `1-4` hoặc `A-D` | Chọn đáp án              |
+| `←`              | Câu trước                |
+| `→`              | Câu sau                  |
+| `Enter`          | Xác nhận và sang câu sau |
+| `Ctrl + Enter`   | Nộp bài                  |
 
 ---
 
 ## Best Practices
 
 ### Giáo viên
+
 - **Câu hỏi rõ ràng**: Tránh mơ hồ
 - **Đáp án hợp lý**: Các đáp án sai cũng phải "có lý"
 - **Thời gian phù hợp**: 1-2 phút/câu
@@ -278,6 +279,7 @@ Tạo bài kiểm tra trắc nghiệm, gửi đến học sinh và tự động 
 - **Preview trước**: Kiểm tra lỗi chính tả
 
 ### Học sinh
+
 - **Đọc kỹ câu hỏi**: Hiểu rõ yêu cầu
 - **Quản lý thời gian**: Không dành quá nhiều cho 1 câu
 - **Kiểm tra lại**: Xem các câu chưa trả lời

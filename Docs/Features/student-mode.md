@@ -6,17 +6,17 @@ Chế độ Học sinh là vai trò **Client** trong hệ thống. Máy tính h�
 
 ## Quyền hạn
 
-| Chức năng | Mô tả |
-|-----------|-------|
-| ✅ Xem trình chiếu | Xem màn hình giáo viên chia sẻ |
-| ✅ Chat với giáo viên | Gửi tin nhắn, đặt câu hỏi |
-| ✅ Giơ tay | Yêu cầu phát biểu |
-| ✅ Gửi file | Nộp bài tập cho giáo viên |
-| ✅ Làm bài kiểm tra | Tham gia bài kiểm tra online |
-| ✅ Ghi chú | Ghi chú cá nhân |
-| ⚠️ Bị giám sát | Màn hình có thể bị xem |
-| ⚠️ Bị điều khiển | Có thể bị điều khiển từ xa |
-| ⚠️ Bị khóa máy | Có thể bị khóa màn hình |
+| Chức năng             | Mô tả                          |
+| --------------------- | ------------------------------ |
+| ✅ Xem trình chiếu    | Xem màn hình giáo viên chia sẻ |
+| ✅ Chat với giáo viên | Gửi tin nhắn, đặt câu hỏi      |
+| ✅ Giơ tay            | Yêu cầu phát biểu              |
+| ✅ Gửi file           | Nộp bài tập cho giáo viên      |
+| ✅ Làm bài kiểm tra   | Tham gia bài kiểm tra online   |
+| ✅ Ghi chú            | Ghi chú cá nhân                |
+| ⚠️ Bị giám sát        | Màn hình có thể bị xem         |
+| ⚠️ Bị điều khiển      | Có thể bị điều khiển từ xa     |
+| ⚠️ Bị khóa máy        | Có thể bị khóa màn hình        |
 
 ## Giao diện chính
 
@@ -54,50 +54,55 @@ Chế độ Học sinh là vai trò **Client** trong hệ thống. Máy tính h�
 
 ### 1. Header (Thanh tiêu đề)
 
-| Thành phần | Chức năng |
-|------------|-----------|
-| Logo & Tên | Hiển thị tên phần mềm |
-| Thông tin HS | Tên học sinh, lớp, môn học |
+| Thành phần   | Chức năng                        |
+| ------------ | -------------------------------- |
+| Logo & Tên   | Hiển thị tên phần mềm            |
+| Thông tin HS | Tên học sinh, lớp, môn học       |
 | Nút Phản hồi | Gửi phản hồi nhanh cho giáo viên |
 
 ### 2. Khu vực chính - Màn hình trình chiếu
 
 - **Trạng thái chờ**: Hiển thị khi GV chưa share màn hình
 - **Đang trình chiếu**: Hiển thị màn hình của giáo viên
-- **Thanh điều khiển**: 
+- **Thanh điều khiển**:
   - Thông tin giáo viên
   - Nút phóng to / thu nhỏ
 
 ### 3. Sidebar phải - Công cụ học tập
 
 #### Gửi file cho GV
+
 - Nộp bài tập, file cho giáo viên
 - Hỗ trợ kéo thả file
 
 #### Giơ tay
+
 - Toggle để yêu cầu phát biểu
 - Giáo viên sẽ nhận thông báo
 
 #### Chat với GV
+
 - Chat nhóm với cả lớp
 - Chat riêng với giáo viên
 
 #### Bài kiểm tra
+
 - Hiển thị bài kiểm tra đang làm
 - Thời gian còn lại
 - Tiến độ hoàn thành
 
 #### Ghi chú nhanh
+
 - Ghi chú cá nhân
 - Lưu tự động
 
 ### 4. Status Bar (Thanh trạng thái)
 
-| Thành phần | Mô tả |
-|------------|-------|
-| Camera | Trạng thái camera (Bật/Tắt) |
-| Microphone | Trạng thái micro (Bật/Tắt) |
-| Kết nối | Trạng thái kết nối với Server |
+| Thành phần | Mô tả                         |
+| ---------- | ----------------------------- |
+| Camera     | Trạng thái camera (Bật/Tắt)   |
+| Microphone | Trạng thái micro (Bật/Tắt)    |
+| Kết nối    | Trạng thái kết nối với Server |
 | Yêu cầu TG | Nút yêu cầu trợ giúp khẩn cấp |
 
 ## Quy trình sử dụng
@@ -198,10 +203,12 @@ Chế độ Học sinh là vai trò **Client** trong hệ thống. Máy tính h�
 ## Trạng thái máy tính
 
 ### Trạng thái bình thường
+
 - Màn hình hoạt động bình thường
 - Có thể sử dụng các chức năng
 
 ### Bị khóa màn hình
+
 ```
 ┌──────────────────────────────────────┐
 │                                      │
@@ -213,38 +220,42 @@ Chế độ Học sinh là vai trò **Client** trong hệ thống. Máy tính h�
 │                                      │
 └──────────────────────────────────────┘
 ```
+
 - Không thể thao tác
 - Chỉ giáo viên có thể mở khóa
 
 ### Đang bị điều khiển
+
 - Hiển thị thông báo "GV đang điều khiển"
 - Chuột/bàn phím bị vô hiệu hóa (tùy cấu hình)
 
 ## Thông báo
 
-| Loại | Mô tả |
-|------|-------|
-| 💬 | Tin nhắn mới từ giáo viên |
-| 📄 | File mới từ giáo viên |
-| 📝 | Bài kiểm tra mới |
-| 🔒 | Máy bị khóa/mở khóa |
-| 📢 | Thông báo từ giáo viên |
+| Loại | Mô tả                     |
+| ---- | ------------------------- |
+| 💬   | Tin nhắn mới từ giáo viên |
+| 📄   | File mới từ giáo viên     |
+| 📝   | Bài kiểm tra mới          |
+| 🔒   | Máy bị khóa/mở khóa       |
+| 📢   | Thông báo từ giáo viên    |
 
 ## Xử lý sự cố
 
-| Vấn đề | Giải pháp |
-|--------|-----------|
+| Vấn đề                | Giải pháp                       |
+| --------------------- | ------------------------------- |
 | Không tìm thấy Server | Kiểm tra kết nối cùng mạng WiFi |
-| Mất kết nối | Đợi tự động kết nối lại |
-| Màn hình share lag | Báo giáo viên |
-| Không gửi được file | Kiểm tra dung lượng file |
+| Mất kết nối           | Đợi tự động kết nối lại         |
+| Màn hình share lag    | Báo giáo viên                   |
+| Không gửi được file   | Kiểm tra dung lượng file        |
 
 ## Lưu ý
 
-> ⚠️ **Quan trọng**: 
+> ⚠️ **Quan trọng**:
+>
 > - Màn hình của bạn có thể được giáo viên xem bất cứ lúc nào
 > - Không sử dụng máy tính vào mục đích cá nhân trong giờ học
 > - Tuân thủ nội quy lớp học
 
 ---
-*Xem thêm: [Workflows - Kết nối phiên Học sinh](../../.agent/workflows/start-student-session.md)*
+
+_Xem thêm: [Workflows - Kết nối phiên Học sinh](../../.agent/workflows/start-student-session.md)_

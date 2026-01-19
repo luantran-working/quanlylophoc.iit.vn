@@ -233,11 +233,11 @@ Trao đổi tập tin giữa giáo viên và học sinh thông qua mạng LAN.
 
 ## Giới hạn
 
-| Thông số | Giá trị |
-|----------|---------|
-| Max file size | 100 MB |
-| Max files/lần | 20 |
-| Tốc độ | ~10 MB/s (LAN) |
+| Thông số      | Giá trị        |
+| ------------- | -------------- |
+| Max file size | 100 MB         |
+| Max files/lần | 20             |
+| Tốc độ        | ~10 MB/s (LAN) |
 
 ---
 

@@ -4,25 +4,25 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="160" d:DesignWidth="240"
              MouseDoubleClick="OnMouseDoubleClick">
-    
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
-    
-    <Border x:Name="MainBorder" 
+
+    <Border x:Name="MainBorder"
             Background="White"
-            CornerRadius="8" 
+            CornerRadius="8"
             Margin="6"
             Cursor="Hand"
             BorderBrush="#E0E0E0" BorderThickness="1">
-        
+
         <Border.Effect>
             <DropShadowEffect BlurRadius="5" ShadowDepth="1" Direction="270" Opacity="0.1" Color="Black"/>
         </Border.Effect>
-        
+
         <Border.Triggers>
             <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
@@ -43,55 +43,54 @@
                 </BeginStoryboard>
             </EventTrigger>
         </Border.Triggers>
-        
+
         <Border.RenderTransform>
             <ScaleTransform ScaleX="1" ScaleY="1" CenterX="120" CenterY="80"/>
         </Border.RenderTransform>
-        
+
         <Grid ClipToBounds="True">
             <Border CornerRadius="7" ClipToBounds="True">
                 <Grid>
                     <!-- Background -->
                     <Border x:Name="ScreenBackground" Background="#F5F5F7"/>
-                    
+
                     <!-- Screen Image -->
-                    <Image x:Name="ScreenImage" 
-                           Stretch="UniformToFill" 
+                    <Image x:Name="ScreenImage"
+                           Stretch="UniformToFill"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            RenderOptions.BitmapScalingMode="Linear"/>
-                    
+
                     <!-- Placeholder when no image -->
-                    <StackPanel x:Name="PlaceholderPanel" 
-                                HorizontalAlignment="Center" 
+                    <StackPanel x:Name="PlaceholderPanel"
+                                HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Visibility="Visible">
                         <Border Background="#EEE" CornerRadius="20" Width="40" Height="40" Margin="0,0,0,8">
-                            <materialDesign:PackIcon Kind="MonitorScreenshot" 
-                                                      Width="20" Height="20" 
+                            <materialDesign:PackIcon Kind="MonitorScreenshot"
+                                                      Width="20" Height="20"
                                                       Foreground="#9E9E9E"
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Chưa có tín hiệu" FontSize="11" 
+                        <TextBlock Text="Chưa có tín hiệu" FontSize="11"
                                    FontWeight="Medium"
-                                   Foreground="#9E9E9E" 
+                                   Foreground="#9E9E9E"
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
-                    
+
                     <!-- Locked Overlay -->
-                    <Border x:Name="LockedOverlay" 
-                            Background="#D9000000" 
+                    <Border x:Name="LockedOverlay"
+                            Background="#D9000000"
                             Visibility="Collapsed">
                          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="Lock" Width="28" Height="28" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                            <TextBlock Text="ĐÃ KHÓA" FontSize="11" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" LetterSpacing="1"/>
+                            <TextBlock Text="ĐÃ KHÓA" FontSize="11" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-                    
+
                     <!-- Bottom Info Bar -->
-                    <Border VerticalAlignment="Bottom" 
-                            Background="#F0FFFFFF" 
+                    <Border VerticalAlignment="Bottom"
                             Padding="8,6"
                             BorderBrush="#EEEEEE" BorderThickness="0,1,0,0">
                          <Border.Background>
@@ -100,26 +99,26 @@
                                 <GradientStop Color="#FFFFFFFF" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
-                        
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            
+
                             <StackPanel Grid.Column="0">
-                                <TextBlock x:Name="StudentNameText" 
-                                           Text="{Binding DisplayName, FallbackValue='Nguyễn Văn A'}" 
+                                <TextBlock x:Name="StudentNameText"
+                                           Text="{Binding DisplayName, FallbackValue='Nguyễn Văn A'}"
                                            FontSize="12" FontWeight="SemiBold"
                                            Foreground="#333"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Name="StudentInfoText" 
+                                    <TextBlock x:Name="StudentInfoText"
                                                FontSize="10" Foreground="#757575" Margin="0,1,0,0">
                                         <Run Text="{Binding IpAddress, FallbackValue='192.168.1.10'}"/>
                                     </TextBlock>
                                 </StackPanel>
                             </StackPanel>
-                            
+
                             <!-- Quick Actions (Only show on hover or cleaner icons) -->
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                  <Button x:Name="LockButton"
@@ -129,7 +128,7 @@
                                         Click="LockButton_Click">
                                     <materialDesign:PackIcon Kind="LockOutline" Width="14" Height="14" Foreground="#757575"/>
                                 </Button>
-                                
+
                                 <Button Style="{StaticResource MaterialDesignToolButton}"
                                         Width="24" Height="24" Padding="2"
                                         ToolTip="Xem toàn màn hình"
@@ -139,10 +138,10 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                    
+
                     <!-- Online Indicator -->
                     <Border Width="10" Height="10" CornerRadius="5"
-                             HorizontalAlignment="Right" 
+                             HorizontalAlignment="Right"
                              VerticalAlignment="Top"
                              Margin="0,8,8,0"
                              BorderBrush="White" BorderThickness="1.5">

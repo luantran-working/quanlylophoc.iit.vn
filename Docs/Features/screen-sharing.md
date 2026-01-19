@@ -7,16 +7,19 @@ Tính năng Chia sẻ màn hình cho phép giáo viên trình chiếu nội dung
 ## Các chế độ chia sẻ
 
 ### 1. Toàn màn hình (Full Screen)
+
 - Chia sẻ toàn bộ desktop
 - Phù hợp khi cần di chuyển giữa nhiều ứng dụng
 - Học sinh thấy mọi thứ trên màn hình
 
 ### 2. Cửa sổ (Window)
+
 - Chỉ chia sẻ một cửa sổ ứng dụng cụ thể
 - Các cửa sổ khác không bị chia sẻ
 - Phù hợp khi muốn tập trung vào một ứng dụng
 
 ### 3. Vùng chọn (Region)
+
 - Chia sẻ một vùng cụ thể trên màn hình
 - Kéo để chọn vùng muốn share
 - Linh hoạt nhất
@@ -166,46 +169,46 @@ TOOLBAR ANNOTATION
 
 ## Thông số kỹ thuật
 
-| Thông số | Giá trị |
-|----------|---------|
-| Codec | MJPEG / H.264 |
+| Thông số   | Giá trị                     |
+| ---------- | --------------------------- |
+| Codec      | MJPEG / H.264               |
 | Resolution | Tự động (theo màn hình gốc) |
-| Frame Rate | 15-30 FPS (tùy cấu hình) |
-| Bitrate | 1-5 Mbps |
-| Latency | 100-500ms |
-| Protocol | TCP (reliable) |
+| Frame Rate | 15-30 FPS (tùy cấu hình)    |
+| Bitrate    | 1-5 Mbps                    |
+| Latency    | 100-500ms                   |
+| Protocol   | TCP (reliable)              |
 
 ## Cấu hình chất lượng
 
 ### Trong Settings
 
-| Mức | FPS | Quality | Bandwidth | Phù hợp |
-|-----|-----|---------|-----------|---------|
-| Thấp | 10 | 60% | ~500 Kbps | Mạng yếu |
-| Trung bình | 20 | 75% | ~1.5 Mbps | Mặc định |
-| Cao | 30 | 90% | ~3 Mbps | Mạng tốt |
-| Tối đa | 30 | 100% | ~5 Mbps | LAN Gigabit |
+| Mức        | FPS | Quality | Bandwidth | Phù hợp     |
+| ---------- | --- | ------- | --------- | ----------- |
+| Thấp       | 10  | 60%     | ~500 Kbps | Mạng yếu    |
+| Trung bình | 20  | 75%     | ~1.5 Mbps | Mặc định    |
+| Cao        | 30  | 90%     | ~3 Mbps   | Mạng tốt    |
+| Tối đa     | 30  | 100%    | ~5 Mbps   | LAN Gigabit |
 
 ## Xử lý sự cố
 
-| Vấn đề | Nguyên nhân | Giải pháp |
-|--------|-------------|-----------|
-| Lag/giật | Mạng chậm | Giảm chất lượng |
-| Màn đen | Firewall block | Kiểm tra firewall |
-| Học sinh không thấy | Chưa kết nối | Kiểm tra danh sách online |
-| CPU cao | Encode nặng | Giảm FPS/resolution |
+| Vấn đề              | Nguyên nhân    | Giải pháp                 |
+| ------------------- | -------------- | ------------------------- |
+| Lag/giật            | Mạng chậm      | Giảm chất lượng           |
+| Màn đen             | Firewall block | Kiểm tra firewall         |
+| Học sinh không thấy | Chưa kết nối   | Kiểm tra danh sách online |
+| CPU cao             | Encode nặng    | Giảm FPS/resolution       |
 
 ## Phím tắt
 
-| Phím tắt | Chức năng |
-|----------|-----------|
-| `F5` | Bắt đầu/Dừng share |
-| `F6` | Pause/Resume |
-| `P` | Bút vẽ |
-| `H` | Highlight |
-| `L` | Laser pointer |
-| `C` | Xóa tất cả annotation |
-| `Esc` | Thoát toàn màn hình |
+| Phím tắt | Chức năng             |
+| -------- | --------------------- |
+| `F5`     | Bắt đầu/Dừng share    |
+| `F6`     | Pause/Resume          |
+| `P`      | Bút vẽ                |
+| `H`      | Highlight             |
+| `L`      | Laser pointer         |
+| `C`      | Xóa tất cả annotation |
+| `Esc`    | Thoát toàn màn hình   |
 
 ## Best Practices
 
@@ -216,4 +219,5 @@ TOOLBAR ANNOTATION
 5. **Annotation**: Highlight điểm quan trọng
 
 ---
-*Xem thêm: [Workflows - Quy trình chia sẻ màn hình](../../.agent/workflows/screen-share-workflow.md)*
+
+_Xem thêm: [Workflows - Quy trình chia sẻ màn hình](../../.agent/workflows/screen-share-workflow.md)_

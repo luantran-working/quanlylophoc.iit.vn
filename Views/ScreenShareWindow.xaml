@@ -77,7 +77,7 @@
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="TitleText" Text="TRÌNH CHIẾU MÀN HÌNH" FontSize="14" FontWeight="Bold" Foreground="White" LetterSpacing="0.5"/>
+                            <TextBlock x:Name="TitleText" Text="TRÌNH CHIẾU MÀN HÌNH" FontSize="14" FontWeight="Bold" Foreground="White"/>
                             <StackPanel x:Name="LiveIndicator" Orientation="Horizontal" Visibility="Collapsed" Margin="0,2,0,0">
                                 <Ellipse Width="6" Height="6" Fill="#FF5252" VerticalAlignment="Center"/>
                                 <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold"
@@ -131,7 +131,7 @@
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Background="{StaticResource AppPrimaryBrush}" 
+                                        Background="{StaticResource AppPrimaryBrush}"
                                         BorderBrush="{StaticResource AppPrimaryBrush}"
                                         Margin="12"
                                         Height="48" Padding="24,0"

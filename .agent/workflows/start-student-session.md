@@ -128,7 +128,7 @@ Khi tìm thấy Server:
 ### Không tìm thấy Server
 
 ```
-Triệu chứng: 
+Triệu chứng:
 "Không tìm thấy phòng học sau 30 giây"
 
 Giải pháp:
@@ -180,6 +180,7 @@ Nếu không tự kết nối được:
 ## Lưu ý
 
 > ⚠️ **Quan trọng**:
+>
 > - Màn hình của bạn có thể bị giáo viên xem
 > - Máy có thể bị điều khiển từ xa
 > - Tuân thủ nội quy lớp học

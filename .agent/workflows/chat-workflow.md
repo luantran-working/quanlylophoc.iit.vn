@@ -10,10 +10,10 @@ Giao tiếp giữa giáo viên và học sinh thông qua tin nhắn văn bản.
 
 ## Các loại chat
 
-| Loại | Mô tả | Ai thấy |
-|------|-------|---------|
-| Chat nhóm | Tin nhắn gửi toàn lớp | Tất cả |
-| Chat riêng | Tin nhắn 1-1 | GV và 1 HS |
+| Loại       | Mô tả                 | Ai thấy    |
+| ---------- | --------------------- | ---------- |
+| Chat nhóm  | Tin nhắn gửi toàn lớp | Tất cả     |
+| Chat riêng | Tin nhắn 1-1          | GV và 1 HS |
 
 ---
 
@@ -171,36 +171,38 @@ Giao tiếp giữa giáo viên và học sinh thông qua tin nhắn văn bản.
 
 ## Trạng thái tin nhắn
 
-| Icon | Trạng thái |
-|------|-----------|
-| ⏳ | Đang gửi |
-| ✓ | Đã gửi đến server |
-| ✓✓ | Đã gửi đến người nhận |
-| ✓✓ (xanh) | Đã đọc |
+| Icon      | Trạng thái            |
+| --------- | --------------------- |
+| ⏳        | Đang gửi              |
+| ✓         | Đã gửi đến server     |
+| ✓✓        | Đã gửi đến người nhận |
+| ✓✓ (xanh) | Đã đọc                |
 
 ---
 
 ## Phím tắt
 
-| Phím | Chức năng |
-|------|-----------|
-| `Enter` | Gửi tin nhắn |
-| `Shift + Enter` | Xuống dòng |
-| `Ctrl + V` | Paste ảnh/file |
-| `Esc` | Đóng chat |
-| `Ctrl + G` | Mở chat nhóm (GV) |
+| Phím            | Chức năng         |
+| --------------- | ----------------- |
+| `Enter`         | Gửi tin nhắn      |
+| `Shift + Enter` | Xuống dòng        |
+| `Ctrl + V`      | Paste ảnh/file    |
+| `Esc`           | Đóng chat         |
+| `Ctrl + G`      | Mở chat nhóm (GV) |
 
 ---
 
 ## Best Practices
 
 ### Giáo viên
+
 - **Thông báo quan trọng**: Gửi qua chat nhóm
 - **Hỗ trợ cá nhân**: Dùng chat riêng
 - **Phản hồi nhanh**: Check thường xuyên
 - **Rõ ràng**: Tin nhắn ngắn gọn, dễ hiểu
 
 ### Học sinh
+
 - **Lịch sự**: Sử dụng ngôn ngữ phù hợp
 - **Cụ thể**: Mô tả rõ câu hỏi
 - **Không spam**: Tránh gửi nhiều tin liên tục

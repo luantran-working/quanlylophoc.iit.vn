@@ -7,33 +7,40 @@ Phần mềm Quản lý Phòng học Thông minh IIT là giải pháp toàn di�
 ## Tính năng chính
 
 ### 🖥️ Giám sát màn hình
+
 - Xem màn hình tất cả học sinh theo thời gian thực
 - Hỗ trợ nhiều chế độ hiển thị: 2x2, 4x4, 6x6
 
 ### 🎯 Điều khiển từ xa
+
 - Điều khiển trực tiếp máy tính học sinh
 - Hỗ trợ chuột, bàn phím và truyền file
 
 ### 📺 Chia sẻ màn hình
+
 - Trình chiếu màn hình giáo viên đến tất cả học sinh
 - Hỗ trợ chia sẻ toàn màn hình, cửa sổ hoặc vùng chọn
 
 ### 💬 Chat & Giao tiếp
+
 - Chat nhóm toàn lớp
 - Chat riêng với từng học sinh
 - Thông báo và phản hồi nhanh
 
 ### 📁 Quản lý tập tin
+
 - Thu bài từ học sinh
 - Gửi tài liệu đến học sinh
 - Quản lý thư mục chia sẻ
 
 ### 📝 Bài kiểm tra
+
 - Tạo bài kiểm tra trắc nghiệm
 - Tự động chấm điểm
 - Thống kê kết quả
 
 ### 🔒 Quản lý máy tính
+
 - Khóa/mở khóa máy học sinh
 - Tắt mic/camera từ xa
 - Giám sát hoạt động
@@ -41,12 +48,14 @@ Phần mềm Quản lý Phòng học Thông minh IIT là giải pháp toàn di�
 ## Yêu cầu hệ thống
 
 ### Máy Giáo viên (Server)
+
 - Windows 10/11
 - .NET 10.0 Runtime
 - RAM: Tối thiểu 4GB
 - Kết nối mạng LAN/WiFi
 
 ### Máy Học sinh (Client)
+
 - Windows 10/11
 - .NET 10.0 Runtime
 - RAM: Tối thiểu 2GB
@@ -55,15 +64,16 @@ Phần mềm Quản lý Phòng học Thông minh IIT là giải pháp toàn di�
 ## Cấu hình mạng
 
 Phần mềm hoạt động trên **mạng LAN nội bộ**:
+
 - Tất cả máy tính phải kết nối cùng một mạng WiFi hoặc Ethernet
 - Máy giáo viên đóng vai trò **Server** lưu trữ dữ liệu
 - Máy học sinh tự động phát hiện và kết nối đến Server
 
 ## Tài khoản mặc định
 
-| Vai trò | Tên đăng nhập | Mật khẩu |
-|---------|---------------|----------|
-| Giáo viên (Admin) | `admin` | `123456` |
+| Vai trò           | Tên đăng nhập | Mật khẩu |
+| ----------------- | ------------- | -------- |
+| Giáo viên (Admin) | `admin`       | `123456` |
 
 > ⚠️ **Lưu ý**: Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên.
 
@@ -87,4 +97,5 @@ Phần mềm hoạt động trên **mạng LAN nội bộ**:
 - **Email**: support@iit.vn
 
 ---
-*Phiên bản: 1.0.0 | Cập nhật: Tháng 01/2026*
+
+_Phiên bản: 1.0.0 | Cập nhật: Tháng 01/2026_

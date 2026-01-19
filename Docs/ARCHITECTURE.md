@@ -79,27 +79,27 @@ Phần mềm Quản lý Phòng học Thông minh IIT sử dụng kiến trúc **
 
 ### Server Components (Máy Giáo viên)
 
-| Thành phần | Mô tả | Port/Protocol |
-|------------|-------|---------------|
-| **Discovery Service** | Phát broadcast để client tìm kiếm | UDP 5001 |
-| **Connection Manager** | Quản lý kết nối TCP từ clients | TCP 5000 |
-| **Auth Service** | Xác thực giáo viên | Local |
-| **Database Service** | SQLite lưu trữ dữ liệu | Local File |
-| **Screen Capture** | Chụp và stream màn hình | TCP 5002 |
-| **File Transfer** | Truyền nhận file | TCP 5003 |
-| **Chat Service** | Xử lý tin nhắn | TCP 5004 |
-| **Remote Control** | Điều khiển từ xa | TCP 5005 |
+| Thành phần             | Mô tả                             | Port/Protocol |
+| ---------------------- | --------------------------------- | ------------- |
+| **Discovery Service**  | Phát broadcast để client tìm kiếm | UDP 5001      |
+| **Connection Manager** | Quản lý kết nối TCP từ clients    | TCP 5000      |
+| **Auth Service**       | Xác thực giáo viên                | Local         |
+| **Database Service**   | SQLite lưu trữ dữ liệu            | Local File    |
+| **Screen Capture**     | Chụp và stream màn hình           | TCP 5002      |
+| **File Transfer**      | Truyền nhận file                  | TCP 5003      |
+| **Chat Service**       | Xử lý tin nhắn                    | TCP 5004      |
+| **Remote Control**     | Điều khiển từ xa                  | TCP 5005      |
 
 ### Client Components (Máy Học sinh)
 
-| Thành phần | Mô tả |
-|------------|-------|
+| Thành phần             | Mô tả                         |
+| ---------------------- | ----------------------------- |
 | **Discovery Listener** | Lắng nghe broadcast từ Server |
-| **Connection Client** | Kết nối và duy trì session |
-| **Screen Agent** | Chụp và gửi ảnh màn hình |
-| **Input Agent** | Nhận lệnh điều khiển |
-| **File Agent** | Xử lý truyền file |
-| **Chat Client** | Gửi/nhận tin nhắn |
+| **Connection Client**  | Kết nối và duy trì session    |
+| **Screen Agent**       | Chụp và gửi ảnh màn hình      |
+| **Input Agent**        | Nhận lệnh điều khiển          |
+| **File Agent**         | Xử lý truyền file             |
+| **Chat Client**        | Gửi/nhận tin nhắn             |
 
 ## Luồng dữ liệu chính
 
@@ -181,21 +181,21 @@ CHECKSUM: CRC32
 
 ### Message Types
 
-| Code | Type | Mô tả |
-|------|------|-------|
-| 0x01 | CONNECT | Yêu cầu kết nối |
-| 0x02 | DISCONNECT | Ngắt kết nối |
-| 0x03 | HEARTBEAT | Kiểm tra kết nối |
-| 0x10 | SCREEN_DATA | Dữ liệu màn hình |
-| 0x11 | SCREEN_REQUEST | Yêu cầu màn hình |
-| 0x20 | CONTROL_MOUSE | Lệnh chuột |
-| 0x21 | CONTROL_KEYBOARD | Lệnh bàn phím |
-| 0x30 | CHAT_MESSAGE | Tin nhắn chat |
-| 0x40 | FILE_START | Bắt đầu truyền file |
-| 0x41 | FILE_DATA | Dữ liệu file |
-| 0x42 | FILE_END | Kết thúc file |
-| 0x50 | LOCK_SCREEN | Khóa màn hình |
-| 0x51 | UNLOCK_SCREEN | Mở khóa màn hình |
+| Code | Type             | Mô tả               |
+| ---- | ---------------- | ------------------- |
+| 0x01 | CONNECT          | Yêu cầu kết nối     |
+| 0x02 | DISCONNECT       | Ngắt kết nối        |
+| 0x03 | HEARTBEAT        | Kiểm tra kết nối    |
+| 0x10 | SCREEN_DATA      | Dữ liệu màn hình    |
+| 0x11 | SCREEN_REQUEST   | Yêu cầu màn hình    |
+| 0x20 | CONTROL_MOUSE    | Lệnh chuột          |
+| 0x21 | CONTROL_KEYBOARD | Lệnh bàn phím       |
+| 0x30 | CHAT_MESSAGE     | Tin nhắn chat       |
+| 0x40 | FILE_START       | Bắt đầu truyền file |
+| 0x41 | FILE_DATA        | Dữ liệu file        |
+| 0x42 | FILE_END         | Kết thúc file       |
+| 0x50 | LOCK_SCREEN      | Khóa màn hình       |
+| 0x51 | UNLOCK_SCREEN    | Mở khóa màn hình    |
 
 ## Bảo mật
 
@@ -235,4 +235,5 @@ Thử kết nối lại (Tối đa 5 lần)
 - Khi Server khởi động lại, Client tự động kết nối lại
 
 ---
-*Tài liệu kỹ thuật - Phiên bản 1.0.0*
+
+_Tài liệu kỹ thuật - Phiên bản 1.0.0_

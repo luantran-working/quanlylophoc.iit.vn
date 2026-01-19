@@ -6,15 +6,15 @@ Tính năng Bảng trắng cung cấp không gian vẽ và ghi chú cho giáo vi
 
 ## Công cụ vẽ
 
-| Công cụ | Icon | Mô tả |
-|---------|------|-------|
-| Bút vẽ | ✏️ | Vẽ tự do với màu và độ dày tùy chọn |
-| Highlight | 🖍️ | Tô đậm với độ trong suốt |
-| Tẩy | 🧽 | Xóa nét vẽ |
-| Hình học | ⬜ | Vẽ hình: Rectangle, Circle, Arrow |
-| Text | T | Thêm văn bản |
-| Image | 🖼️ | Chèn hình ảnh |
-| Pointer | 👆 | Con trỏ/Select |
+| Công cụ   | Icon | Mô tả                               |
+| --------- | ---- | ----------------------------------- |
+| Bút vẽ    | ✏️   | Vẽ tự do với màu và độ dày tùy chọn |
+| Highlight | 🖍️   | Tô đậm với độ trong suốt            |
+| Tẩy       | 🧽   | Xóa nét vẽ                          |
+| Hình học  | ⬜   | Vẽ hình: Rectangle, Circle, Arrow   |
+| Text      | T    | Thêm văn bản                        |
+| Image     | 🖼️   | Chèn hình ảnh                       |
+| Pointer   | 👆   | Con trỏ/Select                      |
 
 ## Giao diện
 
@@ -118,22 +118,23 @@ Tính năng Bảng trắng cung cấp không gian vẽ và ghi chú cho giáo vi
 
 ## Phím tắt
 
-| Phím tắt | Chức năng |
-|----------|-----------|
-| `P` | Bút vẽ (Pen) |
-| `H` | Highlight |
-| `E` | Tẩy (Eraser) |
-| `T` | Text |
-| `S` | Shapes |
-| `Ctrl + Z` | Undo |
-| `Ctrl + Y` | Redo |
-| `Ctrl + S` | Lưu |
-| `Del` | Xóa selected |
-| `Ctrl + A` | Chọn tất cả |
+| Phím tắt   | Chức năng    |
+| ---------- | ------------ |
+| `P`        | Bút vẽ (Pen) |
+| `H`        | Highlight    |
+| `E`        | Tẩy (Eraser) |
+| `T`        | Text         |
+| `S`        | Shapes       |
+| `Ctrl + Z` | Undo         |
+| `Ctrl + Y` | Redo         |
+| `Ctrl + S` | Lưu          |
+| `Del`      | Xóa selected |
+| `Ctrl + A` | Chọn tất cả  |
 
 ## Đa trang (Multi-page)
 
 ### Thêm trang mới
+
 ```
 1. Click [+] ở góc phải dưới
         │
@@ -145,6 +146,7 @@ Tính năng Bảng trắng cung cấp không gian vẽ và ghi chú cho giáo vi
 ```
 
 ### Navigation
+
 - Hiển thị: `Trang: 1/3`
 - [◀] Previous page
 - [▶] Next page
@@ -152,6 +154,7 @@ Tính năng Bảng trắng cung cấp không gian vẽ và ghi chú cho giáo vi
 ## Chia sẻ học sinh
 
 Khi bật chia sẻ:
+
 - Học sinh xem ở chế độ **Read-only**
 - Không thể vẽ hoặc chỉnh sửa
 - Thấy thay đổi realtime
@@ -166,4 +169,5 @@ Khi bật chia sẻ:
 5. **Lưu trữ**: Lưu lại để sử dụng sau
 
 ---
-*Tính năng bổ sung trong các phiên bản tương lai*
+
+_Tính năng bổ sung trong các phiên bản tương lai_

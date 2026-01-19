@@ -6,17 +6,17 @@ Chế độ Giáo viên là vai trò chính của phần mềm, đóng vai trò 
 
 ## Quyền hạn
 
-| Chức năng | Mô tả |
-|-----------|-------|
-| ✅ Giám sát màn hình | Xem màn hình tất cả học sinh |
-| ✅ Điều khiển từ xa | Điều khiển trực tiếp máy học sinh |
-| ✅ Chia sẻ màn hình | Trình chiếu đến tất cả học sinh |
-| ✅ Khóa/Mở khóa máy | Khóa màn hình học sinh |
-| ✅ Tắt mic/camera | Quản lý thiết bị học sinh |
-| ✅ Chat nhóm/riêng | Giao tiếp với học sinh |
-| ✅ Thu/Gửi file | Quản lý tập tin |
-| ✅ Tạo bài kiểm tra | Tạo và chấm điểm |
-| ✅ Bảng trắng | Vẽ và chia sẻ |
+| Chức năng            | Mô tả                             |
+| -------------------- | --------------------------------- |
+| ✅ Giám sát màn hình | Xem màn hình tất cả học sinh      |
+| ✅ Điều khiển từ xa  | Điều khiển trực tiếp máy học sinh |
+| ✅ Chia sẻ màn hình  | Trình chiếu đến tất cả học sinh   |
+| ✅ Khóa/Mở khóa máy  | Khóa màn hình học sinh            |
+| ✅ Tắt mic/camera    | Quản lý thiết bị học sinh         |
+| ✅ Chat nhóm/riêng   | Giao tiếp với học sinh            |
+| ✅ Thu/Gửi file      | Quản lý tập tin                   |
+| ✅ Tạo bài kiểm tra  | Tạo và chấm điểm                  |
+| ✅ Bảng trắng        | Vẽ và chia sẻ                     |
 
 ## Giao diện chính
 
@@ -49,13 +49,13 @@ Chế độ Giáo viên là vai trò chính của phần mềm, đóng vai trò 
 
 ### 1. Header (Thanh tiêu đề)
 
-| Thành phần | Chức năng |
-|------------|-----------|
-| Logo & Tên | Hiển thị tên phần mềm và vai trò |
-| Thông tin lớp | Tên lớp và môn học đang dạy |
-| Thông báo | Hiển thị thông báo mới từ học sinh |
-| Cài đặt | Mở cửa sổ cài đặt |
-| Tài khoản | Thông tin và đăng xuất |
+| Thành phần    | Chức năng                          |
+| ------------- | ---------------------------------- |
+| Logo & Tên    | Hiển thị tên phần mềm và vai trò   |
+| Thông tin lớp | Tên lớp và môn học đang dạy        |
+| Thông báo     | Hiển thị thông báo mới từ học sinh |
+| Cài đặt       | Mở cửa sổ cài đặt                  |
+| Tài khoản     | Thông tin và đăng xuất             |
 
 ### 2. Sidebar trái - Danh sách học sinh
 
@@ -70,33 +70,37 @@ Hiển thị danh sách tất cả học sinh đang kết nối:
 ### 3. Khu vực chính - Tab Control
 
 #### Tab Màn hình học sinh
+
 - Hiển thị thumbnail màn hình các học sinh
 - Hỗ trợ layout: 2x2, 4x4, 6x6
 - Click để xem chi tiết
 - Double-click để điều khiển
 
 #### Tab Điều khiển từ xa
+
 - Màn hình điều khiển full-size
 - Toolbar: Chuột, Bàn phím, Gửi file
 - Nút ngắt kết nối
 
 #### Tab Trình chiếu
+
 - Chia sẻ màn hình đến học sinh
 - Chọn: Toàn màn hình / Cửa sổ / Vùng chọn
 - Hiển thị số học sinh đang xem
 
 #### Tab Bảng trắng
+
 - Vẽ và ghi chú
 - Công cụ: Bút, Highlight, Shapes
 - Chia sẻ bảng trắng đến học sinh
 
 ### 4. Sidebar phải - Công cụ
 
-| Nhóm | Công cụ |
-|------|---------|
-| **Giao tiếp** | Chat nhóm, Chat riêng |
-| **Quản lý** | Thu bài, Khóa máy, Tắt mic/camera |
-| **Học tập** | Tạo bài kiểm tra, Trò chơi, Thống kê |
+| Nhóm          | Công cụ                              |
+| ------------- | ------------------------------------ |
+| **Giao tiếp** | Chat nhóm, Chat riêng                |
+| **Quản lý**   | Thu bài, Khóa máy, Tắt mic/camera    |
+| **Học tập**   | Tạo bài kiểm tra, Trò chơi, Thống kê |
 
 ### 5. Status Bar (Thanh trạng thái)
 
@@ -186,26 +190,27 @@ Hiển thị danh sách tất cả học sinh đang kết nối:
 
 ## Phím tắt
 
-| Phím tắt | Chức năng |
-|----------|-----------|
-| `Ctrl + 1` | Tab Màn hình |
-| `Ctrl + 2` | Tab Điều khiển |
-| `Ctrl + 3` | Tab Trình chiếu |
-| `Ctrl + 4` | Tab Bảng trắng |
-| `Ctrl + L` | Khóa tất cả máy |
-| `Ctrl + U` | Mở khóa tất cả máy |
-| `Ctrl + M` | Tắt mic tất cả |
-| `F5` | Làm mới danh sách |
-| `Esc` | Thoát chế độ toàn màn hình |
+| Phím tắt   | Chức năng                  |
+| ---------- | -------------------------- |
+| `Ctrl + 1` | Tab Màn hình               |
+| `Ctrl + 2` | Tab Điều khiển             |
+| `Ctrl + 3` | Tab Trình chiếu            |
+| `Ctrl + 4` | Tab Bảng trắng             |
+| `Ctrl + L` | Khóa tất cả máy            |
+| `Ctrl + U` | Mở khóa tất cả máy         |
+| `Ctrl + M` | Tắt mic tất cả             |
+| `F5`       | Làm mới danh sách          |
+| `Esc`      | Thoát chế độ toàn màn hình |
 
 ## Xử lý sự cố
 
-| Vấn đề | Giải pháp |
-|--------|-----------|
-| Học sinh không hiển thị | Kiểm tra kết nối mạng LAN |
-| Màn hình học sinh đen | Yêu cầu học sinh restart app |
-| Không điều khiển được | Kiểm tra firewall |
-| Trình chiếu lag | Giảm chất lượng stream |
+| Vấn đề                  | Giải pháp                    |
+| ----------------------- | ---------------------------- |
+| Học sinh không hiển thị | Kiểm tra kết nối mạng LAN    |
+| Màn hình học sinh đen   | Yêu cầu học sinh restart app |
+| Không điều khiển được   | Kiểm tra firewall            |
+| Trình chiếu lag         | Giảm chất lượng stream       |
 
 ---
-*Xem thêm: [Workflows - Khởi động phiên Giáo viên](../../.agent/workflows/start-teacher-session.md)*
+
+_Xem thêm: [Workflows - Khởi động phiên Giáo viên](../../.agent/workflows/start-teacher-session.md)_

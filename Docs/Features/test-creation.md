@@ -229,11 +229,11 @@ Tính năng Tạo bài kiểm tra cho phép giáo viên tạo các bài kiểm t
 
 ## Loại câu hỏi
 
-| Loại | Mô tả |
-|------|-------|
+| Loại            | Mô tả                            |
+| --------------- | -------------------------------- |
 | Multiple Choice | Chọn 1 đáp án đúng từ 4 lựa chọn |
-| True/False | Đúng hoặc Sai |
-| Fill in Blank | Điền vào chỗ trống (tương lai) |
+| True/False      | Đúng hoặc Sai                    |
+| Fill in Blank   | Điền vào chỗ trống (tương lai)   |
 
 ## Thống kê kết quả
 
@@ -275,4 +275,5 @@ Tính năng Tạo bài kiểm tra cho phép giáo viên tạo các bài kiểm t
 5. **Preview**: Xem thử trước khi gửi
 
 ---
-*Xem thêm: [Workflows - Quy trình bài kiểm tra](../../.agent/workflows/test-workflow.md)*
+
+_Xem thêm: [Workflows - Quy trình bài kiểm tra](../../.agent/workflows/test-workflow.md)_

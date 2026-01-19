@@ -12,23 +12,23 @@ Phần mềm sử dụng mạng **LAN cục bộ** để kết nối các máy t
 
 ### Cấu hình mạng
 
-| Yêu cầu | Chi tiết |
-|---------|----------|
-| Loại mạng | LAN (Ethernet hoặc WiFi) |
-| Subnet | Tất cả máy cùng subnet (VD: 192.168.1.x) |
-| Firewall | Cho phép các port: 5000-5005 |
-| Broadcast | Cho phép UDP Broadcast |
+| Yêu cầu   | Chi tiết                                 |
+| --------- | ---------------------------------------- |
+| Loại mạng | LAN (Ethernet hoặc WiFi)                 |
+| Subnet    | Tất cả máy cùng subnet (VD: 192.168.1.x) |
+| Firewall  | Cho phép các port: 5000-5005             |
+| Broadcast | Cho phép UDP Broadcast                   |
 
 ### Ports sử dụng
 
-| Port | Protocol | Chức năng |
-|------|----------|-----------|
-| 5000 | TCP | Kết nối chính (Main Connection) |
-| 5001 | UDP | Discovery (Tìm kiếm Server) |
-| 5002 | TCP | Screen Streaming |
-| 5003 | TCP | File Transfer |
-| 5004 | TCP | Chat Messages |
-| 5005 | TCP | Remote Control |
+| Port | Protocol | Chức năng                       |
+| ---- | -------- | ------------------------------- |
+| 5000 | TCP      | Kết nối chính (Main Connection) |
+| 5001 | UDP      | Discovery (Tìm kiếm Server)     |
+| 5002 | TCP      | Screen Streaming                |
+| 5003 | TCP      | File Transfer                   |
+| 5004 | TCP      | Chat Messages                   |
+| 5005 | TCP      | Remote Control                  |
 
 ## Các bước kết nối
 

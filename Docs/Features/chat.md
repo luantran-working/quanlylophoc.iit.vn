@@ -7,11 +7,13 @@ Tính năng Chat cho phép giao tiếp hai chiều giữa giáo viên và học 
 ## Các loại chat
 
 ### 1. Chat nhóm (Group Chat)
+
 - Tin nhắn gửi đến toàn bộ lớp học
 - Tất cả thành viên đều thấy
 - Phù hợp cho thông báo, câu hỏi chung
 
 ### 2. Chat riêng (Private Chat)
+
 - Tin nhắn giữa giáo viên và một học sinh
 - Chỉ 2 người thấy
 - Phù hợp cho hỗ trợ cá nhân
@@ -108,6 +110,7 @@ Tính năng Chat cho phép giao tiếp hai chiều giữa giáo viên và học 
 ## Tính năng
 
 ### Đính kèm file
+
 ```
 1. Click icon [📎] bên cạnh ô nhập
         │
@@ -119,47 +122,53 @@ Tính năng Chat cho phép giao tiếp hai chiều giữa giáo viên và học 
 ```
 
 ### Emoji
+
 - Hỗ trợ emoji chuẩn Unicode
 - Gõ trực tiếp hoặc chọn từ bảng emoji
 
 ### Trạng thái tin nhắn
-| Icon | Trạng thái |
-|------|-----------|
-| ⏳ | Đang gửi |
-| ✓ | Đã gửi |
-| ✓✓ | Đã nhận |
-| ✓✓ (xanh) | Đã đọc |
+
+| Icon      | Trạng thái |
+| --------- | ---------- |
+| ⏳        | Đang gửi   |
+| ✓         | Đã gửi     |
+| ✓✓        | Đã nhận    |
+| ✓✓ (xanh) | Đã đọc     |
 
 ## Thông báo
 
 ### Giáo viên
+
 - 🔔 Badge đỏ trên icon Chat khi có tin nhắn mới
 - Sound notification (tùy chọn)
 - Popup notification (tùy chọn)
 
 ### Học sinh
+
 - Popup khi có tin nhắn từ giáo viên
 - Badge notification
 - Sound alert
 
 ## Phím tắt
 
-| Phím tắt | Chức năng |
-|----------|-----------|
-| `Enter` | Gửi tin nhắn |
-| `Shift + Enter` | Xuống dòng |
-| `Ctrl + V` | Paste ảnh/file |
-| `Esc` | Đóng cửa sổ chat |
+| Phím tắt        | Chức năng        |
+| --------------- | ---------------- |
+| `Enter`         | Gửi tin nhắn     |
+| `Shift + Enter` | Xuống dòng       |
+| `Ctrl + V`      | Paste ảnh/file   |
+| `Esc`           | Đóng cửa sổ chat |
 
 ## Best Practices
 
 ### Giáo viên
+
 1. **Thông báo rõ ràng**: Sử dụng chat nhóm cho thông báo quan trọng
 2. **Hỗ trợ cá nhân**: Dùng chat riêng để giúp học sinh yếu
 3. **Phản hồi nhanh**: Check tin nhắn thường xuyên
 4. **Đính kèm tài liệu**: Gửi file hỗ trợ khi cần
 
 ### Học sinh
+
 1. **Đặt câu hỏi rõ ràng**: Mô tả chi tiết vấn đề
 2. **Lịch sự**: Sử dụng ngôn ngữ phù hợp
 3. **Không spam**: Hạn chế tin nhắn không cần thiết
@@ -172,4 +181,5 @@ Tính năng Chat cho phép giao tiếp hai chiều giữa giáo viên và học 
 - Tự động xóa sau 7 ngày (có thể cấu hình)
 
 ---
-*Xem thêm: [Workflows - Quy trình Chat](../../.agent/workflows/chat-workflow.md)*
+
+_Xem thêm: [Workflows - Quy trình Chat](../../.agent/workflows/chat-workflow.md)_

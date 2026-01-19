@@ -183,15 +183,15 @@ Tiếp tục:
 
 ## Phím tắt
 
-| Phím | Chức năng |
-|------|-----------|
-| `F5` | Bắt đầu/Dừng share |
-| `F6` | Pause/Resume |
-| `P` | Bút vẽ |
-| `H` | Highlight |
-| `L` | Laser |
-| `C` | Xóa annotation |
-| `Esc` | Thoát fullscreen |
+| Phím  | Chức năng          |
+| ----- | ------------------ |
+| `F5`  | Bắt đầu/Dừng share |
+| `F6`  | Pause/Resume       |
+| `P`   | Bút vẽ             |
+| `H`   | Highlight          |
+| `L`   | Laser              |
+| `C`   | Xóa annotation     |
+| `Esc` | Thoát fullscreen   |
 
 ## Xử lý lỗi
 

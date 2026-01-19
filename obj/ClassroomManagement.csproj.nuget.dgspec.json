@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj": {}
+    "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj": {}
   },
   "projects": {
-    "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj": {
+    "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
         "projectName": "ClassroomManagement",
-        "projectPath": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+        "projectPath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\obj\\",
+        "outputPath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -245,12 +245,12 @@ CREATE TABLE FileRecords (
 
 ## Tài khoản mặc định
 
-| Field | Value |
-|-------|-------|
-| Username | `admin` |
-| Password | `123456` |
+| Field        | Value         |
+| ------------ | ------------- |
+| Username     | `admin`       |
+| Password     | `123456`      |
 | Display Name | Quản trị viên |
-| Role | admin |
+| Role         | admin         |
 
 > ⚠️ **Bảo mật**: Mật khẩu được lưu dưới dạng hash SHA-256. Luôn thay đổi mật khẩu mặc định sau lần đăng nhập đầu tiên.
 
@@ -309,4 +309,5 @@ DELETE FROM Sessions;
 ```
 
 ---
-*Cập nhật: Tháng 01/2026*
+
+_Cập nhật: Tháng 01/2026_

@@ -6,13 +6,13 @@ Tính năng Điều khiển từ xa cho phép giáo viên điều khiển trực
 
 ## Quyền hạn
 
-| Chức năng | Mô tả |
-|-----------|-------|
-| ✅ Xem màn hình | Xem realtime màn hình học sinh |
-| ✅ Điều khiển chuột | Di chuyển, click, kéo thả |
-| ✅ Điều khiển bàn phím | Gõ phím, shortcuts |
-| ✅ Gửi file | Truyền file trong khi điều khiển |
-| ✅ Khóa input | Vô hiệu hóa chuột/phím học sinh |
+| Chức năng              | Mô tả                            |
+| ---------------------- | -------------------------------- |
+| ✅ Xem màn hình        | Xem realtime màn hình học sinh   |
+| ✅ Điều khiển chuột    | Di chuyển, click, kéo thả        |
+| ✅ Điều khiển bàn phím | Gõ phím, shortcuts               |
+| ✅ Gửi file            | Truyền file trong khi điều khiển |
+| ✅ Khóa input          | Vô hiệu hóa chuột/phím học sinh  |
 
 ## Giao diện
 
@@ -41,15 +41,15 @@ Tính năng Điều khiển từ xa cho phép giáo viên điều khiển trực
 
 ## Toolbar chức năng
 
-| Icon | Chức năng | Mô tả |
-|------|-----------|-------|
-| 🔙 | Quay lại | Ngắt điều khiển, về Main Window |
-| 🔄 | Refresh | Làm mới kết nối |
-| ⌨️ | Keyboard | Mở bàn phím ảo |
-| 📷 | Screenshot | Chụp màn hình PC học sinh |
-| 📁 | File | Gửi file đến học sinh |
-| 🔒 | Khóa HS | Khóa input của học sinh |
-| ⛶ | Fullscreen | Chế độ toàn màn hình |
+| Icon | Chức năng  | Mô tả                           |
+| ---- | ---------- | ------------------------------- |
+| 🔙   | Quay lại   | Ngắt điều khiển, về Main Window |
+| 🔄   | Refresh    | Làm mới kết nối                 |
+| ⌨️   | Keyboard   | Mở bàn phím ảo                  |
+| 📷   | Screenshot | Chụp màn hình PC học sinh       |
+| 📁   | File       | Gửi file đến học sinh           |
+| 🔒   | Khóa HS    | Khóa input của học sinh         |
+| ⛶    | Fullscreen | Chế độ toàn màn hình            |
 
 ## Quy trình chi tiết
 
@@ -162,52 +162,56 @@ Khi cần hướng dẫn mà không muốn HS can thiệp:
 ## Chế độ xem
 
 ### View Mode (Chỉ xem)
+
 - Chỉ xem màn hình, không điều khiển
 - Học sinh không biết đang bị xem
 - Phím tắt: `V` để toggle
 
 ### Control Mode (Điều khiển)
+
 - Xem và điều khiển đầy đủ
 - Học sinh được thông báo
 - Mặc định khi mở cửa sổ
 
 ## Phím tắt
 
-| Phím tắt | Chức năng |
-|----------|-----------|
-| `Esc` | Thoát toàn màn hình |
-| `F11` | Toggle toàn màn hình |
-| `Ctrl + R` | Refresh kết nối |
-| `Ctrl + S` | Chụp màn hình |
-| `Ctrl + L` | Khóa/Mở khóa HS |
-| `V` | Toggle View/Control mode |
+| Phím tắt   | Chức năng                |
+| ---------- | ------------------------ |
+| `Esc`      | Thoát toàn màn hình      |
+| `F11`      | Toggle toàn màn hình     |
+| `Ctrl + R` | Refresh kết nối          |
+| `Ctrl + S` | Chụp màn hình            |
+| `Ctrl + L` | Khóa/Mở khóa HS          |
+| `V`        | Toggle View/Control mode |
 
 ## Thông số kỹ thuật
 
-| Thông số | Giá trị |
-|----------|---------|
-| Protocol | TCP (Port 5005) |
-| Encoding | JPEG/H.264 |
-| FPS | 15-60 (tùy cấu hình) |
-| Latency | 10-100ms (LAN) |
-| Input capture | Windows API Hooks |
+| Thông số      | Giá trị              |
+| ------------- | -------------------- |
+| Protocol      | TCP (Port 5005)      |
+| Encoding      | JPEG/H.264           |
+| FPS           | 15-60 (tùy cấu hình) |
+| Latency       | 10-100ms (LAN)       |
+| Input capture | Windows API Hooks    |
 
 ## Xử lý sự cố
 
-| Vấn đề | Nguyên nhân | Giải pháp |
-|--------|-------------|-----------|
-| Lag điều khiển | Mạng chậm | Giảm quality |
-| Không điều khiển được | Firewall | Kiểm tra firewall |
-| Màn hình đen | UAC prompt | Báo HS accept |
-| Input không hoạt động | Focus window | Click vào cửa sổ |
+| Vấn đề                | Nguyên nhân  | Giải pháp         |
+| --------------------- | ------------ | ----------------- |
+| Lag điều khiển        | Mạng chậm    | Giảm quality      |
+| Không điều khiển được | Firewall     | Kiểm tra firewall |
+| Màn hình đen          | UAC prompt   | Báo HS accept     |
+| Input không hoạt động | Focus window | Click vào cửa sổ  |
 
 ## Lưu ý bảo mật
 
 > ⚠️ **Quan trọng**:
+>
 > - Chỉ điều khiển khi cần thiết
 > - Thông báo học sinh trước khi điều khiển
 > - Tránh truy cập thông tin cá nhân
 > - Tuân thủ quy định về quyền riêng tư
 
 ---
-*Xem thêm: [Workflows - Quy trình điều khiển từ xa](../../.agent/workflows/remote-control-workflow.md)*
+
+_Xem thêm: [Workflows - Quy trình điều khiển từ xa](../../.agent/workflows/remote-control-workflow.md)_

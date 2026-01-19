@@ -47,7 +47,7 @@ description: Quy trình điều khiển máy tính học sinh từ xa
 
 2. Hiển thị:
    "Đang kết nối đến Nguyễn Văn An..."
-   
+
    ⏳
 
 3. Chờ kết nối (2-5 giây)
@@ -195,14 +195,14 @@ TOOLBAR:
 
 ## Phím tắt
 
-| Phím | Chức năng |
-|------|-----------|
-| `Esc` | Thoát fullscreen / Ngắt kết nối |
-| `F11` | Toggle toàn màn hình |
-| `Ctrl + R` | Refresh kết nối |
-| `Ctrl + S` | Chụp màn hình |
-| `Ctrl + L` | Khóa/Mở khóa HS |
-| `V` | Toggle View/Control mode |
+| Phím       | Chức năng                       |
+| ---------- | ------------------------------- |
+| `Esc`      | Thoát fullscreen / Ngắt kết nối |
+| `F11`      | Toggle toàn màn hình            |
+| `Ctrl + R` | Refresh kết nối                 |
+| `Ctrl + S` | Chụp màn hình                   |
+| `Ctrl + L` | Khóa/Mở khóa HS                 |
+| `V`        | Toggle View/Control mode        |
 
 ---
 
@@ -240,6 +240,7 @@ Giải pháp:
 ## Lưu ý bảo mật
 
 > ⚠️ **Quan trọng**:
+>
 > - Chỉ điều khiển khi thực sự cần thiết
 > - Học sinh luôn được thông báo khi bị điều khiển
 > - Tránh truy cập thông tin cá nhân

@@ -7,16 +7,19 @@ Tính năng Truyền tập tin cho phép trao đổi file hai chiều giữa gi�
 ## Các chế độ
 
 ### 1. Thu bài từ học sinh (Collect)
+
 - Giáo viên thu file từ một hoặc nhiều học sinh
 - File được lưu vào thư mục theo phiên học
 - Có thể thu đồng thời từ nhiều học sinh
 
 ### 2. Gửi file đến học sinh (Distribute)
+
 - Giáo viên gửi file đến một hoặc tất cả học sinh
 - Học sinh nhận file vào thư mục được chỉ định
 - Hỗ trợ gửi nhiều file cùng lúc
 
 ### 3. Học sinh gửi file (Upload)
+
 - Học sinh chủ động gửi file cho giáo viên
 - Thường dùng để nộp bài tập
 
@@ -193,31 +196,32 @@ Tính năng Truyền tập tin cho phép trao đổi file hai chiều giữa gi�
 
 ## Giới hạn
 
-| Thông số | Giá trị |
-|----------|---------|
-| Kích thước file tối đa | 100 MB |
-| Số file mỗi lần | 20 files |
-| Định dạng được phép | Tất cả |
-| Tốc độ truyền | ~10 MB/s (LAN) |
+| Thông số               | Giá trị        |
+| ---------------------- | -------------- |
+| Kích thước file tối đa | 100 MB         |
+| Số file mỗi lần        | 20 files       |
+| Định dạng được phép    | Tất cả         |
+| Tốc độ truyền          | ~10 MB/s (LAN) |
 
 ## Định dạng file phổ biến
 
-| Loại | Extensions |
-|------|------------|
+| Loại     | Extensions                      |
+| -------- | ------------------------------- |
 | Tài liệu | .doc, .docx, .pdf, .pptx, .xlsx |
-| Ảnh | .jpg, .png, .gif, .bmp |
-| Video | .mp4, .avi, .mkv |
-| Nén | .zip, .rar, .7z |
-| Code | .py, .js, .html, .cs |
+| Ảnh      | .jpg, .png, .gif, .bmp          |
+| Video    | .mp4, .avi, .mkv                |
+| Nén      | .zip, .rar, .7z                 |
+| Code     | .py, .js, .html, .cs            |
 
 ## Xử lý sự cố
 
-| Vấn đề | Nguyên nhân | Giải pháp |
-|--------|-------------|-----------|
-| Truyền chậm | Mạng yếu | Kiểm tra kết nối |
-| File lỗi | Timeout | Thử lại |
-| Không nhận được | Firewall | Kiểm tra firewall |
-| Hết dung lượng | Disk đầy | Xóa file cũ |
+| Vấn đề          | Nguyên nhân | Giải pháp         |
+| --------------- | ----------- | ----------------- |
+| Truyền chậm     | Mạng yếu    | Kiểm tra kết nối  |
+| File lỗi        | Timeout     | Thử lại           |
+| Không nhận được | Firewall    | Kiểm tra firewall |
+| Hết dung lượng  | Disk đầy    | Xóa file cũ       |
 
 ---
-*Xem thêm: [Workflows - Quy trình truyền file](../../.agent/workflows/file-transfer-workflow.md)*
+
+_Xem thêm: [Workflows - Quy trình truyền file](../../.agent/workflows/file-transfer-workflow.md)_
