@@ -122,6 +122,7 @@ namespace ClassroomManagement.Views
 
         private void OnStudentConnected(object? sender, Student student)
         {
+            student.PropertyChanged += OnStudentPropertyChanged;
             UpdateStatusBar();
             // Show notification
             // TODO: Show toast notification
@@ -129,6 +130,7 @@ namespace ClassroomManagement.Views
 
         private void OnStudentDisconnected(object? sender, Student student)
         {
+            student.PropertyChanged -= OnStudentPropertyChanged;
             UpdateStatusBar();
         }
 
@@ -317,7 +319,9 @@ namespace ClassroomManagement.Views
 
         private void SelectAllCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            SetAllStudentsSelection(false);
+            // Only update if triggered by user interaction, not by code
+            if (_selectedCount == _session.OnlineStudents.Count)
+                SetAllStudentsSelection(false);
         }
 
         private void SetAllStudentsSelection(bool selected)
@@ -329,27 +333,53 @@ namespace ClassroomManagement.Views
             UpdateSelectionUI();
         }
 
-        private void DeselectAll_Click(object sender, RoutedEventArgs e)
+        private void ToggleSelection_Click(object sender, RoutedEventArgs e)
         {
-            SetAllStudentsSelection(false);
-            SelectAllCheckbox.IsChecked = false;
+            if (_selectedCount > 0)
+            {
+                // Bỏ chọn tất cả
+                SetAllStudentsSelection(false);
+                SelectAllCheckbox.IsChecked = false;
+            }
+            else
+            {
+                // Chọn tất cả
+                SetAllStudentsSelection(true);
+                SelectAllCheckbox.IsChecked = true;
+            }
         }
 
         private void UpdateSelectionUI()
         {
             _selectedCount = _session.OnlineStudents.Count(s => s.IsSelected);
 
+            BatchActionsBtn.IsEnabled = _selectedCount > 0;
+
             if (_selectedCount > 0)
             {
                 SelectionCountText.Text = $"({_selectedCount} đã chọn)";
-                BatchActionsBtn.IsEnabled = true;
-                DeselectAllBtn.IsEnabled = true;
+                ToggleSelectionBtn.Content = "Bỏ chọn";
+
+                // Update checkbox header state without triggering event loop if possible
+                // (Simple IsChecked assignment is fine here due to check in handler)
+                if (_selectedCount == _session.OnlineStudents.Count)
+                    SelectAllCheckbox.IsChecked = true;
+                else
+                    SelectAllCheckbox.IsChecked = null; // Indeterminate if partially selected
             }
             else
             {
                 SelectionCountText.Text = "";
-                BatchActionsBtn.IsEnabled = false;
-                DeselectAllBtn.IsEnabled = false;
+                ToggleSelectionBtn.Content = "Chọn tất cả";
+                SelectAllCheckbox.IsChecked = false;
+            }
+        }
+
+        private void OnStudentPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Student.IsSelected))
+            {
+                UpdateSelectionUI();
             }
         }
 

@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ClassroomManagement.Models
 {
@@ -33,7 +35,7 @@ namespace ClassroomManagement.Models
     /// <summary>
     /// Thông tin học sinh (Client)
     /// </summary>
-    public class Student
+    public class Student : INotifyPropertyChanged
     {
         public int Id { get; set; }
         public string MachineId { get; set; } = string.Empty;
@@ -41,17 +43,47 @@ namespace ClassroomManagement.Models
         public string ComputerName { get; set; } = string.Empty;
         public string IpAddress { get; set; } = string.Empty;
         public bool IsOnline { get; set; }
-        public bool IsLocked { get; set; }
+
+        private bool _isLocked;
+        public bool IsLocked
+        {
+            get => _isLocked;
+            set { if (_isLocked != value) { _isLocked = value; OnPropertyChanged(); } }
+        }
+
         public bool MicEnabled { get; set; } = true;
         public bool CameraEnabled { get; set; } = true;
         public DateTime? LastSeen { get; set; }
         public int? SessionId { get; set; }
 
         // Screen thumbnail (không lưu DB)
-        public byte[]? ScreenThumbnail { get; set; }
+        private byte[]? _screenThumbnail;
+        public byte[]? ScreenThumbnail
+        {
+            get => _screenThumbnail;
+            set { if (_screenThumbnail != value) { _screenThumbnail = value; OnPropertyChanged(); } }
+        }
 
         // Selection state for batch operations (không lưu DB)
-        public bool IsSelected { get; set; }
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     /// <summary>

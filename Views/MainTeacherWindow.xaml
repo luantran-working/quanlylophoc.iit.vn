@@ -286,14 +286,14 @@
                                         </ContextMenu>
                                     </Button.ContextMenu>
                                 </Button>
-                                <Button Grid.Column="1" x:Name="DeselectAllBtn"
+                                <Button Grid.Column="1" x:Name="ToggleSelectionBtn"
                                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                                        Content="Bỏ chọn"
+                                        Content="Chọn tất cả"
                                         Margin="4,0,0,0"
                                         Height="32"
                                         FontSize="12"
-                                        Click="DeselectAll_Click"
-                                        IsEnabled="False"
+                                        Click="ToggleSelection_Click"
+                                        IsEnabled="True"
                                         materialDesign:ButtonAssist.CornerRadius="4"/>
                             </Grid>
                         </Border>
