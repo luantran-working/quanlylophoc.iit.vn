@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Đăng nhập Giáo viên" 
+        Title="Đăng nhập giáo viên"
         Height="450" Width="400"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
@@ -40,7 +40,7 @@
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Đăng nhập Giáo viên" 
+                        <TextBlock Text="Đăng nhập giáo viên"
                                    FontSize="20" FontWeight="Bold"
                                    Foreground="White"
                                    HorizontalAlignment="Center"/>
@@ -52,7 +52,7 @@
                             HorizontalAlignment="Right" VerticalAlignment="Top"
                             Click="CloseButton_Click"
                             ToolTip="Đóng">
-                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
                     </Button>
                 </Grid>
             </Border>
@@ -63,7 +63,6 @@
                 <TextBlock Text="Tên đăng nhập" FontWeight="Medium" 
                            Foreground="#424242" Margin="0,0,0,8"/>
                 <TextBox x:Name="UsernameTextBox"
-                         materialDesign:HintAssist.Hint="Nhập tên đăng nhập"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          FontSize="14" Padding="12,10"
                          materialDesign:TextFieldAssist.HasLeadingIcon="True"
@@ -73,8 +72,7 @@
                 <TextBlock Text="Mật khẩu" FontWeight="Medium" 
                            Foreground="#424242" Margin="0,16,0,8"/>
                 <PasswordBox x:Name="PasswordBox"
-                             materialDesign:HintAssist.Hint="Nhập mật khẩu"
-                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                            Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                              FontSize="14" Padding="12,10"
                              materialDesign:TextFieldAssist.HasLeadingIcon="True"
                              materialDesign:TextFieldAssist.LeadingIcon="Lock"
@@ -87,32 +85,13 @@
                 
                 <!-- Login Button -->
                 <Button x:Name="LoginButton"
-                        Content="ĐĂNG NHẬP" 
+                        Content="Đăng nhập tài khoản"
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         Background="{StaticResource AppPrimaryBrush}"
                         Foreground="White"
                         FontWeight="Bold" FontSize="14"
                         Height="48" Margin="0,24,0,0"
                         Click="LoginButton_Click"/>
-                
-                <!-- Default credentials hint -->
-                <Border Background="#FFF3E0" CornerRadius="8" 
-                        Padding="12" Margin="0,20,0,0">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Information" 
-                                                      Foreground="#FF9800"
-                                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Tài khoản mặc định:" 
-                                       FontWeight="Medium" Foreground="#E65100"
-                                       Margin="8,0,0,0"/>
-                        </StackPanel>
-                        <TextBlock Text="Tên đăng nhập: admin" 
-                                   Foreground="#424242" FontSize="12" Margin="28,4,0,0"/>
-                        <TextBlock Text="Mật khẩu: 123456" 
-                                   Foreground="#424242" FontSize="12" Margin="28,2,0,0"/>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </Grid>
     </Border>
