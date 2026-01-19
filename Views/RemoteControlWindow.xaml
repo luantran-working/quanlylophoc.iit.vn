@@ -11,6 +11,18 @@
         WindowStyle="None"
         KeyDown="Window_KeyDown">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesign3.defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/primary/materialdesigncolor.blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/secondary/materialdesigncolor.lightblue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <!-- App Primary Brush for this window -->
+            <SolidColorBrush x:Key="AppPrimaryBrush" Color="#2196F3"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Border CornerRadius="8" Background="#1E1E1E" BorderBrush="#333" BorderThickness="1">
         <Border.Effect>
             <DropShadowEffect BlurRadius="20" ShadowDepth="5" Color="Black" Opacity="0.4"/>
