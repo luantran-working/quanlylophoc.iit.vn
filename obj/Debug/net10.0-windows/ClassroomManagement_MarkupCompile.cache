@@ -1,5 +1,5 @@
 ﻿ClassroomManagement
-
+1.0.0.0
 
 winexe
 C#
@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_O
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\App.xaml
 221330815479
 
-311040446599
+33-2100980955
 213540609086
 Controls\ScreenThumbnailControl.xaml;Controls\StatusIndicator.xaml;Controls\StudentCardControl.xaml;Controls\ToolButton.xaml;Styles\Buttons.xaml;Styles\Cards.xaml;Styles\Colors.xaml;Styles\Controls.xaml;Styles\Converters.xaml;Views\ChatWindow.xaml;Views\FileTransferWindow.xaml;Views\LockScreenWindow.xaml;Views\LoginWindow.xaml;Views\LogWindow.xaml;Views\MainTeacherWindow.xaml;Views\ManualConnectDialog.xaml;Views\RoleSelectionWindow.xaml;Views\ScreenShareWindow.xaml;Views\StudentNameDialog.xaml;Views\StudentScreenWindow.xaml;Views\StudentWindow.xaml;Views\TestCreationWindow.xaml;
 
-False
+True
 
