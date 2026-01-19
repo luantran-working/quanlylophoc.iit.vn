@@ -6,17 +6,78 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Đăng nhập giáo viên"
-        Height="450" Width="400"
+        Height="520" Width="420"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         ResizeMode="NoResize">
-    
-    <Border CornerRadius="16" Background="White"
-            BorderBrush="#E0E0E0" BorderThickness="1">
+
+    <Window.Resources>
+        <!-- Window Control Button Styles (Sleek/Minimal) -->
+        <Style x:Key="WindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Foreground" Value="#757575"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="16" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#EEE"/>
+                                <Setter Property="Foreground" Value="#333"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#DDD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="WindowCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF5252"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#FF5252"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" CornerRadius="16" Background="#FF5252">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="MainBorder" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                    <DoubleAnimation Storyboard.TargetName="MainBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="50" To="0" Duration="0:0:0.5" DecelerationRatio="0.9"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Border x:Name="MainBorder" CornerRadius="16" Background="White" RenderTransformOrigin="0.5,0.5">
+        <Border.RenderTransform>
+            <TranslateTransform/>
+        </Border.RenderTransform>
         <Border.Effect>
-            <DropShadowEffect BlurRadius="20" Opacity="0.15" ShadowDepth="5"/>
+            <DropShadowEffect BlurRadius="40" Opacity="0.2" ShadowDepth="10" Color="Black"/>
         </Border.Effect>
         
         <Grid>
@@ -25,73 +86,73 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
-            <!-- Header -->
-            <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}" 
-                    CornerRadius="16,16,0,0" Padding="24,20"
-                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
-                <Grid>
-                    <StackPanel HorizontalAlignment="Center">
-                        <Border Width="64" Height="64" CornerRadius="32" 
-                                Background="White" Margin="0,0,0,12"
-                                HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="School" 
-                                                      Width="36" Height="36"
-                                                      Foreground="{StaticResource AppPrimaryBrush}"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Đăng nhập giáo viên"
-                                   FontSize="20" FontWeight="Bold"
-                                   Foreground="White"
-                                   HorizontalAlignment="Center"/>
-                    </StackPanel>
-                    
-                    <!-- Close Button -->
-                    <Button Style="{StaticResource MaterialDesignIconButton}"
-                            Foreground="White" Opacity="0.8"
-                            HorizontalAlignment="Right" VerticalAlignment="Top"
-                            Click="CloseButton_Click"
-                            ToolTip="Đóng">
-                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
+            <!-- Header (Draggable) -->
+            <Grid Grid.Row="0" MouseLeftButtonDown="Header_MouseLeftButtonDown" Background="Transparent" Height="40">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,12,0">
+                    <Button Style="{StaticResource WindowCloseButtonStyle}" 
+                            Click="CloseButton_Click" ToolTip="Đóng">
+                        <materialDesign:PackIcon Kind="Close" Width="10" Height="10"/>
                     </Button>
-                </Grid>
-            </Border>
+                </StackPanel>
+            </Grid>
             
-            <!-- Login Form -->
-            <StackPanel Grid.Row="1" Margin="32,24">
-                <!-- Username -->
-                <TextBlock Text="Tên đăng nhập" FontWeight="Medium" 
-                           Foreground="#424242" Margin="0,0,0,8"/>
-                <TextBox x:Name="UsernameTextBox"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         FontSize="14" Padding="12,10"
-                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
-                         materialDesign:TextFieldAssist.LeadingIcon="Account"/>
+            <!-- Main Content -->
+            <StackPanel Grid.Row="1" Margin="40,0,40,40">
                 
-                <!-- Password -->
-                <TextBlock Text="Mật khẩu" FontWeight="Medium" 
-                           Foreground="#424242" Margin="0,16,0,8"/>
-                <PasswordBox x:Name="PasswordBox"
-                            Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
-                             FontSize="14" Padding="12,10"
+                <!-- Logo & Title -->
+                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,32">
+                    <Border Width="72" Height="72" CornerRadius="24" Background="#E3F2FD" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="School" Width="40" Height="40" 
+                                                  Foreground="{StaticResource AppPrimaryBrush}" 
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Đăng nhập" FontSize="26" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Chào mừng giáo viên quay trở lại" FontSize="14" Foreground="#757575" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <!-- Login Form -->
+                <StackPanel>
+                    <!-- Username -->
+                    <TextBox x:Name="UsernameTextBox"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:HintAssist.Hint="Tên đăng nhập"
                              materialDesign:TextFieldAssist.HasLeadingIcon="True"
-                             materialDesign:TextFieldAssist.LeadingIcon="Lock"
-                             KeyDown="PasswordBox_KeyDown"/>
-                
-                <!-- Error Message -->
-                <TextBlock x:Name="ErrorText" 
-                           Foreground="#F44336" FontSize="12"
-                           Margin="0,12,0,0" Visibility="Collapsed"/>
-                
-                <!-- Login Button -->
-                <Button x:Name="LoginButton"
-                        Content="Đăng nhập tài khoản"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        Background="{StaticResource AppPrimaryBrush}"
-                        Foreground="White"
-                        FontWeight="Bold" FontSize="14"
-                        Height="48" Margin="0,24,0,0"
-                        Click="LoginButton_Click"/>
+                             materialDesign:TextFieldAssist.LeadingIcon="AccountOutline"
+                             FontSize="14" Height="48" Margin="0,0,0,16"
+                             BorderBrush="#E0E0E0"
+                             Padding="12,10"/>
+                    
+                    <!-- Password -->
+                    <PasswordBox x:Name="PasswordBox"
+                                 Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                 materialDesign:HintAssist.Hint="Mật khẩu"
+                                 materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                                 materialDesign:TextFieldAssist.LeadingIcon="LockOutline"
+                                 FontSize="14" Height="48"
+                                 BorderBrush="#E0E0E0"
+                                 Padding="12,10"
+                                 KeyDown="PasswordBox_KeyDown"/>
+                    
+                    <!-- Error Message -->
+                    <TextBlock x:Name="ErrorText" 
+                               Text="Thông tin đăng nhập không chính xác"
+                               Foreground="#D32F2F" FontSize="13"
+                               HorizontalAlignment="Center"
+                               Margin="0,16,0,0" Visibility="Collapsed"/>
+                    
+                    <!-- Login Button -->
+                    <Button x:Name="LoginButton"
+                            Content="ĐĂNG NHẬP"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{StaticResource AppPrimaryBrush}"
+                            Foreground="White"
+                            FontWeight="Bold" FontSize="14"
+                            Height="50" Margin="0,24,0,0"
+                            materialDesign:ButtonAssist.CornerRadius="8"
+                            materialDesign:ElevationAssist.Elevation="Dp2"
+                            Click="LoginButton_Click"/>
+                </StackPanel>
+
             </StackPanel>
         </Grid>
     </Border>

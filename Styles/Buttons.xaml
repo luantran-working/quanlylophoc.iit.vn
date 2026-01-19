@@ -81,5 +81,4 @@
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4,4,0,0"/>
     </Style>
-    
 </ResourceDictionary>
