@@ -46,9 +46,12 @@ namespace ClassroomManagement.Models
         public bool CameraEnabled { get; set; } = true;
         public DateTime? LastSeen { get; set; }
         public int? SessionId { get; set; }
-        
+
         // Screen thumbnail (không lưu DB)
         public byte[]? ScreenThumbnail { get; set; }
+
+        // Selection state for batch operations (không lưu DB)
+        public bool IsSelected { get; set; }
     }
 
     /// <summary>
@@ -115,7 +118,7 @@ namespace ClassroomManagement.Models
         public bool IsGroup { get; set; } = true;
         public bool IsRead { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        
+
         // Navigation properties (không lưu DB)
         public string SenderName { get; set; } = string.Empty;
     }

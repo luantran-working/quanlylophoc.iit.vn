@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "q5WkKWxcMGc=",
+  "dgSpecHash": "y/XZYFaUcdk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+  "projectFilePath": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\materialdesigncolors\\3.1.0\\materialdesigncolors.3.1.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\materialdesignthemes\\5.1.0\\materialdesignthemes.5.1.0.nupkg.sha512",
@@ -20,9 +20,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference System.Drawing.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+      "projectPath": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
+      "filePath": "c:\\Users\\admin\\Documents\\SourceCode2025\\quanlylophoc.iit.vn\\ClassroomManagement.csproj",
       "libraryId": "System.Drawing.Common",
       "targetGraphs": [
         "net10.0-windows7.0"

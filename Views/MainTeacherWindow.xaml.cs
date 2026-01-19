@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,19 +15,20 @@ namespace ClassroomManagement.Views
     {
         private readonly SessionManager _session;
         private bool _isSessionStarted;
+        private int _selectedCount = 0;
 
         public MainTeacherWindow()
         {
             InitializeComponent();
-            
+
             _session = SessionManager.Instance;
             DataContext = _session;
-            
+
             // Wire up events
             _session.StudentConnected += OnStudentConnected;
             _session.StudentDisconnected += OnStudentDisconnected;
             _session.ChatMessageReceived += OnChatMessageReceived;
-            
+
             // Start session automatically
             Loaded += MainTeacherWindow_Loaded;
             Closing += MainTeacherWindow_Closing;
@@ -96,11 +98,11 @@ namespace ClassroomManagement.Views
             if (success)
             {
                 _isSessionStarted = true;
-                
+
                 // Update UI with class name and server IP
                 ClassNameText.Text = className;
                 ServerIpText.Text = _session.NetworkServer.ServerIp;
-                
+
                 UpdateStatusBar();
             }
             else
@@ -178,9 +180,9 @@ namespace ClassroomManagement.Views
         {
             var button = sender as Button;
             var isLocking = button?.Tag?.ToString() != "locked";
-            
+
             await _session.LockAllStudentsAsync(isLocking);
-            
+
             if (button != null)
             {
                 button.Tag = isLocking ? "locked" : "unlocked";
@@ -285,6 +287,150 @@ namespace ClassroomManagement.Views
         private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             return FindChild<T>(parent);
+        }
+
+        // ============================================
+        // BATCH OPERATIONS
+        // ============================================
+
+        private void BatchActionsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Open context menu
+            if (sender is Button button && button.ContextMenu != null)
+            {
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void SelectAllCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            SetAllStudentsSelection(true);
+        }
+
+        private void SelectAllCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetAllStudentsSelection(false);
+        }
+
+        private void SetAllStudentsSelection(bool selected)
+        {
+            foreach (var student in _session.OnlineStudents)
+            {
+                student.IsSelected = selected;
+            }
+            UpdateSelectionUI();
+        }
+
+        private void DeselectAll_Click(object sender, RoutedEventArgs e)
+        {
+            SetAllStudentsSelection(false);
+            SelectAllCheckbox.IsChecked = false;
+        }
+
+        private void UpdateSelectionUI()
+        {
+            _selectedCount = _session.OnlineStudents.Count(s => s.IsSelected);
+
+            if (_selectedCount > 0)
+            {
+                SelectionCountText.Text = $"({_selectedCount} đã chọn)";
+                BatchActionsBtn.IsEnabled = true;
+                DeselectAllBtn.IsEnabled = true;
+            }
+            else
+            {
+                SelectionCountText.Text = "";
+                BatchActionsBtn.IsEnabled = false;
+                DeselectAllBtn.IsEnabled = false;
+            }
+        }
+
+        private async void BatchLock_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            var result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn khóa {selectedStudents.Count} học sinh đã chọn?",
+                "Xác nhận",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            foreach (var student in selectedStudents)
+            {
+                await _session.LockStudentAsync(student.MachineId, true);
+            }
+
+            ToastService.Instance.ShowSuccess("Đã khóa", $"Đã khóa {selectedStudents.Count} học sinh");
+        }
+
+        private async void BatchUnlock_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            foreach (var student in selectedStudents)
+            {
+                await _session.LockStudentAsync(student.MachineId, false);
+            }
+
+            ToastService.Instance.ShowSuccess("Đã mở khóa", $"Đã mở khóa {selectedStudents.Count} học sinh");
+        }
+
+        private void BatchMessage_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            // TODO: Open message dialog
+            var studentNames = string.Join(", ", selectedStudents.Select(s => s.DisplayName));
+            MessageBox.Show(
+                $"Tính năng gửi tin nhắn cho nhóm sẽ được thêm trong phiên bản sau.\n\nHọc sinh đã chọn: {studentNames}",
+                "Gửi tin nhắn",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private void BatchSendFile_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            var fileDialog = new Microsoft.Win32.OpenFileDialog();
+            fileDialog.Title = "Chọn file để gửi";
+
+            if (fileDialog.ShowDialog() == true)
+            {
+                // TODO: Implement batch file sending
+                ToastService.Instance.ShowInfo(
+                    "Gửi file",
+                    $"Đang gửi file đến {selectedStudents.Count} học sinh...");
+            }
+        }
+
+        private void BatchCameraOff_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            // TODO: Implement camera control
+            ToastService.Instance.ShowInfo(
+                "Tắt camera",
+                $"Đã tắt camera của {selectedStudents.Count} học sinh");
+        }
+
+        private void BatchMicOff_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudents = _session.OnlineStudents.Where(s => s.IsSelected).ToList();
+            if (!selectedStudents.Any()) return;
+
+            // TODO: Implement microphone control
+            ToastService.Instance.ShowInfo(
+                "Tắt mic",
+                $"Đã tắt mic của {selectedStudents.Count} học sinh");
         }
     }
 }
