@@ -45,9 +45,32 @@ namespace ClassroomManagement.Views
             // TODO: Add proper filtering
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.Close();
+            if (e.ButtonState == MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                SystemCommands.RestoreWindow(this);
+            }
+            else
+            {
+                SystemCommands.MaximizeWindow(this);
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void SendMessage_Click(object sender, RoutedEventArgs e)

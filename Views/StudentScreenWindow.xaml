@@ -5,103 +5,153 @@
         Title="Màn hình học sinh" 
         Width="1024" Height="768"
         WindowStartupLocation="CenterScreen"
-        Background="#1a1a2e"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStyle="None"
         KeyDown="Window_KeyDown">
     
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <!-- Header -->
-        <Border Grid.Row="0" Background="#2d2d44" Padding="16,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Monitor" Width="24" Height="24" 
-                                              Foreground="White" VerticalAlignment="Center"/>
-                    <StackPanel Margin="12,0,0,0">
-                        <TextBlock x:Name="StudentNameText" Text="Học sinh" 
-                                   FontSize="16" FontWeight="SemiBold" Foreground="White"/>
-                        <TextBlock x:Name="StudentInfoText" Text="IP: ---.---.---.---" 
-                                   FontSize="12" Foreground="#AAA"/>
-                    </StackPanel>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <!-- Lock Button -->
-                    <Button x:Name="LockButton" 
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Foreground="White" BorderBrush="#555"
-                            Margin="0,0,8,0"
-                            Click="LockButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Lock" Width="18" Height="18"/>
-                            <TextBlock x:Name="LockButtonText" Text="Khóa máy" Margin="8,0,0,0"/>
-                        </StackPanel>
-                    </Button>
+    <Window.Resources>
+        <!-- Toolbar Button Style -->
+        <Style x:Key="ToolbarButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="8,4"/>
+             <Setter Property="Margin" Value="4,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#3D3D4D"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="8" Background="#1E1E2E" BorderBrush="#333" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="15" ShadowDepth="5" Color="Black" Opacity="0.5"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#252530" Padding="16,8" CornerRadius="8,8,0,0" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
                     
-                    <!-- Remote Control Button -->
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Foreground="White" BorderBrush="#555"
-                            Margin="0,0,8,0"
-                            Click="RemoteControlButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="RemoteDesktop" Width="18" Height="18"/>
-                            <TextBlock Text="Điều khiển" Margin="8,0,0,0"/>
+                     <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Border Width="32" Height="32" CornerRadius="16" Background="#3F51B5">
+                             <materialDesign:PackIcon Kind="Monitor" Width="18" Height="18" 
+                                                  Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                       
+                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="StudentNameText" Text="Học sinh" 
+                                       FontSize="14" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock x:Name="StudentInfoText" Text="IP: 192.168.1.10" 
+                                       FontSize="11" Foreground="#AAA"/>
                         </StackPanel>
-                    </Button>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                         <!-- Lock Button -->
+                        <Button x:Name="LockButton" 
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Foreground="#EF5350" BorderBrush="#555"
+                                Margin="0,0,8,0" Padding="12,6" Height="32"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Click="LockButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Lock" Width="16" Height="16"/>
+                                <TextBlock x:Name="LockButtonText" Text="Khóa máy" Margin="8,0,0,0" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <!-- Remote Control Button -->
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Foreground="#42A5F5" BorderBrush="#555"
+                                Margin="0,0,16,0" Padding="12,6" Height="32"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Click="RemoteControlButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="RemoteDesktop" Width="16" Height="16"/>
+                                <TextBlock Text="Điều khiển" Margin="8,0,0,0" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <!-- Window Controls -->
+                        <StackPanel Orientation="Horizontal">
+                             <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
+                                    ToolTip="Thu nhỏ" Click="MinimizeButton_Click">
+                                <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
+                            </Button>
+                             <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
+                                    ToolTip="Phóng to" Click="MaximizeButton_Click">
+                                <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
+                            </Button>
+                             <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#EF5350" Width="30" Height="30"
+                                    ToolTip="Đóng" Click="CloseButton_Click">
+                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                            </Button>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Screen Display -->
+            <Grid Grid.Row="1" Background="Black">
+                <Image x:Name="ScreenImage" 
+                       Stretch="Uniform" 
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                
+                <!-- Loading placeholder -->
+                <StackPanel x:Name="LoadingPanel" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center">
+                    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                 IsIndeterminate="True" Width="40" Height="40"
+                                 Foreground="{StaticResource AppPrimaryBrush}"/>
+                    <TextBlock Text="Đang tải màn hình..." 
+                               Foreground="#888" FontSize="14" 
+                               Margin="0,16,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
+                
+                <!-- Locked Overlay -->
+                <Border x:Name="LockedOverlay" Background="#D9000000" Visibility="Collapsed">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="Lock" Width="56" Height="56" Foreground="#F44336"/>
+                        <TextBlock Text="MÀN HÌNH ĐÃ BỊ KHÓA" FontSize="20" 
+                                   Foreground="#F44336" FontWeight="Bold" Margin="0,16,0,0"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Foreground="White" Margin="0,24,0,0"
+                                Content="Mở khóa ngay"
+                                Click="LockButton_Click"/>
+                    </StackPanel>
+                </Border>
             </Grid>
-        </Border>
-        
-        <!-- Screen Display -->
-        <Grid Grid.Row="1">
-            <Image x:Name="ScreenImage" 
-                   Stretch="Uniform" 
-                   RenderOptions.BitmapScalingMode="HighQuality"/>
             
-            <!-- Loading placeholder -->
-            <StackPanel x:Name="LoadingPanel" 
-                        HorizontalAlignment="Center" 
-                        VerticalAlignment="Center">
-                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
-                             IsIndeterminate="True" Width="48" Height="48"
-                             Foreground="White"/>
-                <TextBlock Text="Đang tải màn hình..." 
-                           Foreground="#888" FontSize="14" 
-                           Margin="0,16,0,0" HorizontalAlignment="Center"/>
-            </StackPanel>
-            
-            <!-- Locked Overlay -->
-            <Border x:Name="LockedOverlay" Background="#CC000000" Visibility="Collapsed">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <materialDesign:PackIcon Kind="Lock" Width="64" Height="64" Foreground="#F44336"/>
-                    <TextBlock Text="MÀN HÌNH ĐÃ BỊ KHÓA" FontSize="24" 
-                               Foreground="#F44336" FontWeight="Bold" Margin="0,16,0,0"/>
-                </StackPanel>
+            <!-- Footer Status Bar -->
+            <Border Grid.Row="2" Background="#252530" Padding="16,6" CornerRadius="0,0,8,8">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatusText" Text="Đang xem trực tiếp" 
+                                   Foreground="#B0BEC5" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <TextBlock x:Name="UpdateTimeText" Text="Cập nhật: --:--:--" 
+                               Foreground="#757575" FontSize="10" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
             </Border>
         </Grid>
-        
-        <!-- Footer Status Bar -->
-        <Border Grid.Row="2" Background="#2d2d44" Padding="16,8">
-            <Grid>
-                <StackPanel Orientation="Horizontal">
-                    <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="StatusText" Text="Đang xem trực tiếp" 
-                               Foreground="#AAA" FontSize="12" Margin="8,0,0,0"/>
-                </StackPanel>
-                
-                <TextBlock x:Name="UpdateTimeText" Text="Cập nhật: --:--:--" 
-                           Foreground="#666" FontSize="11" 
-                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            </Grid>
-        </Border>
-    </Grid>
+    </Border>
 </Window>

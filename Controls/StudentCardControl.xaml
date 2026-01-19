@@ -5,14 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
-             d:DesignHeight="80" d:DesignWidth="280">
+             d:DesignHeight="72" d:DesignWidth="300">
     
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
     </UserControl.Resources>
     
-    <Border Style="{StaticResource StudentListCardStyle}" 
-            Background="{Binding Background, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=White}">
+    <Border CornerRadius="8" Background="White" Margin="4,2" Padding="12,8"
+            BorderBrush="#F0F0F0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.05" Color="Black"/>
+        </Border.Effect>
+        <Border.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1"/>
+                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                 <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
+                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Border.Triggers>
+        <Border.RenderTransform>
+            <ScaleTransform ScaleX="1" ScaleY="1"/>
+        </Border.RenderTransform>
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -22,15 +47,15 @@
             
             <!-- Avatar with Status Indicator -->
             <Grid Grid.Column="0" Margin="0,0,12,0">
-                <Border Width="48" Height="48" CornerRadius="24" Background="#E3F2FD">
+                <Border Width="40" Height="40" CornerRadius="20" Background="#E3F2FD">
                     <materialDesign:PackIcon Kind="Account" 
-                                              Width="28" Height="28"
+                                              Width="24" Height="24"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Foreground="{StaticResource AppPrimaryBrush}"/>
                 </Border>
                 <!-- Online Status Indicator -->
-                <Ellipse Width="14" Height="14"
+                <Ellipse Width="12" Height="12"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Bottom"
                          Stroke="White" StrokeThickness="2"
@@ -51,72 +76,67 @@
             <!-- Student Info -->
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="{Binding DisplayName, FallbackValue='Học sinh'}" 
-                           FontSize="14" FontWeight="SemiBold"
+                           FontSize="13" FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryTextBrush}"/>
-                <TextBlock FontSize="11" Foreground="{StaticResource SecondaryTextBrush}"
-                           Margin="0,2,0,0">
-                    <Run Text="{Binding ComputerName, FallbackValue=''}"/>
-                    <Run Text=" • "/>
-                    <Run Text="{Binding IpAddress, FallbackValue='IP'}"/>
-                </TextBlock>
-                <TextBlock FontSize="11" Margin="0,2,0,0">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="● Online"/>
-                            <Setter Property="Foreground" Value="#4CAF50"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                                    <Setter Property="Text" Value="○ Offline"/>
-                                    <Setter Property="Foreground" Value="#9E9E9E"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsLocked}" Value="True">
-                                    <Setter Property="Text" Value="🔒 Đã khóa"/>
-                                    <Setter Property="Foreground" Value="#F44336"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                    <TextBlock FontSize="11" Foreground="{StaticResource SecondaryTextBrush}">
+                        <Run Text="{Binding ComputerName, FallbackValue='PC-01'}"/>
+                        <Run Text=" • "/>
+                        <Run Text="{Binding IpAddress, FallbackValue='192.168.1.10'}"/>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
             
             <!-- Action Buttons -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Camera Toggle -->
-                <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
-                              Width="32" Height="32"
-                              IsChecked="{Binding IsCameraOn}"
-                              ToolTip="Bật/Tắt Camera">
-                    <materialDesign:PackIcon Kind="Camera" Width="18" Height="18"/>
-                    <materialDesign:ToggleButtonAssist.OnContent>
-                        <materialDesign:PackIcon Kind="Camera" Width="18" Height="18" Foreground="{StaticResource AppPrimaryBrush}"/>
-                    </materialDesign:ToggleButtonAssist.OnContent>
-                </ToggleButton>
+                <!-- Camera Status (Icon only if active, or button on hover? Keeping simpler for now) -->
+                <!-- Let's make these simpler small icon buttons -->
                 
-                <!-- Microphone Toggle -->
-                <ToggleButton Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
-                              Width="32" Height="32"
-                              IsChecked="{Binding IsMicrophoneOn}"
-                              ToolTip="Bật/Tắt Microphone">
-                    <materialDesign:PackIcon Kind="Microphone" Width="18" Height="18"/>
-                    <materialDesign:ToggleButtonAssist.OnContent>
-                        <materialDesign:PackIcon Kind="Microphone" Width="18" Height="18" Foreground="{StaticResource AppPrimaryBrush}"/>
-                    </materialDesign:ToggleButtonAssist.OnContent>
-                </ToggleButton>
-                
-                <!-- Lock Button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}"
-                        Width="32" Height="32"
-                        Command="{Binding LockCommand}"
-                        ToolTip="Khóa máy">
-                    <materialDesign:PackIcon Kind="Lock" Width="18" Height="18"/>
+                 <Button Style="{StaticResource MaterialDesignToolButton}"
+                        Width="28" Height="28" Padding="4"
+                        Command="{Binding ToggleCameraCommand}"
+                        ToolTip="Camera">
+                     <Button.Content>
+                         <materialDesign:PackIcon Kind="Camera" Width="16" Height="16">
+                             <materialDesign:PackIcon.Style>
+                                 <Style TargetType="materialDesign:PackIcon">
+                                     <Setter Property="Foreground" Value="#BDBDBD"/>
+                                      <Style.Triggers>
+                                         <DataTrigger Binding="{Binding IsCameraOn}" Value="True">
+                                             <Setter Property="Foreground" Value="{StaticResource AppPrimaryBrush}"/>
+                                         </DataTrigger>
+                                     </Style.Triggers>
+                                 </Style>
+                             </materialDesign:PackIcon.Style>
+                         </materialDesign:PackIcon>
+                     </Button.Content>
                 </Button>
                 
-                <!-- Chat Button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}"
-                        Width="32" Height="32"
-                        Command="{Binding ChatCommand}"
-                        ToolTip="Chat riêng">
-                    <materialDesign:PackIcon Kind="MessageText" Width="18" Height="18"/>
+                 <Button Style="{StaticResource MaterialDesignToolButton}"
+                        Width="28" Height="28" Padding="4"
+                        Command="{Binding ToggleMicCommand}"
+                        ToolTip="Microphone">
+                      <Button.Content>
+                        <materialDesign:PackIcon Kind="Microphone" Width="16" Height="16">
+                            <materialDesign:PackIcon.Style>
+                                 <Style TargetType="materialDesign:PackIcon">
+                                     <Setter Property="Foreground" Value="#BDBDBD"/>
+                                      <Style.Triggers>
+                                         <DataTrigger Binding="{Binding IsMicrophoneOn}" Value="True">
+                                             <Setter Property="Foreground" Value="{StaticResource AppPrimaryBrush}"/>
+                                         </DataTrigger>
+                                     </Style.Triggers>
+                                 </Style>
+                             </materialDesign:PackIcon.Style>
+                        </materialDesign:PackIcon>
+                     </Button.Content>
+                </Button>
+                
+                <Button Style="{StaticResource MaterialDesignToolButton}"
+                        Width="28" Height="28" Padding="4"
+                        Command="{Binding LockCommand}"
+                        ToolTip="Khóa máy">
+                     <materialDesign:PackIcon Kind="Lock" Width="16" Height="16" Foreground="#757575"/>
                 </Button>
             </StackPanel>
         </Grid>

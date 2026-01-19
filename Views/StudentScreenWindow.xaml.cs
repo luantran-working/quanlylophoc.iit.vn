@@ -125,6 +125,30 @@ namespace ClassroomManagement.Views
                 "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        // Window Chrome Logic
+        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                SystemCommands.RestoreWindow(this);
+            }
+            else
+            {
+                SystemCommands.MaximizeWindow(this);
+            }
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -134,19 +158,20 @@ namespace ClassroomManagement.Views
         {
             if (e.Key == Key.Escape)
             {
-                Close();
+                if (WindowState == WindowState.Maximized)
+                    WindowState = WindowState.Normal;
+                else
+                    Close();
             }
             else if (e.Key == Key.F11)
             {
                 // Toggle fullscreen
-                if (WindowState == WindowState.Maximized && WindowStyle == WindowStyle.None)
+                if (WindowState == WindowState.Maximized)
                 {
                     WindowState = WindowState.Normal;
-                    WindowStyle = WindowStyle.SingleBorderWindow;
                 }
                 else
                 {
-                    WindowStyle = WindowStyle.None;
                     WindowState = WindowState.Maximized;
                 }
             }

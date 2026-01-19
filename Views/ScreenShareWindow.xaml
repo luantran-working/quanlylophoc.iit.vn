@@ -6,21 +6,24 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Trình chiếu màn hình"
-        Height="700" Width="1000"
+        Height="720" Width="1080"
         MinHeight="600" MinWidth="800"
         WindowStartupLocation="CenterScreen"
-        Background="#1E1E2E"
+        Background="Transparent"
         WindowStyle="None"
         AllowsTransparency="True">
 
     <Window.Resources>
         <!-- Toolbar Button Style -->
         <Style x:Key="ToolbarButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="materialDesign:RippleAssist.Feedback" Value="White"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
                     <Setter Property="Background" Value="#3D3D4D"/>
                 </Trigger>
             </Style.Triggers>
@@ -28,210 +31,226 @@
 
         <!-- Active Tool Button Style -->
         <Style x:Key="ActiveToolButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,8"/>
+             <Setter Property="Margin" Value="4,0"/>
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Background" Value="#4CAF50"/>
+                    <Setter Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#3D3D4D"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border CornerRadius="8" Background="#1E1E2E" BorderBrush="#333" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="5" Color="Black" Opacity="0.5"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- ============================================ -->
-        <!-- TOP BAR -->
-        <!-- ============================================ -->
-        <Border Grid.Row="0" Background="#2D2D3D" Padding="16,8" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Title -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <Border Width="36" Height="36" CornerRadius="8" Margin="0,0,12,0">
-                        <Border.Background>
-                            <SolidColorBrush Color="{StaticResource AppPrimaryColor}"/>
-                        </Border.Background>
-                        <materialDesign:PackIcon Kind="Presentation" Width="20" Height="20"
-                                                  Foreground="White"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="TitleText" Text="TRÌNH CHIẾU MÀN HÌNH" FontSize="14" FontWeight="Bold" Foreground="White"/>
-                        <StackPanel x:Name="LiveIndicator" Orientation="Horizontal" Visibility="Collapsed">
-                            <Ellipse Width="8" Height="8" Fill="#F44336" VerticalAlignment="Center"/>
-                            <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold"
-                                       Foreground="#F44336" Margin="6,0,0,0" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="ViewerCountText" Text=" • 0 học sinh đang xem" FontSize="11"
-                                       Foreground="#888" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Window Controls -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="White"
-                            ToolTip="Thu nhỏ" Click="MinimizeButton_Click">
-                        <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="White"
-                            ToolTip="Phóng to" Click="MaximizeButton_Click">
-                        <materialDesign:PackIcon Kind="WindowMaximize" Width="20" Height="20"/>
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#F44336"
-                            ToolTip="Đóng" Click="CloseButton_Click">
-                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- ============================================ -->
-        <!-- SCREEN CONTENT -->
-        <!-- ============================================ -->
-        <Grid Grid.Row="1" Background="#1E1E2E">
-            <!-- Screen Preview -->
-            <Border Background="#0D0D15" Margin="20" CornerRadius="12">
+            <!-- ============================================ -->
+            <!-- TOP BAR -->
+            <!-- ============================================ -->
+            <Border Grid.Row="0" Background="#252530" Padding="16,10" CornerRadius="8,8,0,0" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
                 <Grid>
-                    <!-- Placeholder -->
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                x:Name="PreviewPlaceholder">
-                        <Border Width="120" Height="120" CornerRadius="60" Background="#2D2D3D"
-                                HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="MonitorScreenshot" Width="60" Height="60"
-                                                      Foreground="#555"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Title -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Border Width="32" Height="32" CornerRadius="6" Margin="0,0,12,0" Background="{StaticResource AppPrimaryBrush}">
+                            <materialDesign:PackIcon Kind="Presentation" Width="18" Height="18"
+                                                      Foreground="White"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Chọn nội dung để trình chiếu"
-                                   Foreground="#888" FontSize="16"
-                                   HorizontalAlignment="Center" Margin="0,20,0,0"/>
-
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,24,0,0">
-                            <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                                    Background="#2196F3" Margin="8,0"
-                                    Height="44" Padding="20,0"
-                                    Click="ShareScreen_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Monitor" VerticalAlignment="Center" Width="24" Height="24"/>
-                                    <TextBlock Text="Toàn màn hình" Margin="8,0,0,0" FontSize="14"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                                    Background="#9C27B0" Margin="8,0"
-                                    Height="44" Padding="20,0"
-                                    Click="ShareWindow_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="ApplicationOutline" VerticalAlignment="Center" Width="24" Height="24"/>
-                                    <TextBlock Text="Chọn cửa sổ" Margin="8,0,0,0" FontSize="14"/>
-                                </StackPanel>
-                            </Button>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="TitleText" Text="TRÌNH CHIẾU MÀN HÌNH" FontSize="14" FontWeight="Bold" Foreground="White" LetterSpacing="0.5"/>
+                            <StackPanel x:Name="LiveIndicator" Orientation="Horizontal" Visibility="Collapsed" Margin="0,2,0,0">
+                                <Ellipse Width="6" Height="6" Fill="#FF5252" VerticalAlignment="Center"/>
+                                <TextBlock Text="LIVE" FontSize="10" FontWeight="Bold"
+                                           Foreground="#FF5252" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="ViewerCountText" Text=" • 0 học sinh đang xem" FontSize="11"
+                                           Foreground="#9E9E9E" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- Actual screen content -->
-                    <Image x:Name="ScreenContent" Stretch="Uniform" Visibility="Collapsed"/>
+                    <!-- Window Controls -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
+                                ToolTip="Thu nhỏ" Click="MinimizeButton_Click">
+                            <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
+                                ToolTip="Phóng to" Click="MaximizeButton_Click">
+                            <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#EF5350" Width="30" Height="30"
+                                ToolTip="Đóng" Click="CloseButton_Click">
+                            <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-                    <!-- Annotation Canvas Overlay -->
-                    <InkCanvas x:Name="AnnotationCanvas"
-                               Background="Transparent"
-                               Visibility="Collapsed"
-                               EditingMode="None"/>
+            <!-- ============================================ -->
+            <!-- SCREEN CONTENT -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="1" Background="#121212">
+                <!-- Screen Preview -->
+                <Border Background="#1E1E1E" Margin="16" CornerRadius="8" BorderBrush="#333" BorderThickness="1">
+                    <Grid>
+                        <!-- Placeholder -->
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    x:Name="PreviewPlaceholder">
+                            <Border Width="100" Height="100" CornerRadius="50" Background="#2C2C2C"
+                                    HorizontalAlignment="Center" Margin="0,0,0,16">
+                                <materialDesign:PackIcon Kind="MonitorScreenshot" Width="48" Height="48"
+                                                          Foreground="#757575"
+                                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Đã sẵn sàng trình chiếu"
+                                       Foreground="White" FontSize="18" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Chọn chế độ để bắt đầu chia sẻ màn hình với học sinh"
+                                       Foreground="#9E9E9E" FontSize="14"
+                                       HorizontalAlignment="Center" Margin="0,8,0,24"/>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                        Background="{StaticResource AppPrimaryBrush}" 
+                                        BorderBrush="{StaticResource AppPrimaryBrush}"
+                                        Margin="12"
+                                        Height="48" Padding="24,0"
+                                        materialDesign:ButtonAssist.CornerRadius="6"
+                                        Click="ShareScreen_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Monitor" VerticalAlignment="Center" Width="20" Height="20"/>
+                                        <TextBlock Text="Toàn màn hình" Margin="12,0,0,0" FontSize="14" FontWeight="Medium"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Foreground="White" BorderBrush="#555"
+                                        Margin="12"
+                                        Height="48" Padding="24,0"
+                                        materialDesign:ButtonAssist.CornerRadius="6"
+                                        Click="ShareWindow_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="ApplicationOutline" VerticalAlignment="Center" Width="20" Height="20"/>
+                                        <TextBlock Text="Cửa sổ ứng dụng" Margin="12,0,0,0" FontSize="14" FontWeight="Medium"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Actual screen content -->
+                        <Image x:Name="ScreenContent" Stretch="Uniform" Visibility="Collapsed"/>
+
+                        <!-- Annotation Canvas Overlay -->
+                        <InkCanvas x:Name="AnnotationCanvas"
+                                   Background="Transparent"
+                                   Visibility="Collapsed"
+                                   EditingMode="None"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- BOTTOM TOOLBAR -->
+            <!-- ============================================ -->
+            <Border Grid.Row="2" Background="#252530" Padding="16,12" CornerRadius="0,0,8,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Tools - Annotation -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <ToggleButton x:Name="PenButton" Style="{StaticResource ActiveToolButtonStyle}"
+                                      ToolTip="Bút vẽ (P)" Click="PenButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="LeadPencil" Width="18" Height="18" VerticalAlignment="Center"/>
+                                <TextBlock Text="Bút" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton x:Name="HighlightButton" Style="{StaticResource ActiveToolButtonStyle}"
+                                      ToolTip="Highlight (H)" Click="HighlightButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Marker" Width="18" Height="18" VerticalAlignment="Center"/>
+                                <TextBlock Text="Marker" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="Xóa ghi chú (C)"
+                                Click="ClearAnnotations_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Eraser" Width="18" Height="18" VerticalAlignment="Center"/>
+                                <TextBlock Text="Xóa" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Color Picker -->
+                        <Border Background="#3D3D4D" CornerRadius="16" Margin="16,0,0,0" Padding="6,4" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="20" Height="20" Fill="#F44336" Margin="4,0" Cursor="Hand"
+                                         MouseDown="ColorPicker_MouseDown" Tag="#F44336" ToolTip="Đỏ"/>
+                                <Ellipse Width="20" Height="20" Fill="#2196F3" Margin="4,0" Cursor="Hand"
+                                         MouseDown="ColorPicker_MouseDown" Tag="#2196F3" ToolTip="Xanh"/>
+                                <Ellipse Width="20" Height="20" Fill="#4CAF50" Margin="4,0" Cursor="Hand"
+                                         MouseDown="ColorPicker_MouseDown" Tag="#4CAF50" ToolTip="Lá"/>
+                                <Ellipse Width="20" Height="20" Fill="#FFEB3B" Margin="4,0" Cursor="Hand"
+                                         MouseDown="ColorPicker_MouseDown" Tag="#FFEB3B" ToolTip="Vàng"/>
+                                <Ellipse Width="20" Height="20" Fill="White" Margin="4,0" Cursor="Hand"
+                                         MouseDown="ColorPicker_MouseDown" Tag="#FFFFFF" ToolTip="Trắng"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Center - Main Control -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button x:Name="PauseButton"
+                                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                Width="50" Height="50"
+                                Background="#FF9800" BorderBrush="#FF9800"
+                                ToolTip="Tạm dừng (F6)"
+                                Click="PauseButton_Click">
+                            <materialDesign:PackIcon x:Name="PauseIcon" Kind="Pause" Width="24" Height="24"/>
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                Width="50" Height="50"
+                                Background="#F44336" BorderBrush="#F44336"
+                                ToolTip="Dừng trình chiếu (F5)"
+                                Margin="16,0,0,0"
+                                Click="StopButton_Click">
+                            <materialDesign:PackIcon Kind="Stop" Width="24" Height="24"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Right Tools -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock x:Name="StatusText" Text="Chưa bắt đầu" FontSize="13"
+                                   Foreground="#9E9E9E" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                        <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="Toàn màn hình (F11)"
+                                Click="FullscreenButton_Click">
+                            <materialDesign:PackIcon Kind="Fullscreen" Width="20" Height="20"/>
+                        </Button>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
-
-        <!-- ============================================ -->
-        <!-- BOTTOM TOOLBAR -->
-        <!-- ============================================ -->
-        <Border Grid.Row="2" Background="#2D2D3D" Padding="16,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Left Tools - Annotation -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <ToggleButton x:Name="PenButton" Style="{StaticResource ActiveToolButtonStyle}"
-                                  ToolTip="Bút vẽ (P)" Click="PenButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="LeadPencil" Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="Bút vẽ" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
-                    <ToggleButton x:Name="HighlightButton" Style="{StaticResource ActiveToolButtonStyle}"
-                                  ToolTip="Highlight (H)" Click="HighlightButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Marker" Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="Highlight" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </ToggleButton>
-                    <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="Xóa ghi chú (C)"
-                            Click="ClearAnnotations_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Eraser" Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="Xóa" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Color Picker -->
-                    <Border Background="#3D3D4D" CornerRadius="4" Margin="16,0,0,0" Padding="8,4">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="24" Height="24" Fill="#F44336" Margin="2" Cursor="Hand"
-                                     MouseDown="ColorPicker_MouseDown" Tag="#F44336"/>
-                            <Ellipse Width="24" Height="24" Fill="#2196F3" Margin="2" Cursor="Hand"
-                                     MouseDown="ColorPicker_MouseDown" Tag="#2196F3"/>
-                            <Ellipse Width="24" Height="24" Fill="#4CAF50" Margin="2" Cursor="Hand"
-                                     MouseDown="ColorPicker_MouseDown" Tag="#4CAF50"/>
-                            <Ellipse Width="24" Height="24" Fill="#FFEB3B" Margin="2" Cursor="Hand"
-                                     MouseDown="ColorPicker_MouseDown" Tag="#FFEB3B"/>
-                            <Ellipse Width="24" Height="24" Fill="White" Margin="2" Cursor="Hand"
-                                     MouseDown="ColorPicker_MouseDown" Tag="#FFFFFF"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!-- Center - Main Control -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="PauseButton"
-                            Style="{StaticResource MaterialDesignFloatingActionButton}"
-                            Width="56" Height="56"
-                            Background="#FF9800"
-                            ToolTip="Tạm dừng (F6)"
-                            Click="PauseButton_Click">
-                        <materialDesign:PackIcon x:Name="PauseIcon" Kind="Pause" Width="28" Height="28"/>
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
-                            Width="56" Height="56"
-                            Background="#F44336"
-                            ToolTip="Dừng trình chiếu (F5)"
-                            Margin="16,0,0,0"
-                            Click="StopButton_Click">
-                        <materialDesign:PackIcon Kind="Stop" Width="28" Height="28"/>
-                    </Button>
-                </StackPanel>
-
-                <!-- Right Tools -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock x:Name="StatusText" Text="Chưa bắt đầu"
-                               Foreground="#888" VerticalAlignment="Center" Margin="0,0,16,0"/>
-                    <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="Toàn màn hình (F11)"
-                            Click="FullscreenButton_Click">
-                        <materialDesign:PackIcon Kind="Fullscreen" Width="20" Height="20"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+    </Border>
 </Window>

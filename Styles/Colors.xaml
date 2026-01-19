@@ -34,6 +34,8 @@
     
     <!-- SolidColorBrushes -->
     <SolidColorBrush x:Key="AppPrimaryBrush" Color="{StaticResource AppPrimaryColor}"/>
+    <SolidColorBrush x:Key="AppSecondaryBrush" Color="{StaticResource AppSecondaryColor}"/>
+    <SolidColorBrush x:Key="AppAccentBrush" Color="{StaticResource AppAccentColor}"/>
     <SolidColorBrush x:Key="TeacherPrimaryBrush" Color="{StaticResource TeacherPrimaryColor}"/>
     <SolidColorBrush x:Key="TeacherSecondaryBrush" Color="{StaticResource TeacherSecondaryColor}"/>
     <SolidColorBrush x:Key="TeacherAccentBrush" Color="{StaticResource TeacherAccentColor}"/>
