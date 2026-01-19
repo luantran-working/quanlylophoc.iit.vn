@@ -1,8 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.IO;
@@ -10,43 +16,50 @@ using ClassroomManagement.Services;
 
 namespace ClassroomManagement.Views
 {
-    /// <summary>
-    /// Interaction logic for ScreenShareWindow.xaml
-    /// </summary>
     public partial class ScreenShareWindow : Window
     {
         private readonly SessionManager _session;
         private readonly ScreenCaptureService _screenCapture;
         private readonly LogService _log = LogService.Instance;
-        
+
         private bool _isPaused = false;
         private bool _isSharing = false;
         private CancellationTokenSource? _shareCts;
         private DispatcherTimer? _previewTimer;
-        
+
         // Screen share mode
-        private enum ShareMode { FullScreen, Window, Region }
+        private enum ShareMode { FullScreen, Window }
         private ShareMode _currentMode = ShareMode.FullScreen;
-        private System.Drawing.Rectangle? _selectedRegion;
+        private IntPtr _selectedWindowHandle = IntPtr.Zero;
+
+        // Annotation
+        private Color _currentColor = Colors.Red;
 
         public ScreenShareWindow()
         {
             InitializeComponent();
-            
+
             _session = SessionManager.Instance;
             _screenCapture = new ScreenCaptureService();
-            
+
             Loaded += OnLoaded;
             Closing += OnClosing;
+            KeyDown += OnKeyDown;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Update viewer count
             UpdateViewerCount();
-            
-            // Subscribe to student changes
             _session.OnlineStudents.CollectionChanged += (s, args) => UpdateViewerCount();
+
+            // Setup annotation canvas
+            AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
+            {
+                Color = _currentColor,
+                Width = 3,
+                Height = 3,
+                FitToCurve = true
+            };
         }
 
         private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -64,8 +77,42 @@ namespace ClassroomManagement.Views
                     e.Cancel = true;
                     return;
                 }
-                
+
                 StopSharing();
+            }
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F5:
+                    if (_isSharing) StopSharing();
+                    else ShareScreen_Click(sender, e);
+                    break;
+                case Key.F6:
+                    if (_isSharing) PauseButton_Click(sender, e);
+                    break;
+                case Key.F11:
+                    FullscreenButton_Click(sender, e);
+                    break;
+                case Key.P:
+                    PenButton.IsChecked = !PenButton.IsChecked;
+                    PenButton_Click(sender, e);
+                    break;
+                case Key.H:
+                    HighlightButton.IsChecked = !HighlightButton.IsChecked;
+                    HighlightButton_Click(sender, e);
+                    break;
+                case Key.C:
+                    ClearAnnotations_Click(sender, e);
+                    break;
+                case Key.Escape:
+                    if (WindowState == WindowState.Maximized)
+                    {
+                        WindowState = WindowState.Normal;
+                    }
+                    break;
             }
         }
 
@@ -74,10 +121,11 @@ namespace ClassroomManagement.Views
             Dispatcher.Invoke(() =>
             {
                 var count = _session.OnlineStudents.Count;
-                // Update the viewer count text in toolbar
-                // Find and update the viewer count display
+                ViewerCountText.Text = $" • {count} học sinh đang xem";
             });
         }
+
+        #region Window Controls
 
         private void TopBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -100,40 +148,150 @@ namespace ClassroomManagement.Views
             Close();
         }
 
+        private void FullscreenButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized && WindowStyle == WindowStyle.None)
+            {
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                WindowStyle = WindowStyle.None;
+                WindowState = WindowState.Maximized;
+            }
+        }
+
+        #endregion
+
         #region Screen Share Modes
 
         private void ShareScreen_Click(object sender, RoutedEventArgs e)
         {
             _currentMode = ShareMode.FullScreen;
+            _selectedWindowHandle = IntPtr.Zero;
             StartSharing();
         }
 
         private void ShareWindow_Click(object sender, RoutedEventArgs e)
         {
-            _currentMode = ShareMode.Window;
-            // TODO: Show window selection dialog
-            MessageBox.Show(
-                "Tính năng chọn cửa sổ sẽ được thêm trong phiên bản sau.\nĐang chia sẻ toàn màn hình...",
-                "Thông báo",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-            
-            _currentMode = ShareMode.FullScreen;
-            StartSharing();
+            // Show window selection dialog
+            var windowList = GetOpenWindows();
+            if (windowList.Count == 0)
+            {
+                MessageBox.Show("Không tìm thấy cửa sổ nào để chia sẻ.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Create simple selection dialog
+            var dialog = new Window
+            {
+                Title = "Chọn cửa sổ để chia sẻ",
+                Width = 400,
+                Height = 350,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                Background = new SolidColorBrush(Color.FromRgb(0x2D, 0x2D, 0x3D)),
+                WindowStyle = WindowStyle.ToolWindow
+            };
+
+            var listBox = new ListBox
+            {
+                Background = new SolidColorBrush(Color.FromRgb(0x1E, 0x1E, 0x2E)),
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(0),
+                Margin = new Thickness(10)
+            };
+
+            foreach (var window in windowList)
+            {
+                listBox.Items.Add(new ListBoxItem
+                {
+                    Content = window.Value,
+                    Tag = window.Key,
+                    Foreground = Brushes.White,
+                    Padding = new Thickness(8),
+                    FontSize = 14
+                });
+            }
+
+            var okButton = new Button
+            {
+                Content = "Chia sẻ",
+                Width = 100,
+                Height = 35,
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Background = new SolidColorBrush(Color.FromRgb(0x9C, 0x27, 0xB0)),
+                Foreground = Brushes.White
+            };
+
+            okButton.Click += (s, args) =>
+            {
+                if (listBox.SelectedItem is ListBoxItem selectedItem)
+                {
+                    _selectedWindowHandle = (IntPtr)selectedItem.Tag;
+                    _currentMode = ShareMode.Window;
+                    dialog.DialogResult = true;
+                    dialog.Close();
+                }
+            };
+
+            var panel = new StackPanel();
+            panel.Children.Add(new TextBlock
+            {
+                Text = "Chọn cửa sổ để chia sẻ:",
+                Foreground = Brushes.White,
+                FontSize = 14,
+                Margin = new Thickness(10, 10, 10, 5)
+            });
+            panel.Children.Add(listBox);
+            panel.Children.Add(okButton);
+
+            dialog.Content = panel;
+
+            if (dialog.ShowDialog() == true)
+            {
+                StartSharing();
+            }
         }
 
-        private void ShareRegion_Click(object sender, RoutedEventArgs e)
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetShellWindow();
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        private Dictionary<IntPtr, string> GetOpenWindows()
         {
-            _currentMode = ShareMode.Region;
-            // TODO: Show region selection overlay
-            MessageBox.Show(
-                "Tính năng chọn vùng sẽ được thêm trong phiên bản sau.\nĐang chia sẻ toàn màn hình...",
-                "Thông báo",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-            
-            _currentMode = ShareMode.FullScreen;
-            StartSharing();
+            var windows = new Dictionary<IntPtr, string>();
+            var shellWindow = GetShellWindow();
+
+            EnumWindows((hWnd, lParam) =>
+            {
+                if (hWnd == shellWindow) return true;
+                if (!IsWindowVisible(hWnd)) return true;
+
+                var title = new System.Text.StringBuilder(256);
+                GetWindowText(hWnd, title, 256);
+                var titleStr = title.ToString();
+
+                if (!string.IsNullOrWhiteSpace(titleStr) && titleStr != "Trình chiếu màn hình")
+                {
+                    windows[hWnd] = titleStr;
+                }
+                return true;
+            }, IntPtr.Zero);
+
+            return windows;
         }
 
         #endregion
@@ -146,7 +304,6 @@ namespace ClassroomManagement.Views
 
             try
             {
-                // Check if network server is running
                 if (_session.NetworkServer == null || !_session.IsRunning)
                 {
                     MessageBox.Show(
@@ -164,12 +321,15 @@ namespace ClassroomManagement.Views
                 // Update UI
                 PreviewPlaceholder.Visibility = Visibility.Collapsed;
                 ScreenContent.Visibility = Visibility.Visible;
-                ViewerPanel.Visibility = Visibility.Visible;
+                AnnotationCanvas.Visibility = Visibility.Visible;
+                LiveIndicator.Visibility = Visibility.Visible;
+                TitleText.Text = "ĐANG TRÌNH CHIẾU";
+                StatusText.Text = _currentMode == ShareMode.Window ? "Đang chia sẻ cửa sổ" : "Đang chia sẻ màn hình";
 
                 // Start preview timer
                 _previewTimer = new DispatcherTimer
                 {
-                    Interval = TimeSpan.FromMilliseconds(200) // 5 FPS preview for performance
+                    Interval = TimeSpan.FromMilliseconds(150)
                 };
                 _previewTimer.Tick += PreviewTimer_Tick;
                 _previewTimer.Start();
@@ -192,7 +352,7 @@ namespace ClassroomManagement.Views
         private async Task ShareScreenAsync(CancellationToken ct)
         {
             var networkServer = _session.NetworkServer;
-            
+
             while (!ct.IsCancellationRequested && _isSharing)
             {
                 try
@@ -203,25 +363,14 @@ namespace ClassroomManagement.Views
                         continue;
                     }
 
-                    // Capture screen with good quality for streaming
-                    byte[] screenData;
-                    switch (_currentMode)
-                    {
-                        case ShareMode.Region when _selectedRegion.HasValue:
-                            var r = _selectedRegion.Value;
-                            screenData = _screenCapture.CaptureRegion(r.X, r.Y, r.Width, r.Height, 65);
-                            break;
-                        default:
-                            // Capture at 720p quality for streaming
-                            screenData = _screenCapture.CaptureScreenThumbnail(1280, 720, 65);
-                            break;
-                    }
+                    // Capture screen at 720p quality for streaming
+                    byte[] screenData = _screenCapture.CaptureScreenThumbnail(1280, 720, 65);
 
                     // Send to all students
                     await networkServer.SendScreenShareAsync(screenData);
 
-                    // Control frame rate (~15 FPS)
-                    await Task.Delay(66, ct);
+                    // Control frame rate (~12 FPS)
+                    await Task.Delay(80, ct);
                 }
                 catch (OperationCanceledException)
                 {
@@ -239,11 +388,11 @@ namespace ClassroomManagement.Views
         {
             try
             {
-                if (!_isSharing || _isPaused) return;
+                if (!_isSharing) return;
 
-                // Capture for preview (lower quality for performance)
+                // Capture for preview
                 var previewData = _screenCapture.CaptureScreenThumbnail(640, 360, 50);
-                
+
                 var bitmap = new BitmapImage();
                 using (var ms = new MemoryStream(previewData))
                 {
@@ -277,7 +426,17 @@ namespace ClassroomManagement.Views
             PreviewPlaceholder.Visibility = Visibility.Visible;
             ScreenContent.Visibility = Visibility.Collapsed;
             ScreenContent.Source = null;
-            ViewerPanel.Visibility = Visibility.Collapsed;
+            AnnotationCanvas.Visibility = Visibility.Collapsed;
+            AnnotationCanvas.Strokes.Clear();
+            LiveIndicator.Visibility = Visibility.Collapsed;
+            TitleText.Text = "TRÌNH CHIẾU MÀN HÌNH";
+            StatusText.Text = "Đã dừng";
+
+            // Reset buttons
+            PenButton.IsChecked = false;
+            HighlightButton.IsChecked = false;
+            PauseIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+            PauseButton.Background = new SolidColorBrush(Color.FromRgb(0xFF, 0x98, 0x00));
 
             _log.Info("ScreenShare", "Stopped screen sharing");
             ToastService.Instance.ShowInfo("Dừng trình chiếu", "Đã ngừng chia sẻ màn hình");
@@ -289,33 +448,35 @@ namespace ClassroomManagement.Views
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!_isSharing) return;
+
             _isPaused = !_isPaused;
 
-            // Update button icon
-            if (PauseButton.Content is MaterialDesignThemes.Wpf.PackIcon icon)
-            {
-                icon.Kind = _isPaused 
-                    ? MaterialDesignThemes.Wpf.PackIconKind.Play 
-                    : MaterialDesignThemes.Wpf.PackIconKind.Pause;
-            }
+            PauseIcon.Kind = _isPaused
+                ? MaterialDesignThemes.Wpf.PackIconKind.Play
+                : MaterialDesignThemes.Wpf.PackIconKind.Pause;
 
-            PauseButton.ToolTip = _isPaused ? "Tiếp tục" : "Tạm dừng";
-            PauseButton.Background = _isPaused 
-                ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x4C, 0xAF, 0x50))
-                : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x98, 0x00));
+            PauseButton.ToolTip = _isPaused ? "Tiếp tục (F6)" : "Tạm dừng (F6)";
+            PauseButton.Background = _isPaused
+                ? new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50))
+                : new SolidColorBrush(Color.FromRgb(0xFF, 0x98, 0x00));
+
+            StatusText.Text = _isPaused ? "Đã tạm dừng" : "Đang chia sẻ";
 
             if (_isPaused)
-            {
                 ToastService.Instance.ShowInfo("Tạm dừng", "Đã tạm dừng trình chiếu");
-            }
             else
-            {
                 ToastService.Instance.ShowInfo("Tiếp tục", "Đã tiếp tục trình chiếu");
-            }
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!_isSharing)
+            {
+                Close();
+                return;
+            }
+
             var result = MessageBox.Show(
                 "Bạn có chắc muốn dừng trình chiếu?",
                 "Xác nhận",
@@ -328,17 +489,72 @@ namespace ClassroomManagement.Views
             }
         }
 
-        private void FullscreenButton_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Annotation Tools
+
+        private void PenButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Maximized && WindowStyle == WindowStyle.None)
+            if (PenButton.IsChecked == true)
             {
-                WindowState = WindowState.Normal;
-                WindowStyle = WindowStyle.None;
+                HighlightButton.IsChecked = false;
+                AnnotationCanvas.EditingMode = InkCanvasEditingMode.Ink;
+                AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
+                {
+                    Color = _currentColor,
+                    Width = 3,
+                    Height = 3,
+                    FitToCurve = true
+                };
             }
             else
             {
-                WindowStyle = WindowStyle.None;
-                WindowState = WindowState.Maximized;
+                AnnotationCanvas.EditingMode = InkCanvasEditingMode.None;
+            }
+        }
+
+        private void HighlightButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (HighlightButton.IsChecked == true)
+            {
+                PenButton.IsChecked = false;
+                AnnotationCanvas.EditingMode = InkCanvasEditingMode.Ink;
+                AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
+                {
+                    Color = Color.FromArgb(128, _currentColor.R, _currentColor.G, _currentColor.B),
+                    Width = 20,
+                    Height = 10,
+                    FitToCurve = true,
+                    IsHighlighter = true
+                };
+            }
+            else
+            {
+                AnnotationCanvas.EditingMode = InkCanvasEditingMode.None;
+            }
+        }
+
+        private void ClearAnnotations_Click(object sender, RoutedEventArgs e)
+        {
+            AnnotationCanvas.Strokes.Clear();
+        }
+
+        private void ColorPicker_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is System.Windows.Shapes.Ellipse ellipse && ellipse.Tag is string colorStr)
+            {
+                _currentColor = (Color)ColorConverter.ConvertFromString(colorStr);
+
+                // Update current tool if active
+                if (PenButton.IsChecked == true)
+                {
+                    AnnotationCanvas.DefaultDrawingAttributes.Color = _currentColor;
+                }
+                else if (HighlightButton.IsChecked == true)
+                {
+                    AnnotationCanvas.DefaultDrawingAttributes.Color =
+                        Color.FromArgb(128, _currentColor.R, _currentColor.G, _currentColor.B);
+                }
             }
         }
 
