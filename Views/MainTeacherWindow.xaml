@@ -479,6 +479,11 @@
                                                   IconKind="MessageText"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"/>
 
+                            <controls:ToolButton ButtonText="Bảng trắng"
+                                                  IconKind="DrawPen"
+                                                  IconBackground="#4CAF50"
+                                                  Click="OpenWhiteboard_Click"/>
+
                             <!-- Management Group -->
                             <TextBlock Text="Quản lý" FontSize="11" FontWeight="SemiBold"
                                        Foreground="{StaticResource AppPrimaryBrush}" Margin="0,16,0,8"/>

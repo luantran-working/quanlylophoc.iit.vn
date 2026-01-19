@@ -23,14 +23,14 @@ namespace ClassroomManagement.Controls
         {
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;
-            
+
             // Setup auto-refresh timer (500ms)
             _refreshTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(500)
             };
             _refreshTimer.Tick += RefreshTimer_Tick;
-            
+
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
@@ -67,12 +67,12 @@ namespace ClassroomManagement.Controls
             {
                 // Update lock overlay
                 LockedOverlay.Visibility = _student.IsLocked ? Visibility.Visible : Visibility.Collapsed;
-                
+
                 // Update lock button icon
                 if (LockButton.Content is MaterialDesignThemes.Wpf.PackIcon lockIcon)
                 {
-                    lockIcon.Kind = _student.IsLocked 
-                        ? MaterialDesignThemes.Wpf.PackIconKind.LockOpen 
+                    lockIcon.Kind = _student.IsLocked
+                        ? MaterialDesignThemes.Wpf.PackIconKind.LockOpen
                         : MaterialDesignThemes.Wpf.PackIconKind.Lock;
                 }
                 LockButton.ToolTip = _student.IsLocked ? "Mở khóa màn hình" : "Khóa màn hình";
@@ -118,12 +118,12 @@ namespace ClassroomManagement.Controls
             {
                 var session = SessionManager.Instance;
                 var newLockState = !_student.IsLocked;
-                
+
                 await session.LockStudentAsync(_student.MachineId, newLockState);
                 _student.IsLocked = newLockState;
-                
+
                 UpdateUI();
-                
+
                 ToastService.Instance.ShowInfo(
                     newLockState ? "Đã khóa máy" : "Đã mở khóa",
                     $"Máy của {_student.DisplayName} đã được {(newLockState ? "khóa" : "mở khóa")}");
@@ -173,5 +173,24 @@ namespace ClassroomManagement.Controls
             // Double-click to open fullscreen
             FullscreenButton_Click(sender, e);
         }
+
+        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Optional: Handle selection if needed
+        }
+
+        // Context Menu Handlers
+        private void ViewDetail_Click(object sender, RoutedEventArgs e) => FullscreenButton_Click(sender, e);
+
+        private void RemoteControl_Click(object sender, RoutedEventArgs e)
+        {
+            if (_student == null) return;
+            var remoteWindow = new Views.RemoteControlWindow(_student);
+            remoteWindow.Show();
+        }
+
+        private void SendMessage_Click(object sender, RoutedEventArgs e) => ChatButton_Click(sender, e);
+
+        private void LockMachine_Click(object sender, RoutedEventArgs e) => LockButton_Click(sender, e);
     }
 }

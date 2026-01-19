@@ -169,6 +169,13 @@ namespace ClassroomManagement.Views
             fileTransferWindow.Show();
         }
 
+        private void OpenWhiteboard_Click(object sender, RoutedEventArgs e)
+        {
+            var whiteboardWindow = new WhiteboardWindow();
+            whiteboardWindow.Owner = this;
+            whiteboardWindow.Show();
+        }
+
         private void OpenTestCreation_Click(object sender, RoutedEventArgs e)
         {
             var testCreationWindow = new TestCreationWindow();

@@ -19,6 +19,32 @@
             Cursor="Hand"
             BorderBrush="#E0E0E0" BorderThickness="1">
 
+        <Border.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Xem chi tiết" Click="ViewDetail_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="MonitorDashboard"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Điều khiển từ xa" Click="RemoteControl_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="RemoteDesktop"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Gửi tin nhắn" Click="SendMessage_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Message"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Khóa máy" Click="LockMachine_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Lock"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </Border.ContextMenu>
+
         <Border.Effect>
             <DropShadowEffect BlurRadius="5" ShadowDepth="1" Direction="270" Opacity="0.1" Color="Black"/>
         </Border.Effect>
