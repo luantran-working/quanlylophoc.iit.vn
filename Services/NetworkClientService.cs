@@ -471,6 +471,42 @@ namespace ClassroomManagement.Services
                     RemoteControlStopped?.Invoke(this, EventArgs.Empty);
                     break;
 
+                case MessageType.ControlMouse:
+                    if (message.Payload != null)
+                    {
+                        try
+                        {
+                            var cmd = JsonSerializer.Deserialize<MouseCommand>(message.Payload);
+                            if (cmd != null)
+                            {
+                                InputSimulationService.Instance.SimulateMouse(cmd);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warning("NetworkClient", $"Error processing mouse control: {ex.Message}");
+                        }
+                    }
+                    break;
+
+                case MessageType.ControlKeyboard:
+                    if (message.Payload != null)
+                    {
+                        try
+                        {
+                            var cmd = JsonSerializer.Deserialize<KeyboardCommand>(message.Payload);
+                            if (cmd != null)
+                            {
+                                InputSimulationService.Instance.SimulateKeyboard(cmd);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warning("NetworkClient", $"Error processing keyboard control: {ex.Message}");
+                        }
+                    }
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;
