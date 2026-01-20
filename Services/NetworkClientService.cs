@@ -22,7 +22,7 @@ namespace ClassroomManagement.Services
         private CancellationTokenSource? _connectionCts;
         private readonly LogService _log = LogService.Instance;
         private bool _isDiscovering = false;
-        
+
         public string MachineId { get; private set; }
         public string DisplayName { get; set; } = "Học sinh";
         public bool IsConnected { get; private set; }
@@ -37,6 +37,8 @@ namespace ClassroomManagement.Services
         public event EventHandler<byte[]>? ScreenShareReceived;
         public event EventHandler? ScreenLocked;
         public event EventHandler? ScreenUnlocked;
+        public event EventHandler? RemoteControlStarted;
+        public event EventHandler? RemoteControlStopped;
 
         public NetworkClientService()
         {
@@ -73,10 +75,10 @@ namespace ClassroomManagement.Services
             _isDiscovering = true;
             _log.Info("NetworkClient", $"Starting server discovery (timeout: {timeoutSeconds}s)...");
             _log.Network("NetworkClient", $"Listening for UDP broadcasts on port 5001");
-            
+
             // Log network info
             LogNetworkInfo();
-            
+
             // Create new CTS for this discovery
             _discoveryCts = new CancellationTokenSource();
             var ct = _discoveryCts.Token;
@@ -89,7 +91,7 @@ namespace ClassroomManagement.Services
                 _udpListener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
                 _udpListener.Client.ReceiveTimeout = 3000; // 3 second timeout for each receive attempt
                 _udpListener.Client.Bind(new IPEndPoint(IPAddress.Any, 5001));
-                
+
                 _log.Debug("NetworkClient", "UDP listener bound to port 5001");
             }
             catch (SocketException ex)
@@ -117,17 +119,17 @@ namespace ClassroomManagement.Services
                         // Use ReceiveAsync with timeout
                         var receiveTask = _udpListener.ReceiveAsync(ct).AsTask();
                         var timeoutTask = Task.Delay(3000, ct);
-                        
+
                         var completedTask = await Task.WhenAny(receiveTask, timeoutTask);
-                        
+
                         if (completedTask == receiveTask && !receiveTask.IsFaulted && !receiveTask.IsCanceled)
                         {
                             var result = await receiveTask;
                             var json = Encoding.UTF8.GetString(result.Buffer);
-                            
+
                             _log.Network("NetworkClient", $"UDP packet received from {result.RemoteEndPoint.Address}:{result.RemoteEndPoint.Port}");
                             _log.Debug("NetworkClient", $"Packet content: {json}");
-                            
+
                             try
                             {
                                 var serverInfo = JsonSerializer.Deserialize<ServerDiscoveryInfo>(json);
@@ -165,7 +167,7 @@ namespace ClassroomManagement.Services
                         await Task.Delay(500, ct);
                     }
                 }
-                
+
                 _log.Warning("NetworkClient", $"Server discovery timeout after {timeoutSeconds} seconds");
             }
             catch (OperationCanceledException)
@@ -209,7 +211,7 @@ namespace ClassroomManagement.Services
                         {
                             if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
                             {
-                                _log.Debug("NetworkClient", 
+                                _log.Debug("NetworkClient",
                                     $"  {ni.Name}: {addr.Address} / {addr.IPv4Mask} (Type: {ni.NetworkInterfaceType})");
                             }
                         }
@@ -228,12 +230,12 @@ namespace ClassroomManagement.Services
         public async Task<bool> ConnectAsync(string serverIp, int port = 5000)
         {
             _log.Info("NetworkClient", $"Connecting to server at {serverIp}:{port}...");
-            
+
             try
             {
                 ServerIp = serverIp;
                 ServerPort = port;
-                
+
                 // Create new CTS for connection
                 _connectionCts?.Cancel();
                 _connectionCts = new CancellationTokenSource();
@@ -241,7 +243,7 @@ namespace ClassroomManagement.Services
                 _tcpClient = new TcpClient();
                 _tcpClient.ReceiveTimeout = 30000;
                 _tcpClient.SendTimeout = 10000;
-                
+
                 // Connect with timeout
                 _log.Debug("NetworkClient", "Starting TCP connect...");
                 var connectTask = _tcpClient.ConnectAsync(serverIp, port);
@@ -257,13 +259,13 @@ namespace ClassroomManagement.Services
                     _log.Error("NetworkClient", $"Connection failed: {connectTask.Exception?.InnerException?.Message}");
                     return false;
                 }
-                
+
                 if (!_tcpClient.Connected)
                 {
                     _log.Error("NetworkClient", "TCP client not connected after ConnectAsync");
                     return false;
                 }
-                
+
                 _stream = _tcpClient.GetStream();
                 _log.Network("NetworkClient", $"✓ TCP connection established to {serverIp}:{port}");
 
@@ -284,15 +286,15 @@ namespace ClassroomManagement.Services
                         IpAddress = GetLocalIP()
                     })
                 };
-                
+
                 _log.Debug("NetworkClient", $"Sending Connect message: {DisplayName} ({MachineId})");
-                
+
                 // Send directly to stream (bypass IsConnected check)
                 var json = JsonSerializer.Serialize(connectMsg);
                 var bytes = Encoding.UTF8.GetBytes(json);
                 await _stream.WriteAsync(bytes);
                 _log.Debug("NetworkClient", $"Sent Connect message ({bytes.Length} bytes)");
-                
+
                 // Start listening for messages
                 _ = ListenForMessagesAsync(_connectionCts.Token);
 
@@ -321,7 +323,7 @@ namespace ClassroomManagement.Services
         public void Disconnect()
         {
             _log.Info("NetworkClient", "Disconnecting...");
-            
+
             try
             {
                 if (IsConnected && _stream != null)
@@ -371,7 +373,7 @@ namespace ClassroomManagement.Services
                         }
                         break;
                     }
-                    
+
                     if (bytesRead == 0)
                     {
                         _log.Network("NetworkClient", "Server closed connection (0 bytes received)");
@@ -380,7 +382,7 @@ namespace ClassroomManagement.Services
 
                     var json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     _log.Debug("NetworkClient", $"Received {bytesRead} bytes");
-                    
+
                     try
                     {
                         var message = JsonSerializer.Deserialize<NetworkMessage>(json);
@@ -395,7 +397,7 @@ namespace ClassroomManagement.Services
                     }
                 }
             }
-            catch (OperationCanceledException) 
+            catch (OperationCanceledException)
             {
                 _log.Debug("NetworkClient", "Message listener cancelled");
             }
@@ -417,13 +419,13 @@ namespace ClassroomManagement.Services
         private void HandleMessage(NetworkMessage message)
         {
             _log.Debug("NetworkClient", $"Handling message type: {message.Type}");
-            
+
             switch (message.Type)
             {
                 case MessageType.ConnectAck:
                     _log.Info("NetworkClient", "✓ Received ConnectAck from server");
                     break;
-                    
+
                 case MessageType.Heartbeat:
                     // Server is alive
                     break;
@@ -459,6 +461,16 @@ namespace ClassroomManagement.Services
                     ScreenUnlocked?.Invoke(this, EventArgs.Empty);
                     break;
 
+                case MessageType.ControlStart:
+                    _log.Info("NetworkClient", "Remote control started by teacher");
+                    RemoteControlStarted?.Invoke(this, EventArgs.Empty);
+                    break;
+
+                case MessageType.ControlStop:
+                    _log.Info("NetworkClient", "Remote control stopped by teacher");
+                    RemoteControlStopped?.Invoke(this, EventArgs.Empty);
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;
@@ -468,13 +480,13 @@ namespace ClassroomManagement.Services
         private async Task HeartbeatAsync(CancellationToken ct)
         {
             _log.Debug("NetworkClient", "Started heartbeat");
-            
+
             while (!ct.IsCancellationRequested && IsConnected)
             {
                 try
                 {
                     await Task.Delay(10000, ct); // Every 10 seconds
-                    
+
                     if (IsConnected)
                     {
                         await SendMessageAsync(new NetworkMessage

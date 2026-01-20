@@ -118,7 +118,7 @@ namespace ClassroomManagement.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Không thể khởi động phiên: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Không thể khởi động phiên: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
@@ -285,17 +285,17 @@ namespace ClassroomManagement.Services
         {
             var log = LogService.Instance;
             log.Info("SessionManager", $"OnClientConnected triggered: {e.ClientName} ({e.ClientId}) from {e.IpAddress}");
-            
+
             try
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     log.Debug("SessionManager", "Inside Dispatcher.Invoke");
-                    
+
                     var student = _db.GetOrCreateStudent(
-                        e.ClientId, 
-                        e.ClientName ?? "Unknown", 
-                        e.ClientInfo?.ComputerName ?? "", 
+                        e.ClientId,
+                        e.ClientName ?? "Unknown",
+                        e.ClientInfo?.ComputerName ?? "",
                         e.IpAddress);
 
                     log.Debug("SessionManager", $"GetOrCreateStudent result: {student?.DisplayName ?? "null"}");
@@ -304,9 +304,9 @@ namespace ClassroomManagement.Services
                     {
                         OnlineStudents.Add(student);
                         log.Info("SessionManager", $"Student added to OnlineStudents. Count: {OnlineStudents.Count}");
-                        
+
                         StudentConnected?.Invoke(this, student);
-                        
+
                         // Show toast notification
                         log.Debug("SessionManager", "Calling ToastService.ShowSuccess...");
                         ToastService.Instance.ShowSuccess(
@@ -336,7 +336,7 @@ namespace ClassroomManagement.Services
                 {
                     OnlineStudents.Remove(student);
                     StudentDisconnected?.Invoke(this, student);
-                    
+
                     // Show toast notification
                     ToastService.Instance.ShowWarning(
                         "Học sinh ngắt kết nối",
@@ -416,6 +416,12 @@ namespace ClassroomManagement.Services
                     student.ScreenThumbnail = e.ScreenData.ImageData;
                 }
             });
+
+            // Forward to RemoteControlService for remote control window
+            if (RemoteControlService.Instance.IsSessionActive(e.ClientId))
+            {
+                RemoteControlService.Instance.HandleScreenData(e.ClientId, e.ScreenData.ImageData);
+            }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

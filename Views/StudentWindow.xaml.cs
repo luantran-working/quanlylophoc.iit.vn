@@ -20,6 +20,7 @@ namespace ClassroomManagement.Views
         private bool _isHandRaised = false;
         private bool _isConnected = false;
         private bool _isLocked = false;
+        private bool _isRemoteControlled = false;
 
         public StudentWindow() : this("Học sinh")
         {
@@ -41,6 +42,8 @@ namespace ClassroomManagement.Views
             _networkClient.ScreenShareReceived += OnScreenShareReceived;
             _networkClient.ScreenLocked += OnScreenLocked;
             _networkClient.ScreenUnlocked += OnScreenUnlocked;
+            _networkClient.RemoteControlStarted += OnRemoteControlStarted;
+            _networkClient.RemoteControlStopped += OnRemoteControlStopped;
 
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
@@ -197,13 +200,30 @@ namespace ClassroomManagement.Views
             {
                 try
                 {
-                    // Capture with 360p quality (640x360) for good detail view
-                    // This provides good balance between quality and bandwidth
-                    var thumbnail = _screenCapture.CaptureScreenThumbnail(640, 360, 75);
-                    var (width, height) = ScreenCaptureService.GetScreenSize();
-                    await _networkClient.SendScreenDataAsync(thumbnail, width, height);
+                    // When remote controlled, use higher quality and faster rate
+                    int width, height, quality, delay;
+                    if (_isRemoteControlled)
+                    {
+                        // High quality for remote control (720p, 80% quality, 100ms delay ~10 FPS)
+                        width = 1280;
+                        height = 720;
+                        quality = 80;
+                        delay = 100;
+                    }
+                    else
+                    {
+                        // Normal quality for thumbnail view (360p, 75% quality, 1.5s delay)
+                        width = 640;
+                        height = 360;
+                        quality = 75;
+                        delay = 1500;
+                    }
 
-                    await Task.Delay(1500); // Every 1.5 seconds for smoother updates
+                    var thumbnail = _screenCapture.CaptureScreenThumbnail(width, height, quality);
+                    var (screenWidth, screenHeight) = ScreenCaptureService.GetScreenSize();
+                    await _networkClient.SendScreenDataAsync(thumbnail, screenWidth, screenHeight);
+
+                    await Task.Delay(delay);
                 }
                 catch (Exception ex)
                 {
@@ -333,6 +353,18 @@ namespace ClassroomManagement.Views
                 // Hide lock screen overlay
                 HideLockScreen();
             });
+        }
+
+        private void OnRemoteControlStarted(object? sender, EventArgs e)
+        {
+            _isRemoteControlled = true;
+            Services.LogService.Instance.Info("Student", "Remote control session started by teacher");
+        }
+
+        private void OnRemoteControlStopped(object? sender, EventArgs e)
+        {
+            _isRemoteControlled = false;
+            Services.LogService.Instance.Info("Student", "Remote control session ended");
         }
 
         private LockScreenWindow? _lockScreenWindow;
