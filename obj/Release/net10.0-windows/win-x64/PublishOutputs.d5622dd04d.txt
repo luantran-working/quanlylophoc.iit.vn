@@ -1,0 +1,2 @@
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\bin\Release\net10.0-windows\win-x64\publish\ClassroomManagement.pdb
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\bin\Release\net10.0-windows\win-x64\publish\ClassroomManagement.exe

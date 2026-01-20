@@ -106,14 +106,8 @@ namespace ClassroomManagement.Views
                 // Generate and display connection password
                 var connectionPassword = ConnectionPasswordService.Instance.GeneratePasswordFromIP(_session.NetworkServer.ServerIp);
 
-                // Show connection password to teacher
-                MessageBox.Show(
-                    $"Mã kết nối cho học sinh: {connectionPassword}\n\n" +
-                    $"IP Server: {_session.NetworkServer.ServerIp}\n\n" +
-                    "Học sinh cần nhập mã này nếu không tự động kết nối được.",
-                    "Thông tin kết nối",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                // Show connection password to teacher (Updated: Show in Header only)
+                ConnectionCodeText.Text = connectionPassword;
 
                 UpdateStatusBar();
             }
@@ -480,6 +474,14 @@ namespace ClassroomManagement.Views
             ToastService.Instance.ShowInfo(
                 "Tắt mic",
                 $"Đã tắt mic của {selectedStudents.Count} học sinh");
+        }
+        private void CopyCode_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(ConnectionCodeText.Text) && ConnectionCodeText.Text != "------")
+            {
+                Clipboard.SetText(ConnectionCodeText.Text);
+                ToastService.Instance.ShowSuccess("Đã sao chép", "Mã kết nối đã được lưu vào clipboard");
+            }
         }
     }
 }

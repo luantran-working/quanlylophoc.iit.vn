@@ -113,6 +113,21 @@
                                        Foreground="#424242" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
+                    <!-- Connection Code -->
+                    <Border Background="#FFF3E0" CornerRadius="4" Padding="10,6" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Key" Width="16" Height="16"
+                                                      Foreground="#EF6C00" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Mã kết nối: " FontSize="12" Foreground="#E65100" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ConnectionCodeText" Text="------" FontSize="13" FontWeight="Bold"
+                                       Foreground="#E65100" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <Button Style="{StaticResource MaterialDesignToolButton}"
+                                    Width="20" Height="20" Padding="0" Click="CopyCode_Click"
+                                    ToolTip="Sao chép Mã kết nối" BorderThickness="0" Background="Transparent">
+                                 <materialDesign:PackIcon Kind="ContentCopy" Width="14" Height="14" Foreground="#EF6C00"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
                     <!-- Server IP for manual connection -->
                     <Border Background="#E3F2FD" CornerRadius="4" Padding="10,6">
                         <StackPanel Orientation="Horizontal">
