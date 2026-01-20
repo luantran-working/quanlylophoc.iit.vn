@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -41,7 +40,7 @@ namespace ClassroomManagement.Views
             Close();
         }
 
-        private void IpTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void ConnectionCode_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -83,50 +82,30 @@ namespace ClassroomManagement.Views
             ErrorText.Visibility = Visibility.Collapsed;
 
             var connectionCode = ConnectionCodeTextBox.Text.Trim().ToUpper();
-            var ip = IpTextBox.Text.Trim();
 
-            // Prioritize connection code
-            if (!string.IsNullOrEmpty(connectionCode))
+            if (string.IsNullOrEmpty(connectionCode))
             {
-                // Validate connection code format (5-7 alphanumeric characters)
-                if (connectionCode.Length < 5 || connectionCode.Length > 7 ||
-                    !connectionCode.All(c => char.IsLetterOrDigit(c)))
-                {
-                    ShowError("Mã kết nối không hợp lệ. Mã phải có 5-7 ký tự (chữ và số).");
-                    ConnectionCodeTextBox.Focus();
-                    return;
-                }
-
-                // Save the connection code for next time
-                LocalSettings.Instance.SavedConnectionCode = connectionCode;
-                LocalSettings.Instance.LastConnectionAttempt = System.DateTime.Now;
-                LocalSettings.Instance.Save();
-
-                // Signal that we have a connection code (not IP)
-                ServerIp = "CONNECTION_CODE:" + connectionCode;
-                ContinueSearching = false;
-                DialogResult = true;
-                Close();
-                return;
-            }
-
-            // Fallback to IP input
-            if (string.IsNullOrEmpty(ip))
-            {
-                ShowError("Vui lòng nhập mã kết nối HOẶC địa chỉ IP");
+                ShowError("Vui lòng nhập Mã kết nối");
                 ConnectionCodeTextBox.Focus();
                 return;
             }
 
-            // Validate IP format
-            if (!IPAddress.TryParse(ip, out _))
+            // Validate connection code format (5-7 alphanumeric characters)
+            if (connectionCode.Length < 5 || connectionCode.Length > 7 ||
+                !connectionCode.All(c => char.IsLetterOrDigit(c)))
             {
-                ShowError("Địa chỉ IP không hợp lệ. Ví dụ: 192.168.0.100");
-                IpTextBox.Focus();
+                ShowError("Mã kết nối không hợp lệ. Mã phải có 5-7 ký tự.");
+                ConnectionCodeTextBox.Focus();
                 return;
             }
 
-            ServerIp = ip;
+            // Save the connection code for next time
+            LocalSettings.Instance.SavedConnectionCode = connectionCode;
+            LocalSettings.Instance.LastConnectionAttempt = System.DateTime.Now;
+            LocalSettings.Instance.Save();
+
+            // Return connection code string
+            ServerIp = "CONNECTION_CODE:" + connectionCode;
             ContinueSearching = false;
             DialogResult = true;
             Close();

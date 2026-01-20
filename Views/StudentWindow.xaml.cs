@@ -93,7 +93,7 @@ namespace ClassroomManagement.Views
             UpdateConnectionStatus("Đang tìm phòng học...");
 
             // Try to discover server
-            var serverInfo = await _networkClient.DiscoverServerAsync(30);
+            var serverInfo = await _networkClient.DiscoverServerAsync(10);
 
             if (serverInfo != null)
             {
