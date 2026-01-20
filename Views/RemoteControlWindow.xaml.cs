@@ -196,6 +196,8 @@ namespace ClassroomManagement.Views
 
         private void ControlToggle_Changed(object sender, RoutedEventArgs e)
         {
+            if (ControlToggle == null || _remoteService == null || _student == null || ViewOnlyBanner == null || InfoText == null) return;
+
             var isControlEnabled = ControlToggle.IsChecked == true;
             _remoteService.SetViewOnlyMode(_student.MachineId, !isControlEnabled);
             ViewOnlyBanner.Visibility = isControlEnabled ? Visibility.Collapsed : Visibility.Visible;
@@ -204,6 +206,8 @@ namespace ClassroomManagement.Views
 
         private async void LockInput_Changed(object sender, RoutedEventArgs e)
         {
+            if (LockInputBtn == null || _remoteService == null || _student == null || InfoText == null) return;
+
             var isLocked = LockInputBtn.IsChecked == true;
             await _remoteService.SetInputLockAsync(_student.MachineId, isLocked);
             InfoText.Text = isLocked ? "Input học sinh đã bị khóa" : "Input học sinh đã được mở khóa";
