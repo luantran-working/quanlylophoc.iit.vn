@@ -353,7 +353,7 @@ namespace ClassroomManagement.Services
 
         private async Task ListenForMessagesAsync(CancellationToken ct)
         {
-            var buffer = new byte[1024 * 256]; // 256KB buffer for screen data
+            var buffer = new byte[1024 * 1024]; // 1MB buffer for screen data
             _log.Debug("NetworkClient", "Started message listener");
 
             try

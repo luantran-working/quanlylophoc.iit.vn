@@ -24,11 +24,11 @@ namespace ClassroomManagement.Services
         private readonly ConcurrentDictionary<string, TcpClient> _clients = new();
         private readonly ConcurrentDictionary<string, string> _clientNames = new();
         private readonly LogService _log = LogService.Instance;
-        
+
         public int Port { get; private set; } = 5000;
         public int DiscoveryPort { get; private set; } = 5001;
         public bool IsRunning { get; private set; }
-        
+
         public string ClassName { get; set; } = "Lớp học";
         public string TeacherName { get; set; } = "Giáo viên";
         public string ServerIp { get; private set; } = "";
@@ -64,7 +64,7 @@ namespace ClassroomManagement.Services
                 _tcpListener = new TcpListener(IPAddress.Any, Port);
                 _tcpListener.Start();
                 _log.Info("NetworkServer", $"TCP Server started on {ServerIp}:{Port}");
-                
+
                 IsRunning = true;
 
                 // Start accepting clients
@@ -92,8 +92,8 @@ namespace ClassroomManagement.Services
             _log.Debug("NetworkServer", "=== Network Interfaces ===");
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.OperationalStatus == OperationalStatus.Up && 
-                    (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || 
+                if (ni.OperationalStatus == OperationalStatus.Up &&
+                    (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
                      ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet))
                 {
                     var ipProps = ni.GetIPProperties();
@@ -101,7 +101,7 @@ namespace ClassroomManagement.Services
                     {
                         if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
                         {
-                            _log.Debug("NetworkServer", 
+                            _log.Debug("NetworkServer",
                                 $"  {ni.Name}: {addr.Address} (Type: {ni.NetworkInterfaceType})");
                         }
                     }
@@ -117,15 +117,15 @@ namespace ClassroomManagement.Services
 
             foreach (var clientId in _clients.Keys)
             {
-                try 
-                { 
+                try
+                {
                     if (_clients.TryRemove(clientId, out var client))
                     {
                         client.Close();
                         _log.Debug("NetworkServer", $"Closed connection to client: {clientId}");
                     }
-                } 
-                catch (Exception ex) 
+                }
+                catch (Exception ex)
                 {
                     _log.Warning("NetworkServer", $"Error closing client {clientId}: {ex.Message}");
                 }
@@ -135,14 +135,14 @@ namespace ClassroomManagement.Services
 
             try { _tcpListener?.Stop(); } catch { }
             try { _udpBroadcaster?.Close(); } catch { }
-            
+
             _log.Info("NetworkServer", "Server stopped");
         }
 
         private async Task AcceptClientsAsync(CancellationToken ct)
         {
             _log.Info("NetworkServer", "Started accepting clients...");
-            
+
             while (!ct.IsCancellationRequested && _tcpListener != null)
             {
                 try
@@ -150,13 +150,13 @@ namespace ClassroomManagement.Services
                     var client = await _tcpListener.AcceptTcpClientAsync(ct);
                     var remoteEndpoint = (IPEndPoint?)client.Client.RemoteEndPoint;
                     _log.Network("NetworkServer", $"New connection from {remoteEndpoint?.Address}:{remoteEndpoint?.Port}");
-                    
+
                     _ = HandleClientAsync(client, ct);
                 }
-                catch (OperationCanceledException) 
-                { 
+                catch (OperationCanceledException)
+                {
                     _log.Debug("NetworkServer", "Accept loop cancelled");
-                    break; 
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -170,11 +170,11 @@ namespace ClassroomManagement.Services
             string? clientId = null;
             var remoteEndpoint = (IPEndPoint?)client.Client.RemoteEndPoint;
             var clientAddress = remoteEndpoint?.Address.ToString() ?? "unknown";
-            
+
             _log.Debug("NetworkServer", $"Handling client from {clientAddress}...");
-            
+
             var stream = client.GetStream();
-            var buffer = new byte[1024 * 64]; // 64KB buffer
+            var buffer = new byte[1024 * 1024]; // 1MB buffer to handle large screen data
 
             try
             {
@@ -182,7 +182,7 @@ namespace ClassroomManagement.Services
                 {
                     // Set read timeout
                     stream.ReadTimeout = 60000; // 60 seconds
-                    
+
                     int bytesRead;
                     try
                     {
@@ -193,7 +193,7 @@ namespace ClassroomManagement.Services
                         _log.Warning("NetworkServer", $"Read timeout or IO error from {clientAddress}: {ioEx.Message}");
                         break;
                     }
-                    
+
                     if (bytesRead == 0)
                     {
                         _log.Network("NetworkServer", $"Client {clientAddress} closed connection (0 bytes)");
@@ -202,7 +202,7 @@ namespace ClassroomManagement.Services
 
                     var json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     _log.Debug("NetworkServer", $"Received {bytesRead} bytes from {clientAddress}: {json.Substring(0, Math.Min(200, json.Length))}...");
-                    
+
                     NetworkMessage? message;
                     try
                     {
@@ -213,7 +213,7 @@ namespace ClassroomManagement.Services
                         _log.Warning("NetworkServer", $"JSON parse error from {clientAddress}: {jsonEx.Message}");
                         continue;
                     }
-                    
+
                     if (message == null)
                     {
                         _log.Warning("NetworkServer", $"Null message from {clientAddress}");
@@ -228,9 +228,9 @@ namespace ClassroomManagement.Services
                             clientId = message.SenderId;
                             _clients[clientId] = client;
                             _clientNames[clientId] = message.SenderName;
-                            
+
                             _log.Info("NetworkServer", $"Client registered: {message.SenderName} (ID: {clientId})");
-                            
+
                             // Send ACK
                             var ack = new NetworkMessage
                             {
@@ -240,14 +240,14 @@ namespace ClassroomManagement.Services
                             };
                             await SendToClientAsync(clientId, ack);
                             _log.Debug("NetworkServer", $"Sent ConnectAck to {clientId}");
-                            
+
                             ClientConnected?.Invoke(this, new ClientConnectedEventArgs
                             {
                                 ClientId = clientId,
                                 ClientName = message.SenderName,
                                 IpAddress = clientAddress,
-                                ClientInfo = message.Payload != null 
-                                    ? JsonSerializer.Deserialize<ClientInfo>(message.Payload) 
+                                ClientInfo = message.Payload != null
+                                    ? JsonSerializer.Deserialize<ClientInfo>(message.Payload)
                                     : null
                             });
                             break;
@@ -306,9 +306,9 @@ namespace ClassroomManagement.Services
                 {
                     _clients.TryRemove(clientId, out _);
                     _clientNames.TryRemove(clientId, out var clientName);
-                    
+
                     _log.Info("NetworkServer", $"Client disconnected: {clientName ?? clientId}");
-                    
+
                     ClientDisconnected?.Invoke(this, new ClientDisconnectedEventArgs
                     {
                         ClientId = clientId,
@@ -322,12 +322,12 @@ namespace ClassroomManagement.Services
         private async Task BroadcastDiscoveryAsync(CancellationToken ct)
         {
             _log.Info("NetworkServer", $"Starting UDP broadcast on port {DiscoveryPort}...");
-            
+
             try
             {
                 _udpBroadcaster = new UdpClient();
                 _udpBroadcaster.EnableBroadcast = true;
-                
+
                 // Bind to any available port for sending
                 _udpBroadcaster.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
                 _log.Debug("NetworkServer", $"UDP client bound to local port {((IPEndPoint)_udpBroadcaster.Client.LocalEndPoint!).Port}");
@@ -337,7 +337,7 @@ namespace ClassroomManagement.Services
                 _log.Error("NetworkServer", "Failed to create UDP broadcaster", ex);
                 return;
             }
-            
+
             var localIp = GetLocalIPAddress();
 
             while (!ct.IsCancellationRequested)
@@ -355,11 +355,11 @@ namespace ClassroomManagement.Services
 
                     var json = JsonSerializer.Serialize(info);
                     var bytes = Encoding.UTF8.GetBytes(json);
-                    
+
                     // Broadcast to 255.255.255.255
                     var broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, DiscoveryPort);
                     await _udpBroadcaster.SendAsync(bytes, bytes.Length, broadcastEndpoint);
-                    
+
                     // Also try sending to subnet broadcast (e.g., 192.168.1.255)
                     var subnetBroadcast = GetSubnetBroadcast(localIp);
                     if (subnetBroadcast != null)
@@ -367,7 +367,7 @@ namespace ClassroomManagement.Services
                         var subnetEndpoint = new IPEndPoint(IPAddress.Parse(subnetBroadcast), DiscoveryPort);
                         await _udpBroadcaster.SendAsync(bytes, bytes.Length, subnetEndpoint);
                     }
-                    
+
                     _log.Debug("NetworkServer", $"UDP broadcast sent: {ClassName} at {localIp}:{Port} ({_clients.Count} clients)");
 
                     await Task.Delay(3000, ct); // Broadcast every 3 seconds
@@ -379,7 +379,7 @@ namespace ClassroomManagement.Services
                     await Task.Delay(1000, ct);
                 }
             }
-            
+
             _log.Debug("NetworkServer", "UDP broadcast stopped");
         }
 
@@ -442,7 +442,7 @@ namespace ClassroomManagement.Services
         }
 
         public int GetOnlineCount() => _clients.Count;
-        
+
         public IEnumerable<string> GetConnectedClientIds() => _clients.Keys;
 
         private static string GetLocalIPAddress()
@@ -466,7 +466,7 @@ namespace ClassroomManagement.Services
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 foreach (var ip in host.AddressList)
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork && 
+                    if (ip.AddressFamily == AddressFamily.InterNetwork &&
                         !IPAddress.IsLoopback(ip))
                     {
                         return ip.ToString();
@@ -474,7 +474,7 @@ namespace ClassroomManagement.Services
                 }
             }
             catch { }
-            
+
             return "127.0.0.1";
         }
 

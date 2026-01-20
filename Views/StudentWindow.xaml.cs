@@ -204,10 +204,10 @@ namespace ClassroomManagement.Views
                     int width, height, quality, delay;
                     if (_isRemoteControlled)
                     {
-                        // High quality for remote control (720p, 80% quality, 100ms delay ~10 FPS)
-                        width = 1280;
-                        height = 720;
-                        quality = 80;
+                        // Lower quality to ensure packet fits in buffer (packet fragmentation workaround)
+                        width = 1024;
+                        height = 576;
+                        quality = 55;
                         delay = 100;
                     }
                     else
@@ -215,7 +215,7 @@ namespace ClassroomManagement.Views
                         // Normal quality for thumbnail view (360p, 75% quality, 1.5s delay)
                         width = 640;
                         height = 360;
-                        quality = 75;
+                        quality = 70;
                         delay = 1500;
                     }
 
