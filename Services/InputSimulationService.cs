@@ -41,12 +41,16 @@ namespace ClassroomManagement.Services
                 int x = cmd.X;
                 int y = cmd.Y;
 
+                // Log mouse simulation
+                LogService.Instance.Debug("InputSim", $"Mouse Action: {cmd.Action}, X: {x}, Y: {y}");
+
                 switch (cmd.Action)
                 {
                     case MouseAction.Move:
                         mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         break;
 
+                    // ... other cases (logging is enough at start) ...
                     case MouseAction.LeftDown:
                         mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
@@ -59,6 +63,7 @@ namespace ClassroomManagement.Services
 
                     case MouseAction.LeftClick:
                     case MouseAction.LeftDoubleClick: // Double click handled by sender usually, or verify
+                        LogService.Instance.Debug("InputSim", "Executing Left Click");
                         mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         mouse_event(MOUSEEVENTF_LEFTUP | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
@@ -75,6 +80,7 @@ namespace ClassroomManagement.Services
                         break;
 
                     case MouseAction.RightClick:
+                        LogService.Instance.Debug("InputSim", "Executing Right Click");
                         mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
                         mouse_event(MOUSEEVENTF_RIGHTUP | MOUSEEVENTF_ABSOLUTE, x, y, 0, 0);
@@ -91,13 +97,14 @@ namespace ClassroomManagement.Services
                         break;
 
                     case MouseAction.Scroll:
+                        LogService.Instance.Debug("InputSim", $"Executing Scroll: {cmd.Delta}");
                         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, cmd.Delta, 0);
                         break;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore errors
+                LogService.Instance.Error("InputSim", "SimulateMouse Error", ex);
             }
         }
 

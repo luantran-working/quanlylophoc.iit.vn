@@ -155,6 +155,7 @@ namespace ClassroomManagement.Services
 
                 var networkServer = SessionManager.Instance.NetworkServer;
                 await networkServer.SendToClientAsync(machineId, message);
+                // _log.Debug("RemoteControl", $"Sent mouse input: {input.Action} ({cmd.X},{cmd.Y})"); // Log occasionally or debug
             }
             catch (Exception ex)
             {

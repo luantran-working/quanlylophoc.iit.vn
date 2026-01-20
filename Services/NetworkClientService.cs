@@ -476,6 +476,7 @@ namespace ClassroomManagement.Services
                     {
                         try
                         {
+                            _log.Debug("NetworkClient", "Received ControlMouse message"); // Add logging
                             var cmd = JsonSerializer.Deserialize<MouseCommand>(message.Payload);
                             if (cmd != null)
                             {
