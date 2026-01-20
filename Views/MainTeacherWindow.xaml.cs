@@ -103,6 +103,18 @@ namespace ClassroomManagement.Views
                 ClassNameText.Text = className;
                 ServerIpText.Text = _session.NetworkServer.ServerIp;
 
+                // Generate and display connection password
+                var connectionPassword = ConnectionPasswordService.Instance.GeneratePasswordFromIP(_session.NetworkServer.ServerIp);
+
+                // Show connection password to teacher
+                MessageBox.Show(
+                    $"Mã kết nối cho học sinh: {connectionPassword}\n\n" +
+                    $"IP Server: {_session.NetworkServer.ServerIp}\n\n" +
+                    "Học sinh cần nhập mã này nếu không tự động kết nối được.",
+                    "Thông tin kết nối",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
                 UpdateStatusBar();
             }
             else

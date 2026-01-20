@@ -28,12 +28,12 @@ namespace ClassroomManagement.Views
         public StudentWindow(string studentName)
         {
             InitializeComponent();
-            
+
             _studentName = studentName;
             _networkClient = new NetworkClientService();
             _networkClient.DisplayName = studentName;
             _screenCapture = new ScreenCaptureService();
-            
+
             // Wire up network events
             _networkClient.Connected += OnConnected;
             _networkClient.Disconnected += OnDisconnected;
@@ -41,7 +41,7 @@ namespace ClassroomManagement.Views
             _networkClient.ScreenShareReceived += OnScreenShareReceived;
             _networkClient.ScreenLocked += OnScreenLocked;
             _networkClient.ScreenUnlocked += OnScreenUnlocked;
-            
+
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
         }
@@ -94,7 +94,7 @@ namespace ClassroomManagement.Views
 
             // Try to discover server
             var serverInfo = await _networkClient.DiscoverServerAsync(30);
-            
+
             if (serverInfo != null)
             {
                 await TryConnectToServer(serverInfo.ServerIp, serverInfo.ServerPort, serverInfo.ClassName);
@@ -110,7 +110,7 @@ namespace ClassroomManagement.Views
         {
             var dialog = new ManualConnectDialog();
             dialog.Owner = this;
-            
+
             if (dialog.ShowDialog() == true)
             {
                 if (dialog.ContinueSearching)
@@ -120,8 +120,33 @@ namespace ClassroomManagement.Views
                 }
                 else if (!string.IsNullOrEmpty(dialog.ServerIp))
                 {
-                    // User entered IP manually
-                    await TryConnectToServer(dialog.ServerIp, 5000, "Phòng học");
+                    string targetIp = dialog.ServerIp;
+
+                    // Check if input is a connection code
+                    if (targetIp.StartsWith("CONNECTION_CODE:"))
+                    {
+                        var code = targetIp.Substring("CONNECTION_CODE:".Length);
+                        UpdateConnectionStatus($"Đang tìm server từ mã kết nối {code}...");
+
+                        // Try to convert code to IP (scan common ranges)
+                        var resolvedIp = await Task.Run(() => ConnectionPasswordService.Instance.TryGetIPFromPassword(code));
+
+                        if (resolvedIp != null)
+                        {
+                            targetIp = resolvedIp;
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                "Không tìm thấy server với mã kết nối này trong mạng 192.168.x.x.\nVui lòng kiểm tra lại hoặc nhập IP trực tiếp.",
+                                "Không tìm thấy", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            await ShowManualConnectDialog(); // Retry
+                            return;
+                        }
+                    }
+
+                    // User entered IP manually or resolved from code
+                    await TryConnectToServer(targetIp, 5000, "Phòng học");
                 }
             }
             else
@@ -136,18 +161,18 @@ namespace ClassroomManagement.Views
         private async Task TryConnectToServer(string serverIp, int port, string className)
         {
             UpdateConnectionStatus($"Đang kết nối đến {serverIp}...");
-            
+
             var connected = await _networkClient.ConnectAsync(serverIp, port);
             if (connected)
             {
                 _isConnected = true;
                 UpdateConnectionStatus($"Đã kết nối - {className}");
-                
+
                 // Show toast notification
                 ToastService.Instance.ShowSuccess(
                     "Kết nối thành công",
                     $"Đã kết nối đến {className}\nServer: {serverIp}:{port}");
-                
+
                 // Start sending screen thumbnails periodically
                 _ = SendScreenDataAsync();
             }
@@ -160,7 +185,7 @@ namespace ClassroomManagement.Views
                         "Lỗi kết nối",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
-                    
+
                     await ShowManualConnectDialog();
                 });
             }
@@ -177,7 +202,7 @@ namespace ClassroomManagement.Views
                     var thumbnail = _screenCapture.CaptureScreenThumbnail(640, 360, 75);
                     var (width, height) = ScreenCaptureService.GetScreenSize();
                     await _networkClient.SendScreenDataAsync(thumbnail, width, height);
-                    
+
                     await Task.Delay(1500); // Every 1.5 seconds for smoother updates
                 }
                 catch (Exception ex)
@@ -231,7 +256,7 @@ namespace ClassroomManagement.Views
             Dispatcher.Invoke(() =>
             {
                 UpdateConnectionStatus("Mất kết nối");
-                
+
                 if (!_isLocked)
                 {
                     ShowConnectionError($"Mất kết nối với giáo viên: {reason}");
@@ -315,10 +340,10 @@ namespace ClassroomManagement.Views
         private void ShowLockScreen()
         {
             if (_lockScreenWindow != null) return;
-            
+
             _lockScreenWindow = new LockScreenWindow();
             _lockScreenWindow.Show();
-            
+
             // Log the lock event
             Services.LogService.Instance.Info("Student", "Screen locked by teacher");
         }
@@ -329,10 +354,10 @@ namespace ClassroomManagement.Views
             {
                 _lockScreenWindow.Unlock();
                 _lockScreenWindow = null;
-                
+
                 // Log the unlock event
                 Services.LogService.Instance.Info("Student", "Screen unlocked by teacher");
-                
+
                 // Show toast
                 ToastService.Instance.ShowInfo("Đã mở khóa", "Giáo viên đã mở khóa màn hình của bạn");
             }
@@ -389,13 +414,13 @@ namespace ClassroomManagement.Views
         {
             _isHandRaised = !_isHandRaised;
             RaiseHandToggle.IsChecked = _isHandRaised;
-            
+
             if (_isHandRaised)
             {
                 RaiseHandStatus.Text = "Đang giơ tay...";
                 RaiseHandBorder.Background = new System.Windows.Media.SolidColorBrush(
                     System.Windows.Media.Color.FromRgb(0x4D, 0x4D, 0x5D));
-                
+
                 // Send raise hand to server
                 await _networkClient.RaiseHandAsync(true);
             }
@@ -404,7 +429,7 @@ namespace ClassroomManagement.Views
                 RaiseHandStatus.Text = "Nhấn để giơ tay";
                 RaiseHandBorder.Background = new System.Windows.Media.SolidColorBrush(
                     System.Windows.Media.Color.FromRgb(0x3D, 0x3D, 0x4D));
-                
+
                 await _networkClient.RaiseHandAsync(false);
             }
         }

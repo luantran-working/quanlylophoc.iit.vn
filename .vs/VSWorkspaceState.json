@@ -1,5 +1,8 @@
 {
-  "ExpandedNodes": ["", "\\Views"],
-  "SelectedNode": "\\Views\\ScreenShareWindow.xaml.cs",
+  "ExpandedNodes": [
+    "",
+    "\\Views"
+  ],
+  "SelectedNode": "\\App.xaml",
   "PreviewInSolutionExplorer": false
 }

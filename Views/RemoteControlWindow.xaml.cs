@@ -23,11 +23,10 @@ namespace ClassroomManagement.Views
 
         public RemoteControlWindow(Student student)
         {
-            InitializeComponent();
             _remoteService = RemoteControlService.Instance;
             _student = student;
 
-            TitleText.Text = $"Điều khiển: {student.DisplayName}";
+            InitializeComponent();
 
             Loaded += RemoteControlWindow_Loaded;
             Closing += RemoteControlWindow_Closing;
@@ -35,6 +34,9 @@ namespace ClassroomManagement.Views
 
         private async void RemoteControlWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // Set window title
+            TitleText.Text = $"Điều khiển: {_student.DisplayName}";
+
             // Start remote control session
             _session = await _remoteService.RequestControlAsync(_student);
 
