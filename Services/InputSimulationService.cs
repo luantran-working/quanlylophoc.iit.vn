@@ -113,9 +113,16 @@ namespace ClassroomManagement.Services
             try
             {
                 byte vk = (byte)cmd.KeyCode;
-                // Scan code optional for basic keys
+                // Scan code useful for some games/apps, but usually 0 is fine for standard desktop
                 byte scan = 0;
                 uint flags = 0;
+
+                if (IsExtendedKey(cmd.KeyCode))
+                {
+                    flags |= KEYEVENTF_EXTENDEDKEY;
+                }
+
+                LogService.Instance.Debug("InputSim", $"Key Action: {cmd.Action}, VK: {vk}, Flags: {flags}");
 
                 switch (cmd.Action)
                 {
@@ -129,15 +136,32 @@ namespace ClassroomManagement.Services
                         break;
 
                     case KeyAction.Press:
-                        keybd_event(vk, scan, 0, 0);
-                        keybd_event(vk, scan, KEYEVENTF_KEYUP, 0);
+                        keybd_event(vk, scan, flags, 0);
+                        keybd_event(vk, scan, flags | KEYEVENTF_KEYUP, 0);
                         break;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore errors
+                LogService.Instance.Error("InputSim", "SimulateKeyboard Error", ex);
             }
+        }
+
+        private bool IsExtendedKey(int keyCode)
+        {
+            return keyCode == 0x2D || // VK_INSERT
+                   keyCode == 0x2E || // VK_DELETE
+                   keyCode == 0x24 || // VK_HOME
+                   keyCode == 0x23 || // VK_END
+                   keyCode == 0x21 || // VK_PRIOR (Page Up)
+                   keyCode == 0x22 || // VK_NEXT (Page Down)
+                   keyCode == 0x25 || // VK_LEFT
+                   keyCode == 0x26 || // VK_UP
+                   keyCode == 0x27 || // VK_RIGHT
+                   keyCode == 0x28 || // VK_DOWN
+                   keyCode == 0x90 || // VK_NUMLOCK
+                   keyCode == 0x2C || // VK_SNAPSHOT (Print Screen)
+                   keyCode == 0x6F;   // VK_DIVIDE (Numpad /)
         }
     }
 }
