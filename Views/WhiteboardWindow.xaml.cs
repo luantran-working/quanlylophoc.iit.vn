@@ -86,6 +86,11 @@ namespace ClassroomManagement.Views
 
                 switch (_currentTool)
                 {
+                    case DrawingType.Select:
+                        WhiteboardCanvas.EditingMode = InkCanvasEditingMode.Select;
+                        StatusText.Text = "Công cụ: Chọn / Di chuyển";
+                        break;
+
                     case DrawingType.Pen:
                         WhiteboardCanvas.EditingMode = InkCanvasEditingMode.Ink;
                         _currentDrawingAttributes.IsHighlighter = false;
@@ -178,6 +183,8 @@ namespace ClassroomManagement.Views
         {
             if (WhiteboardCanvas.Strokes.Count > 0)
             {
+                var lastStroke = WhiteboardCanvas.Strokes[WhiteboardCanvas.Strokes.Count - 1];
+                _redoStack.Push(lastStroke);
                 WhiteboardCanvas.Strokes.RemoveAt(WhiteboardCanvas.Strokes.Count - 1);
                 await _whiteboardService.UndoAsync();
                 StatusText.Text = "Đã hoàn tác";
@@ -242,6 +249,62 @@ namespace ClassroomManagement.Views
                     MessageBox.Show($"Lỗi khi lưu file: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void QuickColor_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.Tag is string hexColor)
+            {
+                var color = (Color)ColorConverter.ConvertFromString(hexColor);
+                _currentDrawingAttributes.Color = color;
+                ColorButton.Background = new SolidColorBrush(color);
+                StatusText.Text = $"Đã chọn màu";
+            }
+        }
+
+        private System.Collections.Generic.Stack<System.Windows.Ink.Stroke> _redoStack = new();
+
+        private async void Redo_Click(object sender, RoutedEventArgs e)
+        {
+            if (_redoStack.Count > 0)
+            {
+                var stroke = _redoStack.Pop();
+                WhiteboardCanvas.Strokes.Add(stroke);
+                await _whiteboardService.RedoAsync();
+                StatusText.Text = "Đã làm lại";
+            }
+            else
+            {
+                StatusText.Text = "Không có gì để làm lại";
+            }
+        }
+
+        private double _currentZoom = 1.0;
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentZoom < 3.0)
+            {
+                _currentZoom += 0.25;
+                ApplyZoom();
+            }
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentZoom > 0.25)
+            {
+                _currentZoom -= 0.25;
+                ApplyZoom();
+            }
+        }
+
+        private void ApplyZoom()
+        {
+            var transform = new ScaleTransform(_currentZoom, _currentZoom);
+            WhiteboardCanvas.LayoutTransform = transform;
+            ZoomText.Text = $"{_currentZoom * 100:F0}%";
+            StatusText.Text = $"Thu phóng: {_currentZoom * 100:F0}%";
         }
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)

@@ -6,11 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using System.IO;
 using ClassroomManagement.Services;
 
@@ -25,15 +23,12 @@ namespace ClassroomManagement.Views
         private bool _isPaused = false;
         private bool _isSharing = false;
         private CancellationTokenSource? _shareCts;
-        private DispatcherTimer? _previewTimer;
+        private System.Windows.Threading.DispatcherTimer? _previewTimer;
 
         // Screen share mode
         private enum ShareMode { FullScreen, Window }
         private ShareMode _currentMode = ShareMode.FullScreen;
         private IntPtr _selectedWindowHandle = IntPtr.Zero;
-
-        // Annotation
-        private Color _currentColor = Colors.Red;
 
         public ScreenShareWindow()
         {
@@ -51,15 +46,6 @@ namespace ClassroomManagement.Views
         {
             UpdateViewerCount();
             _session.OnlineStudents.CollectionChanged += (s, args) => UpdateViewerCount();
-
-            // Setup annotation canvas
-            AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
-            {
-                Color = _currentColor,
-                Width = 3,
-                Height = 3,
-                FitToCurve = true
-            };
         }
 
         private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -95,17 +81,6 @@ namespace ClassroomManagement.Views
                     break;
                 case Key.F11:
                     FullscreenButton_Click(sender, e);
-                    break;
-                case Key.P:
-                    PenButton.IsChecked = !PenButton.IsChecked;
-                    PenButton_Click(sender, e);
-                    break;
-                case Key.H:
-                    HighlightButton.IsChecked = !HighlightButton.IsChecked;
-                    HighlightButton_Click(sender, e);
-                    break;
-                case Key.C:
-                    ClearAnnotations_Click(sender, e);
                     break;
                 case Key.Escape:
                     if (WindowState == WindowState.Maximized)
@@ -321,13 +296,12 @@ namespace ClassroomManagement.Views
                 // Update UI
                 PreviewPlaceholder.Visibility = Visibility.Collapsed;
                 ScreenContent.Visibility = Visibility.Visible;
-                AnnotationCanvas.Visibility = Visibility.Visible;
                 LiveIndicator.Visibility = Visibility.Visible;
                 TitleText.Text = "ĐANG TRÌNH CHIẾU";
                 StatusText.Text = _currentMode == ShareMode.Window ? "Đang chia sẻ cửa sổ" : "Đang chia sẻ màn hình";
 
                 // Start preview timer
-                _previewTimer = new DispatcherTimer
+                _previewTimer = new System.Windows.Threading.DispatcherTimer
                 {
                     Interval = TimeSpan.FromMilliseconds(150)
                 };
@@ -419,22 +393,18 @@ namespace ClassroomManagement.Views
             _shareCts?.Cancel();
             _previewTimer?.Stop();
 
-            // Notify students
+            // Notify students to clear screen share
             _ = _session.StopScreenShareAsync();
 
             // Update UI
             PreviewPlaceholder.Visibility = Visibility.Visible;
             ScreenContent.Visibility = Visibility.Collapsed;
             ScreenContent.Source = null;
-            AnnotationCanvas.Visibility = Visibility.Collapsed;
-            AnnotationCanvas.Strokes.Clear();
             LiveIndicator.Visibility = Visibility.Collapsed;
             TitleText.Text = "TRÌNH CHIẾU MÀN HÌNH";
             StatusText.Text = "Đã dừng";
 
-            // Reset buttons
-            PenButton.IsChecked = false;
-            HighlightButton.IsChecked = false;
+            // Reset pause button
             PauseIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
             PauseButton.Background = new SolidColorBrush(Color.FromRgb(0xFF, 0x98, 0x00));
 
@@ -486,75 +456,6 @@ namespace ClassroomManagement.Views
             if (result == MessageBoxResult.Yes)
             {
                 StopSharing();
-            }
-        }
-
-        #endregion
-
-        #region Annotation Tools
-
-        private void PenButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (PenButton.IsChecked == true)
-            {
-                HighlightButton.IsChecked = false;
-                AnnotationCanvas.EditingMode = InkCanvasEditingMode.Ink;
-                AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
-                {
-                    Color = _currentColor,
-                    Width = 3,
-                    Height = 3,
-                    FitToCurve = true
-                };
-            }
-            else
-            {
-                AnnotationCanvas.EditingMode = InkCanvasEditingMode.None;
-            }
-        }
-
-        private void HighlightButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (HighlightButton.IsChecked == true)
-            {
-                PenButton.IsChecked = false;
-                AnnotationCanvas.EditingMode = InkCanvasEditingMode.Ink;
-                AnnotationCanvas.DefaultDrawingAttributes = new DrawingAttributes
-                {
-                    Color = Color.FromArgb(128, _currentColor.R, _currentColor.G, _currentColor.B),
-                    Width = 20,
-                    Height = 10,
-                    FitToCurve = true,
-                    IsHighlighter = true
-                };
-            }
-            else
-            {
-                AnnotationCanvas.EditingMode = InkCanvasEditingMode.None;
-            }
-        }
-
-        private void ClearAnnotations_Click(object sender, RoutedEventArgs e)
-        {
-            AnnotationCanvas.Strokes.Clear();
-        }
-
-        private void ColorPicker_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is System.Windows.Shapes.Ellipse ellipse && ellipse.Tag is string colorStr)
-            {
-                _currentColor = (Color)ColorConverter.ConvertFromString(colorStr);
-
-                // Update current tool if active
-                if (PenButton.IsChecked == true)
-                {
-                    AnnotationCanvas.DefaultDrawingAttributes.Color = _currentColor;
-                }
-                else if (HighlightButton.IsChecked == true)
-                {
-                    AnnotationCanvas.DefaultDrawingAttributes.Color =
-                        Color.FromArgb(128, _currentColor.R, _currentColor.G, _currentColor.B);
-                }
             }
         }
 

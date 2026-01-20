@@ -31,7 +31,28 @@ namespace ClassroomManagement.Services
         {
             try
             {
+                if (student == null)
+                {
+                    _log.Error("RemoteControl", "Student is null");
+                    return null;
+                }
+
                 _log.Info("RemoteControl", $"Requesting control of {student.DisplayName}");
+
+                // Check if session manager and network server are available
+                var sessionManager = SessionManager.Instance;
+                if (sessionManager == null)
+                {
+                    _log.Error("RemoteControl", "SessionManager is null");
+                    return null;
+                }
+
+                var networkServer = sessionManager.NetworkServer;
+                if (networkServer == null)
+                {
+                    _log.Error("RemoteControl", "NetworkServer is null - session may not be started");
+                    return null;
+                }
 
                 var session = new RemoteSession
                 {
@@ -50,7 +71,6 @@ namespace ClassroomManagement.Services
                     SenderName = "Giáo viên"
                 };
 
-                var networkServer = SessionManager.Instance.NetworkServer;
                 await networkServer.SendToClientAsync(student.MachineId, message);
 
                 // Wait for response (with timeout)
@@ -70,7 +90,7 @@ namespace ClassroomManagement.Services
             }
             catch (Exception ex)
             {
-                _log.Error("RemoteControl", $"Failed to start remote control for {student.DisplayName}", ex);
+                _log.Error("RemoteControl", $"Failed to start remote control for {student?.DisplayName ?? "unknown"}", ex);
                 return null;
             }
         }

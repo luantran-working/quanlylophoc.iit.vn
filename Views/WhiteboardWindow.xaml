@@ -74,12 +74,22 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Drawing Tools -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <!-- Select -->
+                        <RadioButton x:Name="SelectTool" GroupName="DrawingTool"
+                                     Style="{StaticResource MaterialDesignToolRadioButton}"
+                                     ToolTip="Chọn / Di chuyển" Margin="4,0" Click="Tool_Click" Tag="Select">
+                            <materialDesign:PackIcon Kind="CursorMove" Width="20" Height="20"/>
+                        </RadioButton>
+
+                        <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="8,0"/>
+
                         <!-- Pen -->
                         <RadioButton x:Name="PenTool" GroupName="DrawingTool" IsChecked="True"
                                      Style="{StaticResource MaterialDesignToolRadioButton}"
@@ -133,19 +143,35 @@
                                      ToolTip="Văn bản" Margin="4,0" Click="Tool_Click" Tag="Text">
                             <materialDesign:PackIcon Kind="FormatText" Width="20" Height="20"/>
                         </RadioButton>
+                    </StackPanel>
 
-                        <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="8,0"/>
+                    <!-- Color & Thickness -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0">
+                        <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="0,0,8,0"/>
 
-                        <!-- Color Picker -->
+                        <!-- Quick Color Palette -->
                         <StackPanel Orientation="Horizontal" Margin="4,0">
-                            <TextBlock Text="Màu:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#666"/>
-                            <Button x:Name="ColorButton" Width="32" Height="32"
-                                    Background="Black"
-                                    BorderThickness="1" BorderBrush="#CCC"
-                                    Click="ColorButton_Click"
-                                    materialDesign:ButtonAssist.CornerRadius="4"
-                                    ToolTip="Chọn màu"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#000000" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#000000" ToolTip="Đen"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#F44336" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#F44336" ToolTip="Đỏ"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#2196F3" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#2196F3" ToolTip="Xanh"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#4CAF50" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#4CAF50" ToolTip="Lá"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#FF9800" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#FF9800" ToolTip="Cam"/>
+                            <Border Width="24" Height="24" CornerRadius="12" Background="#9C27B0" Margin="2"
+                                    Cursor="Hand" MouseDown="QuickColor_Click" Tag="#9C27B0" ToolTip="Tím"/>
                         </StackPanel>
+
+                        <!-- More Colors Button -->
+                        <Button x:Name="ColorButton" Width="32" Height="32"
+                                Background="Black"
+                                BorderThickness="2" BorderBrush="#CCC"
+                                Click="ColorButton_Click"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                ToolTip="Chọn màu khác" Margin="8,0,0,0"/>
 
                         <!-- Thickness Slider -->
                         <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
@@ -159,14 +185,24 @@
                     </StackPanel>
 
                     <!-- Action Buttons -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <StackPanel Grid.Column="3" Orientation="Horizontal">
                         <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Height="32" Padding="12,0"
                                 Click="Undo_Click"
-                                ToolTip="Hoàn tác" Margin="4,0">
+                                ToolTip="Hoàn tác (Ctrl+Z)" Margin="4,0">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Undo" Width="18" Height="18" VerticalAlignment="Center"/>
                                 <TextBlock Text="Hoàn tác" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Height="32" Padding="12,0"
+                                Click="Redo_Click"
+                                ToolTip="Làm lại (Ctrl+Y)" Margin="4,0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Redo" Width="18" Height="18" VerticalAlignment="Center"/>
+                                <TextBlock Text="Làm lại" Margin="8,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
@@ -208,9 +244,29 @@
             <!-- Status Bar -->
             <Border Grid.Row="3" Background="#F5F5F5" Padding="12,8" CornerRadius="0,0,8,8" BorderBrush="#EEE" BorderThickness="0,1,0,0">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
                     <TextBlock x:Name="StatusText" Text="Sẵn sàng"
                                FontSize="12" Foreground="#666" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="CoordinatesText" Text=""
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,16,0">
+                        <Button Style="{StaticResource MaterialDesignToolButton}" Width="28" Height="28"
+                                Click="ZoomOut_Click" ToolTip="Thu nhỏ">
+                            <materialDesign:PackIcon Kind="MagnifyMinus" Width="16" Height="16"/>
+                        </Button>
+                        <TextBlock x:Name="ZoomText" Text="100%" FontSize="11" Foreground="#666"
+                                   VerticalAlignment="Center" Margin="8,0" Width="40" TextAlignment="Center"/>
+                        <Button Style="{StaticResource MaterialDesignToolButton}" Width="28" Height="28"
+                                Click="ZoomIn_Click" ToolTip="Phóng to">
+                            <materialDesign:PackIcon Kind="MagnifyPlus" Width="16" Height="16"/>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock x:Name="CoordinatesText" Grid.Column="2" Text=""
                                FontSize="11" Foreground="#999"
                                HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 </Grid>

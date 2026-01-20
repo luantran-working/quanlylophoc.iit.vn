@@ -62,6 +62,7 @@ namespace ClassroomManagement.Models
     /// </summary>
     public enum DrawingType
     {
+        Select,
         Pen,
         Highlighter,
         Eraser,

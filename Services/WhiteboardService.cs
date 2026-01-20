@@ -135,12 +135,36 @@ namespace ClassroomManagement.Services
                 var lastStroke = Strokes.Last();
                 Strokes.Remove(lastStroke);
                 _currentSession?.Strokes.Remove(lastStroke);
+                _redoStack.Push(lastStroke);
 
                 await BroadcastUndoAsync(lastStroke.Id);
             }
             catch (Exception ex)
             {
                 _log.Error("Whiteboard", "Failed to undo", ex);
+            }
+        }
+
+        private System.Collections.Generic.Stack<DrawingStroke> _redoStack = new();
+
+        /// <summary>
+        /// Redo last undone stroke
+        /// </summary>
+        public async Task RedoAsync()
+        {
+            if (_redoStack.Count == 0) return;
+
+            try
+            {
+                var stroke = _redoStack.Pop();
+                Strokes.Add(stroke);
+                _currentSession?.Strokes.Add(stroke);
+
+                await BroadcastStrokeAsync(stroke);
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Whiteboard", "Failed to redo", ex);
             }
         }
 
