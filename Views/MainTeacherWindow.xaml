@@ -507,6 +507,11 @@
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
                                                   Click="OpenFileTransfer_Click"/>
 
+                            <controls:ToolButton ButtonText="Bài tập đã nộp"
+                                                  IconKind="AssignmentTurnedIn"
+                                                  IconBackground="{StaticResource AppPrimaryBrush}"
+                                                  Click="OpenAssignmentList_Click"/>
+
                             <controls:ToolButton ButtonText="Khóa máy"
                                                   IconKind="Lock"
                                                   IconBackground="#F44336"/>

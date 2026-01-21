@@ -599,6 +599,18 @@ namespace ClassroomManagement.Services
             await SendMessageAsync(message);
         }
 
+        public async Task SubmitAssignmentAsync(AssignmentSubmission submission)
+        {
+            var message = new NetworkMessage
+            {
+                Type = MessageType.AssignmentSubmit,
+                SenderId = MachineId,
+                SenderName = DisplayName,
+                Payload = JsonSerializer.Serialize(submission)
+            };
+            await SendMessageAsync(message);
+        }
+
         public async Task RaiseHandAsync(bool raise)
         {
             var message = new NetworkMessage

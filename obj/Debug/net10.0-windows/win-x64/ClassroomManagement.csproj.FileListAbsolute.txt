@@ -469,3 +469,7 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\RemoteControlWindow.g.cs
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\WhiteboardView.baml
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\WhiteboardView.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SubmitAssignmentDialog.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SubmitAssignmentDialog.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\AssignmentListWindow.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\AssignmentListWindow.g.cs

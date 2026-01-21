@@ -26,42 +26,47 @@ namespace ClassroomManagement.Models
         Disconnect = 0x02,
         Heartbeat = 0x03,
         ConnectAck = 0x04,
-        
+
         // Screen
         ScreenData = 0x10,
         ScreenRequest = 0x11,
         ScreenShare = 0x12,
         ScreenShareStop = 0x13,
-        
+
         // Control
         ControlMouse = 0x20,
         ControlKeyboard = 0x21,
         ControlStart = 0x22,
         ControlStop = 0x23,
-        
+
         // Chat
         ChatMessage = 0x30,
         ChatPrivate = 0x31,
-        
+
         // File
         FileStart = 0x40,
         FileData = 0x41,
         FileEnd = 0x42,
         FileRequest = 0x43,
-        
+
         // Lock
         LockScreen = 0x50,
         UnlockScreen = 0x51,
-        
+
         // Test
         TestStart = 0x60,
         TestSubmit = 0x61,
         TestResult = 0x62,
-        
+
         // Misc
         RaiseHand = 0x70,
         LowerHand = 0x71,
-        Notification = 0x72
+        Notification = 0x72,
+
+        // Assignment
+        AssignmentSubmit = 0x90,
+        AssignmentSubmitAck = 0x91,
+        AssignmentList = 0x92
     }
 
     /// <summary>

@@ -174,7 +174,7 @@ namespace ClassroomManagement.Services
             _log.Debug("NetworkServer", $"Handling client from {clientAddress}...");
 
             var stream = client.GetStream();
-            var buffer = new byte[1024 * 1024]; // 1MB buffer to handle large screen data
+            var buffer = new byte[50 * 1024 * 1024]; // 50MB buffer to handle large file submissions
 
             try
             {

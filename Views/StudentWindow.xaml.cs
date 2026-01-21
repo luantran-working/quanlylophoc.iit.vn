@@ -421,24 +421,46 @@ namespace ClassroomManagement.Views
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void SendFile_Click(object sender, RoutedEventArgs e)
+        private async void SubmitAssignment_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog
+            var dialog = new SubmitAssignmentDialog();
+            dialog.Owner = this;
+            if (dialog.ShowDialog() == true)
             {
-                Title = "Chọn file để gửi cho giáo viên",
-                Filter = "Tất cả tệp (*.*)|*.*|Tài liệu Word (*.docx)|*.docx|PDF (*.pdf)|*.pdf|Hình ảnh (*.jpg;*.png)|*.jpg;*.png",
-                Multiselect = true
-            };
+                try
+                {
+                    var submission = new AssignmentSubmission
+                    {
+                        StudentId = _networkClient.MachineId,
+                        StudentName = _studentName,
+                        SessionId = "0", // Server will handle SessionId
+                        SubmittedAt = DateTime.Now,
+                        Note = dialog.Note
+                    };
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                // TODO: Actually send files through network
-                string files = string.Join("\n", openFileDialog.FileNames);
-                MessageBox.Show(
-                    $"Đã chọn {openFileDialog.FileNames.Length} file để gửi:\n{files}",
-                    "Gửi file",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                    foreach (var fileView in dialog.SelectedFiles)
+                    {
+                        var data = await System.IO.File.ReadAllBytesAsync(fileView.LocalPath);
+                        submission.Files.Add(new SubmittedFile
+                        {
+                            FileName = fileView.FileName,
+                            FileSize = fileView.FileSize,
+                            LocalPath = "",
+                            Data = data
+                        });
+                    }
+
+                    ToastService.Instance.ShowInfo("Đang gửi...", "Đang nộp bài tập...");
+
+                    // Send to server
+                    await _networkClient.SubmitAssignmentAsync(submission);
+
+                    MessageBox.Show("Đã nộp bài thành công!", "Nộp bài", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi nộp bài: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

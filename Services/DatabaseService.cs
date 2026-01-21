@@ -24,11 +24,11 @@ namespace ClassroomManagement.Services
             var appDataPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "IIT", "ClassroomManagement");
-            
+
             Directory.CreateDirectory(appDataPath);
             _databasePath = Path.Combine(appDataPath, "classroom.db");
             _connectionString = $"Data Source={_databasePath}";
-            
+
             InitializeDatabase();
         }
 
@@ -42,7 +42,7 @@ namespace ClassroomManagement.Services
         private void InitializeDatabase()
         {
             using var connection = GetConnection();
-            
+
             var createTables = @"
                 -- Users table
                 CREATE TABLE IF NOT EXISTS Users (
@@ -157,6 +157,26 @@ namespace ClassroomManagement.Services
                     FOREIGN KEY (SessionId) REFERENCES Sessions(Id),
                     FOREIGN KEY (StudentId) REFERENCES Students(Id)
                 );
+
+                -- Assignments table
+                CREATE TABLE IF NOT EXISTS Assignments (
+                    Id TEXT PRIMARY KEY,
+                    SessionId INTEGER,
+                    StudentId TEXT,
+                    StudentName TEXT,
+                    Note TEXT,
+                    SubmittedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+
+                -- AssignmentFiles table
+                CREATE TABLE IF NOT EXISTS AssignmentFiles (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    AssignmentId TEXT,
+                    FileName TEXT,
+                    FileSize INTEGER,
+                    LocalPath TEXT,
+                    FOREIGN KEY (AssignmentId) REFERENCES Assignments(Id) ON DELETE CASCADE
+                );
             ";
 
             using var command = new SqliteCommand(createTables, connection);
@@ -178,7 +198,7 @@ namespace ClassroomManagement.Services
                 var insertUser = @"
                     INSERT INTO Users (Username, PasswordHash, DisplayName, Role)
                     VALUES ('admin', @hash, 'Quản trị viên', 'admin')";
-                
+
                 using var insertCmd = new SqliteCommand(insertUser, connection);
                 insertCmd.Parameters.AddWithValue("@hash", passwordHash);
                 insertCmd.ExecuteNonQuery();
@@ -199,14 +219,14 @@ namespace ClassroomManagement.Services
         {
             using var connection = GetConnection();
             var passwordHash = HashPassword(password);
-            
-            var sql = @"SELECT Id, Username, PasswordHash, DisplayName, Role, CreatedAt, UpdatedAt 
+
+            var sql = @"SELECT Id, Username, PasswordHash, DisplayName, Role, CreatedAt, UpdatedAt
                         FROM Users WHERE Username = @username AND PasswordHash = @hash";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@username", username);
             command.Parameters.AddWithValue("@hash", passwordHash);
-            
+
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -228,12 +248,12 @@ namespace ClassroomManagement.Services
         {
             using var connection = GetConnection();
             var passwordHash = HashPassword(newPassword);
-            
+
             var sql = "UPDATE Users SET PasswordHash = @hash, UpdatedAt = CURRENT_TIMESTAMP WHERE Id = @id";
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@hash", passwordHash);
             command.Parameters.AddWithValue("@id", userId);
-            
+
             return command.ExecuteNonQuery() > 0;
         }
 
@@ -244,23 +264,23 @@ namespace ClassroomManagement.Services
         public int CreateSession(int userId, string className, string subject)
         {
             using var connection = GetConnection();
-            
-            var sql = @"INSERT INTO Sessions (UserId, ClassName, Subject) 
+
+            var sql = @"INSERT INTO Sessions (UserId, ClassName, Subject)
                         VALUES (@userId, @className, @subject);
                         SELECT last_insert_rowid();";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@className", className);
             command.Parameters.AddWithValue("@subject", subject);
-            
+
             return Convert.ToInt32(command.ExecuteScalar());
         }
 
         public void EndSession(int sessionId)
         {
             using var connection = GetConnection();
-            
+
             var sql = "UPDATE Sessions SET EndTime = CURRENT_TIMESTAMP, Status = 'ended' WHERE Id = @id";
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@id", sessionId);
@@ -270,14 +290,14 @@ namespace ClassroomManagement.Services
         public Session? GetActiveSession(int userId)
         {
             using var connection = GetConnection();
-            
-            var sql = @"SELECT Id, UserId, ClassName, Subject, StartTime, EndTime, Status 
-                        FROM Sessions WHERE UserId = @userId AND Status = 'active' 
+
+            var sql = @"SELECT Id, UserId, ClassName, Subject, StartTime, EndTime, Status
+                        FROM Sessions WHERE UserId = @userId AND Status = 'active'
                         ORDER BY StartTime DESC LIMIT 1";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@userId", userId);
-            
+
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -302,7 +322,7 @@ namespace ClassroomManagement.Services
         public Student? GetOrCreateStudent(string machineId, string displayName, string computerName, string ipAddress)
         {
             using var connection = GetConnection();
-            
+
             // Try to get existing
             var selectSql = "SELECT Id FROM Students WHERE MachineId = @machineId";
             using var selectCmd = new SqliteCommand(selectSql, connection);
@@ -312,8 +332,8 @@ namespace ClassroomManagement.Services
             if (existingId != null)
             {
                 // Update existing
-                var updateSql = @"UPDATE Students SET 
-                    DisplayName = @displayName, ComputerName = @computerName, 
+                var updateSql = @"UPDATE Students SET
+                    DisplayName = @displayName, ComputerName = @computerName,
                     IpAddress = @ipAddress, IsOnline = 1, LastSeen = CURRENT_TIMESTAMP
                     WHERE MachineId = @machineId";
                 using var updateCmd = new SqliteCommand(updateSql, connection);
@@ -322,7 +342,7 @@ namespace ClassroomManagement.Services
                 updateCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
                 updateCmd.Parameters.AddWithValue("@machineId", machineId);
                 updateCmd.ExecuteNonQuery();
-                
+
                 return GetStudentById(Convert.ToInt32(existingId));
             }
             else
@@ -336,7 +356,7 @@ namespace ClassroomManagement.Services
                 insertCmd.Parameters.AddWithValue("@displayName", displayName);
                 insertCmd.Parameters.AddWithValue("@computerName", computerName);
                 insertCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
-                
+
                 var newId = Convert.ToInt32(insertCmd.ExecuteScalar());
                 return GetStudentById(newId);
             }
@@ -348,7 +368,7 @@ namespace ClassroomManagement.Services
             var sql = "SELECT * FROM Students WHERE Id = @id";
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@id", id);
-            
+
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -360,14 +380,14 @@ namespace ClassroomManagement.Services
         public List<Student> GetOnlineStudents(int? sessionId = null)
         {
             using var connection = GetConnection();
-            var sql = sessionId.HasValue 
+            var sql = sessionId.HasValue
                 ? "SELECT * FROM Students WHERE IsOnline = 1 AND SessionId = @sessionId"
                 : "SELECT * FROM Students WHERE IsOnline = 1";
-            
+
             using var command = new SqliteCommand(sql, connection);
             if (sessionId.HasValue)
                 command.Parameters.AddWithValue("@sessionId", sessionId.Value);
-            
+
             var students = new List<Student>();
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -425,7 +445,7 @@ namespace ClassroomManagement.Services
             var sql = @"INSERT INTO ChatMessages (SessionId, SenderType, SenderId, ReceiverId, Content, IsGroup)
                         VALUES (@sessionId, @senderType, @senderId, @receiverId, @content, @isGroup);
                         SELECT last_insert_rowid();";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@sessionId", message.SessionId);
             command.Parameters.AddWithValue("@senderType", message.SenderType);
@@ -433,7 +453,7 @@ namespace ClassroomManagement.Services
             command.Parameters.AddWithValue("@receiverId", message.ReceiverId.HasValue ? message.ReceiverId.Value : DBNull.Value);
             command.Parameters.AddWithValue("@content", message.Content);
             command.Parameters.AddWithValue("@isGroup", message.IsGroup ? 1 : 0);
-            
+
             return Convert.ToInt32(command.ExecuteScalar());
         }
 
@@ -441,18 +461,18 @@ namespace ClassroomManagement.Services
         {
             using var connection = GetConnection();
             var sql = studentId.HasValue
-                ? @"SELECT * FROM ChatMessages WHERE SessionId = @sessionId 
+                ? @"SELECT * FROM ChatMessages WHERE SessionId = @sessionId
                     AND (IsGroup = 1 OR (ReceiverId = @studentId OR SenderId = @studentId))
                     ORDER BY CreatedAt DESC LIMIT @limit"
                 : @"SELECT * FROM ChatMessages WHERE SessionId = @sessionId AND IsGroup = 1
                     ORDER BY CreatedAt DESC LIMIT @limit";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@sessionId", sessionId);
             command.Parameters.AddWithValue("@limit", limit);
             if (studentId.HasValue)
                 command.Parameters.AddWithValue("@studentId", studentId.Value);
-            
+
             var messages = new List<ChatMessage>();
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -484,7 +504,7 @@ namespace ClassroomManagement.Services
             var sql = @"INSERT INTO FileRecords (SessionId, StudentId, FileName, OriginalName, FilePath, Size, Direction)
                         VALUES (@sessionId, @studentId, @fileName, @originalName, @filePath, @size, @direction);
                         SELECT last_insert_rowid();";
-            
+
             using var command = new SqliteCommand(sql, connection);
             command.Parameters.AddWithValue("@sessionId", record.SessionId);
             command.Parameters.AddWithValue("@studentId", record.StudentId.HasValue ? record.StudentId.Value : DBNull.Value);
@@ -493,8 +513,104 @@ namespace ClassroomManagement.Services
             command.Parameters.AddWithValue("@filePath", record.FilePath);
             command.Parameters.AddWithValue("@size", record.Size);
             command.Parameters.AddWithValue("@direction", record.Direction);
-            
+
             return Convert.ToInt32(command.ExecuteScalar());
+        }
+
+        #endregion
+        #region Assignment Methods
+
+        public void SaveAssignment(AssignmentSubmission submission)
+        {
+            using var connection = GetConnection();
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                var sql = @"INSERT INTO Assignments (Id, SessionId, StudentId, StudentName, Note, SubmittedAt)
+                            VALUES (@id, @sessionId, @studentId, @studentName, @note, @submittedAt)";
+
+                using (var command = new SqliteCommand(sql, connection, transaction))
+                {
+                    command.Parameters.AddWithValue("@id", submission.Id);
+                    command.Parameters.AddWithValue("@sessionId", submission.SessionId);
+                    command.Parameters.AddWithValue("@studentId", submission.StudentId);
+                    command.Parameters.AddWithValue("@studentName", submission.StudentName);
+                    command.Parameters.AddWithValue("@note", submission.Note ?? "");
+                    command.Parameters.AddWithValue("@submittedAt", submission.SubmittedAt);
+                    command.ExecuteNonQuery();
+                }
+
+                foreach (var file in submission.Files)
+                {
+                    var fileSql = @"INSERT INTO AssignmentFiles (AssignmentId, FileName, FileSize, LocalPath)
+                                    VALUES (@assignmentId, @fileName, @fileSize, @localPath)";
+                    using (var fileCmd = new SqliteCommand(fileSql, connection, transaction))
+                    {
+                        fileCmd.Parameters.AddWithValue("@assignmentId", submission.Id);
+                        fileCmd.Parameters.AddWithValue("@fileName", file.FileName);
+                        fileCmd.Parameters.AddWithValue("@fileSize", file.FileSize);
+                        fileCmd.Parameters.AddWithValue("@localPath", file.LocalPath);
+                        fileCmd.ExecuteNonQuery();
+                    }
+                }
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        public List<AssignmentSubmission> GetAssignments(int sessionId)
+        {
+            using var connection = GetConnection();
+            var sql = "SELECT * FROM Assignments WHERE SessionId = @sessionId ORDER BY SubmittedAt DESC";
+            var assignments = new List<AssignmentSubmission>();
+
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@sessionId", sessionId);
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var id = reader.GetString(reader.GetOrdinal("Id"));
+                var assignment = new AssignmentSubmission
+                {
+                    Id = id,
+                    SessionId = reader.IsDBNull(reader.GetOrdinal("SessionId")) ? "" : reader.GetInt32(reader.GetOrdinal("SessionId")).ToString(),
+                    StudentId = reader.GetString(reader.GetOrdinal("StudentId")),
+                    StudentName = reader.GetString(reader.GetOrdinal("StudentName")),
+                    Note = reader.IsDBNull(reader.GetOrdinal("Note")) ? "" : reader.GetString(reader.GetOrdinal("Note")),
+                    SubmittedAt = reader.GetDateTime(reader.GetOrdinal("SubmittedAt")),
+                    Files = GetAssignmentFiles(id, connection)
+                };
+                assignments.Add(assignment);
+            }
+            return assignments;
+        }
+
+        private List<SubmittedFile> GetAssignmentFiles(string assignmentId, SqliteConnection connection)
+        {
+            var files = new List<SubmittedFile>();
+            var sql = "SELECT FileName, FileSize, LocalPath FROM AssignmentFiles WHERE AssignmentId = @assignmentId";
+
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@assignmentId", assignmentId);
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                files.Add(new SubmittedFile
+                {
+                    FileName = reader.GetString(0),
+                    FileSize = reader.GetInt64(1),
+                    LocalPath = reader.GetString(2)
+                });
+            }
+            return files;
         }
 
         #endregion

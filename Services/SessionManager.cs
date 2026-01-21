@@ -361,6 +361,52 @@ namespace ClassroomManagement.Services
                 case MessageType.FileStart:
                     HandleFileTransfer(e);
                     break;
+
+                case MessageType.AssignmentSubmit:
+                    HandleAssignmentSubmit(e);
+                    break;
+            }
+        }
+
+        private async void HandleAssignmentSubmit(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+
+            try
+            {
+                var submission = System.Text.Json.JsonSerializer.Deserialize<AssignmentSubmission>(e.Message.Payload);
+                if (submission != null)
+                {
+                     // Ensure SessionId is from current active session
+                     if (CurrentSession != null)
+                     {
+                         submission.SessionId = CurrentSession.Id.ToString();
+                     }
+
+                     // Use AssignmentService to process
+                     await AssignmentService.Instance.ProcessSubmissionAsync(submission);
+
+                     // Notify UI
+                     Application.Current.Dispatcher.Invoke(() =>
+                     {
+                         ToastService.Instance.ShowSuccess(
+                             "Nộp bài tập",
+                             $"Học sinh {submission.StudentName} đã nộp bài.");
+                     });
+
+                     // Send ACK
+                     await _networkServer.SendToClientAsync(e.ClientId, new NetworkMessage
+                     {
+                         Type = MessageType.AssignmentSubmitAck,
+                         SenderId = "server",
+                         TargetId = e.ClientId,
+                         Payload = "Received successfully"
+                     });
+                }
+            }
+            catch (Exception ex)
+            {
+                 LogService.Instance.Error("SessionManager", "Error handling assignment submission", ex);
             }
         }
 
