@@ -20,8 +20,13 @@ namespace ClassroomManagement.Services
         public ObservableCollection<DrawingStroke> Strokes { get; } = new();
         public DrawingTool CurrentTool { get; } = new();
 
+        public int CurrentPage { get; private set; } = 1;
+        public int TotalPages { get; private set; } = 1;
+
         public event EventHandler<DrawingStroke>? StrokeAdded;
         public event EventHandler? WhiteboardCleared;
+        public event EventHandler? StrokesRefreshed;
+        public event EventHandler<int>? PageChanged;
         public event EventHandler<WhiteboardSession>? SessionStarted;
         public event EventHandler? SessionEnded;
 
@@ -32,6 +37,13 @@ namespace ClassroomManagement.Services
         /// </summary>
         public async Task<bool> StartSessionAsync()
         {
+            if (_currentSession != null && _currentSession.IsActive)
+            {
+                RefreshStrokes();
+                SessionStarted?.Invoke(this, _currentSession); // Re-notify
+                return true;
+            }
+
             try
             {
                 _currentSession = new WhiteboardSession
@@ -40,6 +52,8 @@ namespace ClassroomManagement.Services
                     StartTime = DateTime.Now
                 };
 
+                CurrentPage = 1;
+                TotalPages = 1;
                 Strokes.Clear();
 
                 SessionStarted?.Invoke(this, _currentSession);
@@ -86,6 +100,8 @@ namespace ClassroomManagement.Services
         {
             try
             {
+                stroke.PageIndex = CurrentPage;
+
                 Strokes.Add(stroke);
                 _currentSession?.Strokes.Add(stroke);
 
@@ -100,22 +116,74 @@ namespace ClassroomManagement.Services
             }
         }
 
+        public async Task NextPageAsync()
+        {
+            if (CurrentPage < TotalPages)
+            {
+                CurrentPage++;
+                RefreshStrokes();
+                PageChanged?.Invoke(this, CurrentPage);
+                await BroadcastPageChangeAsync(CurrentPage);
+            }
+            else
+            {
+                await AddPageAsync();
+            }
+        }
+
+        public async Task PreviousPageAsync()
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                RefreshStrokes();
+                PageChanged?.Invoke(this, CurrentPage);
+                await BroadcastPageChangeAsync(CurrentPage);
+            }
+        }
+
+        public async Task AddPageAsync()
+        {
+            TotalPages++;
+            CurrentPage = TotalPages;
+            RefreshStrokes();
+            PageChanged?.Invoke(this, CurrentPage);
+            await BroadcastPageChangeAsync(CurrentPage);
+        }
+
+        private void RefreshStrokes()
+        {
+            Strokes.Clear();
+            if (_currentSession != null)
+            {
+                var pageStrokes = _currentSession.Strokes.Where(s => s.PageIndex == CurrentPage).ToList();
+                foreach (var s in pageStrokes)
+                {
+                    Strokes.Add(s);
+                }
+            }
+            StrokesRefreshed?.Invoke(this, EventArgs.Empty);
+        }
+
         /// <summary>
-        /// Clear all strokes
+        /// Clear all strokes on CURRENT page
         /// </summary>
         public async Task ClearAsync()
         {
             try
             {
                 Strokes.Clear();
-                _currentSession?.Strokes.Clear();
+                if (_currentSession != null)
+                {
+                    _currentSession.Strokes.RemoveAll(s => s.PageIndex == CurrentPage);
+                }
 
                 WhiteboardCleared?.Invoke(this, EventArgs.Empty);
 
                 // Broadcast to students
                 await BroadcastClearAsync();
 
-                _log.Info("Whiteboard", "Whiteboard cleared");
+                _log.Info("Whiteboard", "Whiteboard page cleared");
             }
             catch (Exception ex)
             {
@@ -124,7 +192,7 @@ namespace ClassroomManagement.Services
         }
 
         /// <summary>
-        /// Undo last stroke
+        /// Undo last stroke on current page
         /// </summary>
         public async Task UndoAsync()
         {
@@ -157,10 +225,16 @@ namespace ClassroomManagement.Services
             try
             {
                 var stroke = _redoStack.Pop();
-                Strokes.Add(stroke);
-                _currentSession?.Strokes.Add(stroke);
-
-                await BroadcastStrokeAsync(stroke);
+                // Ensure stroke belongs to current page?
+                // Ideally redo stack should be per page or global?
+                // Typically per session, but if I switch page, redo might jump back?
+                // For simplicity, let's assume redo stack is global but we only redo if matches page.
+                // Or better: clear redo stack on page change.
+                if (stroke.PageIndex == CurrentPage) {
+                    Strokes.Add(stroke);
+                    _currentSession?.Strokes.Add(stroke);
+                    await BroadcastStrokeAsync(stroke);
+                }
             }
             catch (Exception ex)
             {
@@ -215,6 +289,12 @@ namespace ClassroomManagement.Services
         private async Task BroadcastUndoAsync(string strokeId)
         {
             // TODO: Send WHITEBOARD_UNDO command with stroke ID
+            await Task.Delay(10);
+        }
+
+        private async Task BroadcastPageChangeAsync(int pageIndex)
+        {
+            // TODO: Send WHITEBOARD_PAGE command
             await Task.Delay(10);
         }
     }

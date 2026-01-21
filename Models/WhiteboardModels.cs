@@ -45,6 +45,8 @@ namespace ClassroomManagement.Models
         // For text
         public string Text { get; set; } = string.Empty;
         public double FontSize { get; set; } = 14;
+        // For multiple pages
+        public int PageIndex { get; set; } = 0;
     }
 
     /// <summary>
