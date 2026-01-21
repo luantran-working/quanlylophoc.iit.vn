@@ -90,6 +90,11 @@ Phần mềm hoạt động trên **mạng LAN nội bộ**:
   - [Truyền tập tin](./Features/file-transfer.md)
   - [Bài kiểm tra](./Features/test-creation.md)
   - [Bảng trắng](./Features/whiteboard.md)
+- **Tính năng mới (đang phát triển):**
+  - [Chat nâng cao](./Features/advanced-chat.md) - Nhóm chat, gửi hình/file
+  - [Giám sát hệ thống](./Features/system-monitoring.md) - Ổ đĩa, USB, ứng dụng
+  - [Nộp bài tập & Gửi file](./Features/assignment-submission.md)
+  - [Bình chọn thời gian thực](./Features/realtime-polling.md)
 
 ## Hỗ trợ
 
