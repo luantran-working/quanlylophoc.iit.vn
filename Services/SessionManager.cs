@@ -387,7 +387,73 @@ namespace ClassroomManagement.Services
                 case MessageType.ProcessListResponse:
                     HandleProcessListResponse(e);
                     break;
+
+                case MessageType.FileCollectionData:
+                    HandleFileCollectionData(e);
+                    break;
+
+                case MessageType.FileCollectionStatus:
+                    HandleFileCollectionStatus(e);
+                    break;
             }
+        }
+
+        private void HandleFileCollectionData(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var fileData = System.Text.Json.JsonSerializer.Deserialize<CollectedFile>(e.Message.Payload);
+                if (fileData != null)
+                {
+                    // Save file
+                    string baseDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CollectedFiles");
+                    string sessionDir = CurrentSession?.Id.ToString() ?? "UnknownSession";
+                    string studentDir = $"{fileData.StudentName}_{fileData.StudentMachineId}";
+
+                    // Combine and create directory
+                    string targetDir = System.IO.Path.Combine(baseDir, sessionDir, studentDir);
+                    if (!string.IsNullOrEmpty(fileData.RelativePath) && fileData.RelativePath != fileData.FileName)
+                    {
+                         // Maintain relative structure if possible, but sanitize
+                         string relDir = System.IO.Path.GetDirectoryName(fileData.RelativePath) ?? "";
+                         targetDir = System.IO.Path.Combine(targetDir, relDir);
+                    }
+
+                    System.IO.Directory.CreateDirectory(targetDir);
+
+                    string savePath = System.IO.Path.Combine(targetDir, fileData.FileName);
+                    System.IO.File.WriteAllBytes(savePath, fileData.Content);
+
+                    // Update UI status (optional log)
+                    // LogService.Instance.Info("SessionManager", $"Received file {fileData.FileName} from {fileData.StudentName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.Error("SessionManager", "Error saving collected file", ex);
+            }
+        }
+
+        private void HandleFileCollectionStatus(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var status = System.Text.Json.JsonSerializer.Deserialize<FileCollectionStatus>(e.Message.Payload);
+                if (status != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
+                        if (student != null)
+                        {
+                            student.CollectionStatus = $"{status.ProcessedFiles}/{status.TotalFiles} - {status.Message}";
+                        }
+                    });
+                }
+            }
+            catch {}
         }
 
         private async void HandleAssignmentSubmit(MessageReceivedEventArgs e)

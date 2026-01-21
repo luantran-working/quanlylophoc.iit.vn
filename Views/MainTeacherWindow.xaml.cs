@@ -177,6 +177,13 @@ namespace ClassroomManagement.Views
             fileTransferWindow.Show();
         }
 
+        private void OpenFileCollection_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new FileCollectionWindow();
+            win.Owner = this;
+            win.Show();
+        }
+
         private void OpenAssignmentList_Click(object sender, RoutedEventArgs e)
         {
             var assignmentListWindow = new AssignmentListWindow();

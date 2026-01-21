@@ -40,11 +40,15 @@ namespace ClassroomManagement.Services
         public event EventHandler? RemoteControlStarted;
         public event EventHandler? RemoteControlStopped;
 
+        private readonly FileCollectionService _fileCollectionService; // Add field
+
         public NetworkClientService()
         {
             MachineId = GetMachineId();
             _log.Info("NetworkClient", $"Initialized with MachineId: {MachineId}");
+            _fileCollectionService = new FileCollectionService(this); // Initialize
         }
+
 
         /// <summary>
         /// Hủy discovery đang chạy
@@ -519,6 +523,24 @@ namespace ClassroomManagement.Services
 
                 case MessageType.ProcessKillCommand:
                     HandleProcessKillCommand(message);
+                    break;
+
+                case MessageType.FileCollectionRequest:
+                    if (message.Payload != null)
+                    {
+                        try
+                        {
+                            var request = JsonSerializer.Deserialize<FileCollectionRequest>(message.Payload);
+                            if (request != null)
+                            {
+                                _ = _fileCollectionService.StartCollectionAsync(request);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error("NetworkClient", "Error processing file collection request", ex);
+                        }
+                    }
                     break;
 
                 default:

@@ -79,6 +79,14 @@ namespace ClassroomManagement.Models
             }
         }
 
+        // Feature 4: File Collection Status
+        private string _collectionStatus = string.Empty;
+        public string CollectionStatus
+        {
+            get => _collectionStatus;
+            set { if (_collectionStatus != value) { _collectionStatus = value; OnPropertyChanged(); } }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

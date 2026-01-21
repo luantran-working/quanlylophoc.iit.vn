@@ -75,7 +75,12 @@ namespace ClassroomManagement.Models
         // App Management (Feature 3)
         ProcessListRequest = 0xB0,
         ProcessListResponse = 0xB1,
-        ProcessKillCommand = 0xB2
+        ProcessKillCommand = 0xB2,
+
+        // File Collection (Feature 4)
+        FileCollectionRequest = 0xC0,
+        FileCollectionData = 0xC1,
+        FileCollectionStatus = 0xC2
     }
 
     /// <summary>

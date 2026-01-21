@@ -66,3 +66,13 @@
     - Added UI for Teacher to view student processes and send Kill command.
     - Integrated "Quản lý ứng dụng" option into student thumbnail context menu.
   - Verification: `dotnet build` passed.
+
+- **Step 10: Implement File Collection (Feature 4)**
+  - Files changed: `Models/FileCollectionModels.cs`, `Services/FileCollectionService.cs`, `Services/NetworkClientService.cs`, `Services/SessionManager.cs`, `Views/FileCollectionWindow.xaml`, `Views/FileCollectionWindow.xaml.cs`, `Views/MainTeacherWindow.xaml`
+  - What changed:
+    - Defined models for File Collection Request/Response.
+    - Implemented client-side recursive file scanning and uploading.
+    - Implemented server-side file receiving and storage organization (Session/Student/File).
+    - Created Teacher UI to configure path, extensions, and monitor progress.
+    - Replaced "Thu bài" button logic to open File Collection Window.
+  - Verification: `dotnet build` passed.

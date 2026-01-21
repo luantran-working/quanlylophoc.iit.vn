@@ -502,10 +502,10 @@
                             <TextBlock Text="Quản lý" FontSize="11" FontWeight="SemiBold"
                                        Foreground="{StaticResource AppPrimaryBrush}" Margin="0,16,0,8"/>
 
-                            <controls:ToolButton ButtonText="Thu bài"
+                            <controls:ToolButton ButtonText="Thu thập File"
                                                   IconKind="FolderDownload"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenFileTransfer_Click"/>
+                                                  Click="OpenFileCollection_Click"/>
 
                             <controls:ToolButton ButtonText="Cấu hình máy"
                                                   IconKind="Monitor"
