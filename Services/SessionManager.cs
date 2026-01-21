@@ -60,6 +60,7 @@ namespace ClassroomManagement.Services
         public event EventHandler<Student>? StudentConnected;
         public event EventHandler<Student>? StudentDisconnected;
         public event EventHandler<ChatMessage>? ChatMessageReceived;
+        public event EventHandler<ProcessListReceivedEventArgs>? ProcessListReceived;
 
         private SessionManager()
         {
@@ -382,6 +383,10 @@ namespace ClassroomManagement.Services
                 case MessageType.SystemSpecsResponse:
                     HandleSystemSpecsResponse(e);
                     break;
+
+                case MessageType.ProcessListResponse:
+                    HandleProcessListResponse(e);
+                    break;
             }
         }
 
@@ -452,6 +457,32 @@ namespace ClassroomManagement.Services
             }
         }
 
+
+
+        private void HandleProcessListResponse(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var processes = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<ProcessInfo>>(e.Message.Payload);
+                if (processes != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ProcessListReceived?.Invoke(this, new ProcessListReceivedEventArgs
+                        {
+                            ClientId = e.ClientId,
+                            Processes = processes
+                        });
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.Error("SessionManager", "Error parsing process list response", ex);
+            }
+        }
+
         private void HandleChatMessage(MessageReceivedEventArgs e)
         {
             if (CurrentSession == null) return;
@@ -516,5 +547,11 @@ namespace ClassroomManagement.Services
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
+
+    public class ProcessListReceivedEventArgs : EventArgs
+    {
+        public string ClientId { get; set; } = string.Empty;
+        public System.Collections.Generic.List<ProcessInfo> Processes { get; set; } = new();
     }
 }

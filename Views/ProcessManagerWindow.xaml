@@ -1,0 +1,83 @@
+<Window x:Class="ClassroomManagement.Views.ProcessManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Quản lý Ứng dụng" Height="600" Width="900"
+        WindowStartupLocation="CenterOwner"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <materialDesign:ColorZone Mode="PrimaryMid" Padding="16" materialDesign:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ChartBubble" Width="24" Height="24" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TitleText" VerticalAlignment="Center" Text="QUẢN LÝ ỨNG DỤNG"
+                               Margin="16,0,0,0" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="LÀM MỚI" Click="Refresh_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,0,8,0">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Refresh" Margin="0,0,8,0"/>
+                                    <TextBlock Text="LÀM MỚI"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </materialDesign:ColorZone>
+
+        <DataGrid Grid.Row="1" x:Name="ProcessGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                  Margin="16" HeadersVisibility="Column" SelectionMode="Single"
+                  AlternatingRowBackground="#F9F9F9" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="Tên Process" Binding="{Binding Name}" Width="200" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Tiêu đề cửa sổ" Binding="{Binding MainWindowTitle}" Width="300">
+                     <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Bộ nhớ" Binding="{Binding MemoryUsageMB}" Width="100"/>
+
+                <DataGridTemplateColumn Header="Thao tác" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Content="Đóng"
+                                    Click="KillProcess_Click"
+                                    CommandParameter="{Binding Id}"
+                                    BorderBrush="#F44336" Foreground="#F44336"
+                                    Height="25" Padding="8,0" Margin="0"
+                                    ToolTip="Tắt ứng dụng này"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.Row="1" x:Name="LoadingOverlay" Background="#80FFFFFF" Visibility="Collapsed">
+            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="True"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -513,9 +513,59 @@ namespace ClassroomManagement.Services
                     _ = RespondWithSystemSpecs();
                     break;
 
+                case MessageType.ProcessListRequest:
+                    _ = RespondWithProcessList();
+                    break;
+
+                case MessageType.ProcessKillCommand:
+                    HandleProcessKillCommand(message);
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;
+            }
+        }
+
+        private async Task RespondWithProcessList()
+        {
+            try
+            {
+                var processes = ProcessManagerService.Instance.GetRunningProcesses();
+                var response = new NetworkMessage
+                {
+                    Type = MessageType.ProcessListResponse,
+                    SenderId = MachineId,
+                    SenderName = DisplayName,
+                    Payload = JsonSerializer.Serialize(processes)
+                };
+                await SendMessageAsync(response);
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error sending process list", ex);
+            }
+        }
+
+        private void HandleProcessKillCommand(NetworkMessage message)
+        {
+            if (message.Payload == null) return;
+            try
+            {
+                var action = JsonSerializer.Deserialize<ProcessAction>(message.Payload);
+                if (action != null)
+                {
+                    bool success = ProcessManagerService.Instance.KillProcess(action.ProcessId);
+                    if (success)
+                    {
+                        // Optional: Send ack or notification
+                         _log.Info("NetworkClient", $"Killed process {action.ProcessId}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error executing kill command", ex);
             }
         }
 

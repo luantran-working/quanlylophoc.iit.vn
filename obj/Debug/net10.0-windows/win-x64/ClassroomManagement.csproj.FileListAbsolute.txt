@@ -478,3 +478,5 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SystemConfigTableWindow.baml
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\ComputerSpecsWindow.g.cs
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SystemConfigTableWindow.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\ProcessManagerWindow.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\ProcessManagerWindow.g.cs

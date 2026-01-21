@@ -47,6 +47,11 @@
                         <materialDesign:PackIcon Kind="Monitor"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="Quản lý ứng dụng" Click="ManageApps_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Apps"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </ContextMenu>
         </Border.ContextMenu>
 

@@ -70,7 +70,12 @@ namespace ClassroomManagement.Models
 
         // System Info (Feature 2)
         SystemSpecsRequest = 0xA0,
-        SystemSpecsResponse = 0xA1
+        SystemSpecsResponse = 0xA1,
+
+        // App Management (Feature 3)
+        ProcessListRequest = 0xB0,
+        ProcessListResponse = 0xB1,
+        ProcessKillCommand = 0xB2
     }
 
     /// <summary>

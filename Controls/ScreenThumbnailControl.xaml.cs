@@ -214,5 +214,13 @@ namespace ClassroomManagement.Controls
                 });
             }
         }
+
+        private void ManageApps_Click(object sender, RoutedEventArgs e)
+        {
+            if (_student == null) return;
+            var window = new Views.ProcessManagerWindow(_student);
+            window.Owner = Window.GetWindow(this);
+            window.Show();
+        }
     }
 }

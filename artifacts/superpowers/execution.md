@@ -57,3 +57,12 @@
     - Implemented hardware collection using WMI (System.Management).
     - Added "Bảng cấu hình" button and individual student config view via context menu.
   - Verification: `dotnet build` passed.
+
+- **Step 9: Implement App Management (Feature 3)**
+  - Files changed: `Models/ProcessModels.cs`, `Services/ProcessManagerService.cs`, `Views/ProcessManagerWindow.xaml`, `Views/ProcessManagerWindow.xaml.cs`, `Services/NetworkClientService.cs`, `Services/SessionManager.cs`, `Controls/ScreenThumbnailControl.xaml`, `Controls/ScreenThumbnailControl.xaml.cs`, `Models/NetworkModels.cs`
+  - What changed:
+    - Defined `ProcessInfo` model and new Network Messages.
+    - Implemented `ProcessManagerService` to list/kill processes on client.
+    - Added UI for Teacher to view student processes and send Kill command.
+    - Integrated "Quản lý ứng dụng" option into student thumbnail context menu.
+  - Verification: `dotnet build` passed.
