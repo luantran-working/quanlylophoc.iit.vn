@@ -76,3 +76,13 @@
     - Created Teacher UI to configure path, extensions, and monitor progress.
     - Replaced "Thu bài" button logic to open File Collection Window.
   - Verification: `dotnet build` passed.
+
+- **Step 11: Implement Bulk File Send (Feature 6)**
+  - Files changed: `Models/BulkFileModels.cs`, `Models/NetworkModels.cs`, `Services/BulkFileSender.cs`, `Services/FileReceiverService.cs`, `Services/NetworkClientService.cs`, `Views/BulkFileSendWindow.xaml`, `Views/BulkFileSendWindow.xaml.cs`, `Views/FileNotificationPopup.xaml`, `Views/FileNotificationPopup.xaml.cs`, `Views/StudentWindow.xaml.cs`, `Views/MainTeacherWindow.xaml`, `Views/MainTeacherWindow.xaml.cs`
+  - What changed:
+    - Defined models for Bulk File Transfer protocol.
+    - Implemented `BulkFileSender` service on Server to chunk and broadcast files.
+    - Implemented `FileReceiverService` on Client to handle requests, show Popup, and reassemble files.
+    - Created Teacher UI (`BulkFileSendWindow`) and Student UI (`FileNotificationPopup`).
+    - Integrated "Gửi File" feature into Main Teacher Window.
+  - Verification: `dotnet build` passed.

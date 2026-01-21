@@ -543,6 +543,22 @@ namespace ClassroomManagement.Services
                     }
                     break;
 
+                case MessageType.BulkFileTransferRequest:
+                     if (message.Payload != null)
+                     {
+                         var req = JsonSerializer.Deserialize<BulkFileTransferRequest>(message.Payload);
+                         if (req != null) FileReceiverService.Instance.HandleRequest(req);
+                     }
+                     break;
+
+                case MessageType.BulkFileData:
+                     if (message.Payload != null)
+                     {
+                         var chunk = JsonSerializer.Deserialize<BulkFileDataChunk>(message.Payload);
+                         if (chunk != null) _ = FileReceiverService.Instance.HandleChunkAsync(chunk);
+                     }
+                     break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;

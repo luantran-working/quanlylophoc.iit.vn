@@ -507,6 +507,11 @@
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
                                                   Click="OpenFileCollection_Click"/>
 
+                            <controls:ToolButton ButtonText="Gửi File"
+                                                  IconKind="FileUpload"
+                                                  IconBackground="{StaticResource AppPrimaryBrush}"
+                                                  Click="OpenBulkFileSend_Click"/>
+
                             <controls:ToolButton ButtonText="Cấu hình máy"
                                                   IconKind="Monitor"
                                                   IconBackground="#673AB7"

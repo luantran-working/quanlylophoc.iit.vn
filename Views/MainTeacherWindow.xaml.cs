@@ -184,6 +184,13 @@ namespace ClassroomManagement.Views
             win.Show();
         }
 
+        private void OpenBulkFileSend_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new BulkFileSendWindow();
+            win.Owner = this;
+            win.Show();
+        }
+
         private void OpenAssignmentList_Click(object sender, RoutedEventArgs e)
         {
             var assignmentListWindow = new AssignmentListWindow();

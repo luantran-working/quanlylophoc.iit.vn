@@ -45,6 +45,8 @@ namespace ClassroomManagement.Views
             _networkClient.RemoteControlStarted += OnRemoteControlStarted;
             _networkClient.RemoteControlStopped += OnRemoteControlStopped;
 
+            FileReceiverService.Instance.FileRequestReceived += OnFileRequestReceived;
+
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
         }
@@ -337,21 +339,30 @@ namespace ClassroomManagement.Views
 
         private void OnScreenLocked(object? sender, EventArgs e)
         {
-            _isLocked = true;
             Dispatcher.Invoke(() =>
             {
-                // Show lock screen overlay
+                _isLocked = true;
+                _isRemoteControlled = false;
                 ShowLockScreen();
             });
         }
 
         private void OnScreenUnlocked(object? sender, EventArgs e)
         {
-            _isLocked = false;
             Dispatcher.Invoke(() =>
             {
-                // Hide lock screen overlay
+                _isLocked = false;
                 HideLockScreen();
+            });
+        }
+
+        private void OnFileRequestReceived(object? sender, BulkFileTransferRequest req)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                 var popup = new FileNotificationPopup(req);
+                 popup.Owner = this;
+                 popup.Show();
             });
         }
 

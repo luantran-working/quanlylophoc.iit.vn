@@ -80,7 +80,11 @@ namespace ClassroomManagement.Models
         // File Collection (Feature 4)
         FileCollectionRequest = 0xC0,
         FileCollectionData = 0xC1,
-        FileCollectionStatus = 0xC2
+        FileCollectionStatus = 0xC2,
+
+        // Bulk File Send (Feature 6)
+        BulkFileTransferRequest = 0xD0,
+        BulkFileData = 0xD1
     }
 
     /// <summary>

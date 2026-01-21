@@ -1,0 +1,51 @@
+<Window x:Class="ClassroomManagement.Views.BulkFileSendWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Gửi File Hàng Loạt" Height="450" Width="600"
+        WindowStartupLocation="CenterOwner"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="GỬI FILE CHO HỌC SINH" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
+
+        <!-- File Selection -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="FilePathBox" materialDesign:HintAssist.Hint="Đường dẫn file" IsReadOnly="True" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="CHỌN FILE" Click="Browse_Click" Margin="16,0,0,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+        </Grid>
+
+        <!-- Student Selection -->
+        <GroupBox Grid.Row="2" Header="Danh sách nhận" Margin="0,0,0,16">
+            <DataGrid x:Name="StudentGrid" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Extended">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                            ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                                            EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"/>
+                    <DataGridTextColumn Header="Học sinh" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Máy" Binding="{Binding ComputerName}" Width="150" IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- Actions -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+             <ProgressBar x:Name="SendProgress" Width="200" Height="10" Margin="0,0,16,0" Visibility="Hidden"/>
+             <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="0,0,16,0" FontStyle="Italic"/>
+             <Button Content="GỬI NGAY" Click="Send_Click" Style="{StaticResource MaterialDesignRaisedButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>
