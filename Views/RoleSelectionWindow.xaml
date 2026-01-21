@@ -109,7 +109,7 @@
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         
-                        <TextBlock Text="Quản lý phòng học thông minh"
+                        <TextBlock Text="HỆ THỐNG QUẢN LÝ PHÒNG HỌC THÔNG MINH"
                                    FontSize="28" FontWeight="Bold"
                                    Foreground="{StaticResource AppPrimaryBrush}"
                                    HorizontalAlignment="Center"
@@ -170,6 +170,7 @@
                                         Style="{StaticResource MaterialDesignRaisedButton}"
                                         Content="Đăng nhập"
                                         Background="{StaticResource AppPrimaryBrush}"
+                                        Foreground="White"
                                         BorderThickness="0"
                                         materialDesign:ButtonAssist.CornerRadius="8"
                                         Click="TeacherLogin_Click"/>
@@ -221,6 +222,7 @@
                                         Style="{StaticResource MaterialDesignRaisedButton}"
                                         Content="Tham gia"
                                         Background="#2E7D32"
+                                        Foreground="White"
                                         BorderThickness="0"
                                         materialDesign:ButtonAssist.CornerRadius="8"
                                         Click="StudentJoin_Click"/>
