@@ -508,9 +508,34 @@ namespace ClassroomManagement.Services
                     }
                     break;
 
+                case MessageType.SystemSpecsRequest:
+                    _log.Info("NetworkClient", "System specs request received from teacher");
+                    _ = RespondWithSystemSpecs();
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;
+            }
+        }
+
+        private async Task RespondWithSystemSpecs()
+        {
+            try
+            {
+                var package = SystemInfoService.Instance.GetFullSystemInfo(MachineId, DisplayName);
+                var response = new NetworkMessage
+                {
+                    Type = MessageType.SystemSpecsResponse,
+                    SenderId = MachineId,
+                    SenderName = DisplayName,
+                    Payload = JsonSerializer.Serialize(package)
+                };
+                await SendMessageAsync(response);
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error collecting system specs", ex);
             }
         }
 

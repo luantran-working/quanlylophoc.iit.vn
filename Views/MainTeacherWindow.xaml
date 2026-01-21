@@ -507,6 +507,11 @@
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
                                                   Click="OpenFileTransfer_Click"/>
 
+                            <controls:ToolButton ButtonText="Cấu hình máy"
+                                                  IconKind="Monitor"
+                                                  IconBackground="#673AB7"
+                                                  Click="OpenConfigTable_Click"/>
+
                             <controls:ToolButton ButtonText="Bài tập đã nộp"
                                                   IconKind="AssignmentTurnedIn"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"

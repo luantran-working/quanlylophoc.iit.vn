@@ -49,3 +49,11 @@
     - Increased Server Network Buffer to 50MB to accommodate file submissions.
     - Updated `SubmitAssignmentDialog` to warn if file size > 5MB.
   - Verification: `dotnet build` passed.
+- **Step 8: Implement Computer Info (Feature 2)**
+  - Files changed: `Models/SystemInfoModels.cs`, `Services/SystemInfoService.cs`, `Views/SystemConfigTableWindow.xaml`, `Views/ComputerSpecsWindow.xaml`, `Services/NetworkClientService.cs`, `Services/SessionManager.cs`, `Views/MainTeacherWindow.xaml`
+  - What changed:
+    - Updated `feature-2-computer-info.md` workflow to focus on comprehensive hardware specs and "Configuration Table".
+    - Created models for CPU, RAM, GPU, OS, Motherboard, and Disk info.
+    - Implemented hardware collection using WMI (System.Management).
+    - Added "Bảng cấu hình" button and individual student config view via context menu.
+  - Verification: `dotnet build` passed.

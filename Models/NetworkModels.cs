@@ -66,7 +66,11 @@ namespace ClassroomManagement.Models
         // Assignment
         AssignmentSubmit = 0x90,
         AssignmentSubmitAck = 0x91,
-        AssignmentList = 0x92
+        AssignmentList = 0x92,
+
+        // System Info (Feature 2)
+        SystemSpecsRequest = 0xA0,
+        SystemSpecsResponse = 0xA1
     }
 
     /// <summary>

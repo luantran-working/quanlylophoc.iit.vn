@@ -51,6 +51,7 @@ namespace ClassroomManagement.Services
 
         public ObservableCollection<Student> OnlineStudents { get; } = new();
         public ObservableCollection<ChatMessage> ChatMessages { get; } = new();
+        public ObservableCollection<SystemInfoPackage> OnlineStudentsSystemInfo { get; } = new();
 
         public NetworkServerService NetworkServer => _networkServer;
         public ScreenCaptureService ScreenCapture => _screenCapture;
@@ -228,6 +229,18 @@ namespace ClassroomManagement.Services
         }
 
         /// <summary>
+        /// Yêu cầu tất cả học sinh gửi thông tin cấu hình máy tính
+        /// </summary>
+        public async Task RequestAllSystemSpecsAsync()
+        {
+            await _networkServer.BroadcastToAllAsync(new NetworkMessage
+            {
+                Type = MessageType.SystemSpecsRequest,
+                SenderId = "server"
+            });
+        }
+
+        /// <summary>
         /// Gửi tin nhắn chat
         /// </summary>
         public async Task SendChatMessageAsync(string content, int? studentId = null)
@@ -365,6 +378,10 @@ namespace ClassroomManagement.Services
                 case MessageType.AssignmentSubmit:
                     HandleAssignmentSubmit(e);
                     break;
+
+                case MessageType.SystemSpecsResponse:
+                    HandleSystemSpecsResponse(e);
+                    break;
             }
         }
 
@@ -407,6 +424,31 @@ namespace ClassroomManagement.Services
             catch (Exception ex)
             {
                  LogService.Instance.Error("SessionManager", "Error handling assignment submission", ex);
+            }
+        }
+
+        private void HandleSystemSpecsResponse(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var info = System.Text.Json.JsonSerializer.Deserialize<SystemInfoPackage>(e.Message.Payload);
+                if (info != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var existing = OnlineStudentsSystemInfo.FirstOrDefault(s => s.MachineId == info.MachineId);
+                        if (existing != null)
+                        {
+                            OnlineStudentsSystemInfo.Remove(existing);
+                        }
+                        OnlineStudentsSystemInfo.Add(info);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.Error("SessionManager", "Error parsing system specs response", ex);
             }
         }
 

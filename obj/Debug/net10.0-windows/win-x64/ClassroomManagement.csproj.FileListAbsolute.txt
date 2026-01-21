@@ -473,3 +473,8 @@ C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-wi
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SubmitAssignmentDialog.g.cs
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\AssignmentListWindow.baml
 C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\AssignmentListWindow.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\bin\Debug\net10.0-windows\win-x64\System.Management.dll
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\ComputerSpecsWindow.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SystemConfigTableWindow.baml
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\ComputerSpecsWindow.g.cs
+C:\Users\admin\Documents\SourceCode2025\quanlylophoc.iit.vn\obj\Debug\net10.0-windows\win-x64\Views\SystemConfigTableWindow.g.cs

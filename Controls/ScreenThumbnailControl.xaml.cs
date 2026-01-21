@@ -192,5 +192,27 @@ namespace ClassroomManagement.Controls
         private void SendMessage_Click(object sender, RoutedEventArgs e) => ChatButton_Click(sender, e);
 
         private void LockMachine_Click(object sender, RoutedEventArgs e) => LockButton_Click(sender, e);
+
+        private void ViewSpecs_Click(object sender, RoutedEventArgs e)
+        {
+            if (_student == null) return;
+
+            var info = SessionManager.Instance.OnlineStudentsSystemInfo.FirstOrDefault(s => s.MachineId == _student.MachineId);
+            if (info != null)
+            {
+                var window = new Views.ComputerSpecsWindow(info);
+                window.Owner = Window.GetWindow(this);
+                window.Show();
+            }
+            else
+            {
+                ToastService.Instance.ShowInfo("Đang yêu cầu...", $"Đang gửi yêu cầu lấy cấu hình từ {_student.DisplayName}");
+                _ = SessionManager.Instance.NetworkServer.SendToClientAsync(_student.MachineId, new NetworkMessage
+                {
+                    Type = MessageType.SystemSpecsRequest,
+                    SenderId = "server"
+                });
+            }
+        }
     }
 }

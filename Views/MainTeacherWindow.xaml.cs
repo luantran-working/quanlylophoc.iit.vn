@@ -184,6 +184,13 @@ namespace ClassroomManagement.Views
             assignmentListWindow.Show();
         }
 
+        private void OpenConfigTable_Click(object sender, RoutedEventArgs e)
+        {
+            var configTableWindow = new SystemConfigTableWindow();
+            configTableWindow.Owner = this;
+            configTableWindow.Show();
+        }
+
         private void OpenWhiteboard_Click(object sender, RoutedEventArgs e)
         {
             var whiteboardWindow = new WhiteboardWindow();

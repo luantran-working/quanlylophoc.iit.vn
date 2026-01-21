@@ -1,0 +1,80 @@
+<Window x:Class="ClassroomManagement.Views.SystemConfigTableWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Bảng Cấu Hình Hệ Thống Học Sinh" Height="600" Width="1100"
+        WindowStartupLocation="CenterOwner"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <materialDesign:ColorZone Mode="PrimaryMid" Padding="16" materialDesign:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ChartTable" Width="24" Height="24" VerticalAlignment="Center"/>
+                    <TextBlock VerticalAlignment="Center" Text="BẢNG CẤU HÌNH HỆ THỐNG"
+                               Margin="16,0,0,0" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="TẢI LẠI TẤT CẢ" Click="RefreshAll_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,0,8,0"
+                            ToolTip="Yêu cầu tất cả học sinh gửi lại thông tin cấu hình">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Refresh" Margin="0,0,8,0"/>
+                                    <TextBlock Text="CẬP NHẬT TẤT CẢ"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </materialDesign:ColorZone>
+
+        <DataGrid Grid.Row="1" x:Name="SpecsGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                  Margin="16" HeadersVisibility="Column" SelectionMode="Single"
+                  AlternatingRowBackground="#F9F9F9" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Học sinh" Binding="{Binding StudentName}" Width="150">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="8,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Hệ điều hành" Binding="{Binding Specs.OS}" Width="180"/>
+                <DataGridTextColumn Header="Vi xử lý (CPU)" Binding="{Binding Specs.CPU}" Width="250"/>
+                <DataGridTextColumn Header="RAM" Binding="{Binding Specs.RAMTotalGB, StringFormat={}{0} GB}" Width="80"/>
+                <DataGridTextColumn Header="Đồ họa (GPU)" Binding="{Binding Specs.GPU}" Width="200"/>
+                <DataGridTextColumn Header="Bo mạch chủ" Binding="{Binding Specs.Motherboard}" Width="180"/>
+                <DataGridTextColumn Header="IP Address" Binding="{Binding Specs.IpAddress}" Width="120"/>
+
+                <DataGridTemplateColumn Header="Thao tác" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource MaterialDesignIconButton}" Click="ViewDetail_Click" ToolTip="Xem chi tiết ổ đĩa và phần cứng">
+                                <materialDesign:PackIcon Kind="Eye" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
