@@ -34,6 +34,7 @@ namespace ClassroomManagement.Views
             _networkClient = new NetworkClientService();
             _networkClient.DisplayName = studentName;
             _screenCapture = new ScreenCaptureService();
+            PollService.Instance.InitializeClient(_networkClient);
 
             // Wire up network events
             _networkClient.Connected += OnConnected;
@@ -46,6 +47,8 @@ namespace ClassroomManagement.Views
             _networkClient.RemoteControlStopped += OnRemoteControlStopped;
 
             FileReceiverService.Instance.FileRequestReceived += OnFileRequestReceived;
+
+            // PollService.Instance.PollStarted += OnPollStarted;
 
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
@@ -363,6 +366,16 @@ namespace ClassroomManagement.Views
                  var popup = new FileNotificationPopup(req);
                  popup.Owner = this;
                  popup.Show();
+            });
+        }
+
+        private void OnPollStarted(object? sender, Poll poll)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var win = new VotePollWindow(poll);
+                // win.Owner = this; // Should be top but maybe not child if fullscreen lock?
+                win.Show();
             });
         }
 

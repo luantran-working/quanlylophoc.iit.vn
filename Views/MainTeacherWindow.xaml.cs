@@ -191,6 +191,13 @@ namespace ClassroomManagement.Views
             win.Show();
         }
 
+        private void OpenCreatePoll_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new CreatePollWindow();
+            win.Owner = this;
+            win.Show();
+        }
+
         private void OpenAssignmentList_Click(object sender, RoutedEventArgs e)
         {
             var assignmentListWindow = new AssignmentListWindow();

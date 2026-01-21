@@ -84,7 +84,13 @@ namespace ClassroomManagement.Models
 
         // Bulk File Send (Feature 6)
         BulkFileTransferRequest = 0xD0,
-        BulkFileData = 0xD1
+        BulkFileData = 0xD1,
+
+        // Poll (Feature 7)
+        PollStart = 0xE0,
+        PollVote = 0xE1,
+        PollStop = 0xE2,
+        PollUpdate = 0xE3
     }
 
     /// <summary>

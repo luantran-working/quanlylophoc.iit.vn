@@ -86,3 +86,6 @@
     - Created Teacher UI (`BulkFileSendWindow`) and Student UI (`FileNotificationPopup`).
     - Integrated "Gửi File" feature into Main Teacher Window.
   - Verification: `dotnet build` passed.
+
+- **Step 12: Implement Realtime Polling (Feature 7)**
+  - Files changed: Models/PollModels.cs, Models/NetworkModels.cs, Services/PollService.cs, Services/SessionManager.cs, Services/NetworkClientService.cs, Views/CreatePollWindow.xaml, Views/CreatePollWindow.xaml.cs, Views/VotePollWindow.xaml, Views/VotePollWindow.xaml.cs, Views/MainTeacherWindow.xaml, Views/MainTeacherWindow.xaml.cs, Views/StudentWindow.xaml.cs 

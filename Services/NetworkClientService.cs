@@ -559,6 +559,26 @@ namespace ClassroomManagement.Services
                      }
                      break;
 
+                case MessageType.PollStart:
+                    if (message.Payload != null)
+                    {
+                        var poll = JsonSerializer.Deserialize<Poll>(message.Payload);
+                        if (poll != null) PollService.Instance.HandlePollStart(poll);
+                    }
+                    break;
+
+                case MessageType.PollStop:
+                    PollService.Instance.HandlePollStop();
+                    break;
+
+                case MessageType.PollUpdate:
+                    if (message.Payload != null)
+                    {
+                        var update = JsonSerializer.Deserialize<PollResultUpdate>(message.Payload);
+                        if (update != null) PollService.Instance.HandlePollUpdate(update);
+                    }
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;

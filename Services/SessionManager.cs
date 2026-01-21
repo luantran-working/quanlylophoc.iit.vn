@@ -395,7 +395,28 @@ namespace ClassroomManagement.Services
                 case MessageType.FileCollectionStatus:
                     HandleFileCollectionStatus(e);
                     break;
+
+                case MessageType.PollVote:
+                    HandlePollVote(e);
+                    break;
             }
+        }
+
+        private async void HandlePollVote(MessageReceivedEventArgs e)
+        {
+             if (e.Message.Payload == null) return;
+             try
+             {
+                 var vote = System.Text.Json.JsonSerializer.Deserialize<Models.PollVote>(e.Message.Payload);
+                 if (vote != null)
+                 {
+                     await PollService.Instance.ProcessVoteAsync(vote);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 LogService.Instance.Error("SessionManager", "Error processing vote", ex);
+             }
         }
 
         private void HandleFileCollectionData(MessageReceivedEventArgs e)

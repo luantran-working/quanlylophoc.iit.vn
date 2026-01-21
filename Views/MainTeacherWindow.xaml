@@ -512,6 +512,11 @@
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
                                                   Click="OpenBulkFileSend_Click"/>
 
+                            <controls:ToolButton ButtonText="Bình chọn"
+                                                  IconKind="Poll"
+                                                  IconBackground="#E91E63"
+                                                  Click="OpenCreatePoll_Click"/>
+
                             <controls:ToolButton ButtonText="Cấu hình máy"
                                                   IconKind="Monitor"
                                                   IconBackground="#673AB7"
