@@ -94,6 +94,7 @@ Phần mềm hoạt động trên **mạng LAN nội bộ**:
   - [Chat nâng cao](./Features/advanced-chat.md) - Nhóm chat, gửi hình/file
   - [Giám sát hệ thống](./Features/system-monitoring.md) - Ổ đĩa, USB, ứng dụng
   - [Nộp bài tập & Gửi file](./Features/assignment-submission.md)
+  - [Thu thập file](./Features/file-collection.md)
   - [Bình chọn thời gian thực](./Features/realtime-polling.md)
 
 ## Hỗ trợ
