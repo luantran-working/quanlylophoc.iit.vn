@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IIT Vietnam")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c56a37ac34e4c98d31dd7d232e5ee722193c715")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+edd7433bbf2ec1ab0cbee44c1957eb0b8d249783")]
 [assembly: System.Reflection.AssemblyProductAttribute("Quản lý Lớp học IIT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClassroomManagement")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
