@@ -73,6 +73,8 @@ namespace ClassroomManagement.Services
             _networkServer.ClientDisconnected += OnClientDisconnected;
             _networkServer.MessageReceived += OnMessageReceived;
             _networkServer.ScreenDataReceived += OnScreenDataReceived;
+
+            ChatService.Instance.Initialize(_networkServer, null);
         }
 
         /// <summary>
@@ -363,10 +365,7 @@ namespace ClassroomManagement.Services
         {
             switch (e.Message.Type)
             {
-                case MessageType.ChatMessage:
-                case MessageType.ChatPrivate:
-                    HandleChatMessage(e);
-                    break;
+
 
                 case MessageType.RaiseHand:
                     HandleRaiseHand(e);
@@ -399,7 +398,40 @@ namespace ClassroomManagement.Services
                 case MessageType.PollVote:
                     HandlePollVote(e);
                     break;
+
+                case MessageType.ChatMessage:
+                case MessageType.ChatPrivate:
+                    HandleChatMessage(e);
+                    break;
+
+                case MessageType.ChatImageUpload:
+                    HandleChatImageUpload(e);
+                    break;
             }
+        }
+
+        private async void HandleChatMessage(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var msg = System.Text.Json.JsonSerializer.Deserialize<ChatMessage>(e.Message.Payload);
+                if (msg != null)
+                {
+                    // Update Sender Info from Network Info to be safe
+                    msg.SenderType = "student";
+                    msg.SenderId = DatabaseService.Instance.GetOrCreateStudent(e.Message.SenderId, e.Message.SenderName, "", "")?.Id ?? 0;
+
+                    msg.Id = DatabaseService.Instance.SaveChatMessage(msg);
+                    await ChatService.Instance.BroadcastMessageAsync(msg);
+                }
+            } catch {}
+        }
+
+        private async void HandleChatImageUpload(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            await ChatService.Instance.HandleImageUploadAsync(e.Message.SenderId, e.Message.Payload);
         }
 
         private async void HandlePollVote(MessageReceivedEventArgs e)
@@ -570,32 +602,7 @@ namespace ClassroomManagement.Services
             }
         }
 
-        private void HandleChatMessage(MessageReceivedEventArgs e)
-        {
-            if (CurrentSession == null) return;
 
-            var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
-            if (student == null) return;
-
-            var chatMessage = new ChatMessage
-            {
-                SessionId = CurrentSession.Id,
-                SenderType = "student",
-                SenderId = student.Id,
-                SenderName = student.DisplayName,
-                Content = e.Message.Payload ?? "",
-                IsGroup = e.Message.Type == MessageType.ChatMessage,
-                CreatedAt = DateTime.Now
-            };
-
-            _db.SaveChatMessage(chatMessage);
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ChatMessages.Add(chatMessage);
-                ChatMessageReceived?.Invoke(this, chatMessage);
-            });
-        }
 
         private void HandleRaiseHand(MessageReceivedEventArgs e)
         {

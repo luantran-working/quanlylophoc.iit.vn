@@ -42,6 +42,10 @@ namespace ClassroomManagement.Models
         // Chat
         ChatMessage = 0x30,
         ChatPrivate = 0x31,
+        ChatGroupCreate = 0x32,
+        ChatGroupInvite = 0x33,
+        ChatImageUpload = 0x34, // Client -> Server: Upload image
+        ChatFileUpload = 0x35,  // Client -> Server: Upload file
 
         // File
         FileStart = 0x40,

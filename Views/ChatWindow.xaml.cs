@@ -1,113 +1,21 @@
-using System;
 using System.Windows;
-using System.Windows.Input;
 using ClassroomManagement.Models;
-using ClassroomManagement.Services;
 
 namespace ClassroomManagement.Views
 {
-    /// <summary>
-    /// Interaction logic for ChatWindow.xaml
-    /// </summary>
     public partial class ChatWindow : Window
     {
-        private readonly SessionManager _session;
-        private readonly Student? _targetStudent;
-        private readonly bool _isPrivateChat;
-
         public ChatWindow()
         {
             InitializeComponent();
-            _session = SessionManager.Instance;
-            _isPrivateChat = false;
-            
-            // Bind to session chat messages
-            DataContext = _session;
-            LoadChatMessages();
         }
 
-        public ChatWindow(Student student)
+        public ChatWindow(Student student) : this()
         {
-            InitializeComponent();
-            _session = SessionManager.Instance;
-            _targetStudent = student;
-            _isPrivateChat = true;
-            
-            Title = $"Chat với {student.DisplayName}";
-            DataContext = _session;
-            LoadChatMessages();
-        }
-
-        private void LoadChatMessages()
-        {
-            // Load existing messages
-            // For private chat, filter by student
-            // TODO: Add proper filtering
-        }
-
-        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ButtonState == MouseButtonState.Pressed)
-                DragMove();
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            SystemCommands.MinimizeWindow(this);
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
+            if (student != null)
             {
-                SystemCommands.RestoreWindow(this);
-            }
-            else
-            {
-                SystemCommands.MaximizeWindow(this);
-            }
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void SendMessage_Click(object sender, RoutedEventArgs e)
-        {
-            SendMessage();
-        }
-
-        private void MessageInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(MessageInput.Text))
-            {
-                SendMessage();
-            }
-        }
-
-        private async void SendMessage()
-        {
-            if (string.IsNullOrWhiteSpace(MessageInput.Text))
-                return;
-
-            string message = MessageInput.Text;
-            MessageInput.Clear();
-
-            try
-            {
-                if (_isPrivateChat && _targetStudent != null)
-                {
-                    await _session.SendChatMessageAsync(message, _targetStudent.Id);
-                }
-                else
-                {
-                    await _session.SendChatMessageAsync(message);
-                }
-            }
-            catch (Exception ex)
-            {
-                ToastService.Instance.ShowError("Lỗi", $"Không thể gửi tin nhắn: {ex.Message}");
+                MainChatView.SetPrivateChat(student);
+                Title = $"Chat với {student.DisplayName}";
             }
         }
     }

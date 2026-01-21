@@ -35,6 +35,7 @@ namespace ClassroomManagement.Views
             _networkClient.DisplayName = studentName;
             _screenCapture = new ScreenCaptureService();
             PollService.Instance.InitializeClient(_networkClient);
+            ChatService.Instance.Initialize(null, _networkClient);
 
             // Wire up network events
             _networkClient.Connected += OnConnected;

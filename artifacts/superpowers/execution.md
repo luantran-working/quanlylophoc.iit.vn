@@ -89,3 +89,13 @@
 
 - **Step 12: Implement Realtime Polling (Feature 7)**
   - Files changed: Models/PollModels.cs, Models/NetworkModels.cs, Services/PollService.cs, Services/SessionManager.cs, Services/NetworkClientService.cs, Views/CreatePollWindow.xaml, Views/CreatePollWindow.xaml.cs, Views/VotePollWindow.xaml, Views/VotePollWindow.xaml.cs, Views/MainTeacherWindow.xaml, Views/MainTeacherWindow.xaml.cs, Views/StudentWindow.xaml.cs 
+
+- **Step 13: Implement Advanced Chat (Feature 1)**
+  - Files changed: `Views/ChatWindow.xaml`, `Views/ChatWindow.xaml.cs`, `Views/ChatView.xaml`, `Views/ChatView.xaml.cs`, `Services/ChatService.cs`, `Services/SessionManager.cs`, `Views/StudentWindow.xaml.cs`, `Controls/ScreenThumbnailControl.xaml.cs`
+  - What changed:
+    - Replaced legacy ChatWindow with modern `ChatView` supporting Teacher/Student modes.
+    - Implemented `ChatService` for message handling (Text/Image) and broadcasting.
+    - Updated Server logic to handle Chat messages and integrated with Database.
+    - Updated Student Client to support opening chat and sending messages.
+    - Resolved integration conflicts in `SessionManager` and `ScreenThumbnailControl`.
+  - Verification: `dotnet build` passed.

@@ -161,6 +161,30 @@ namespace ClassroomManagement.Models
 
         // Navigation properties (không lưu DB)
         public string SenderName { get; set; } = string.Empty;
+
+        // Advanced Chat properties
+        public string ContentType { get; set; } = "text"; // text, image, file
+        public string? AttachmentPath { get; set; } // Local path or URL
+        public string? GroupId { get; set; } // For custom groups
+    }
+
+    /// <summary>
+    /// Nhóm chat tùy chỉnh
+    /// </summary>
+    public class ChatGroup
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; } = string.Empty;
+        public int CreatorId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    }
+
+    public class ChatGroupMember
+    {
+        public int Id { get; set; }
+        public string GroupId { get; set; } = string.Empty;
+        public int StudentId { get; set; }
+        public DateTime JoinedAt { get; set; } = DateTime.Now;
     }
 
     /// <summary>
