@@ -282,6 +282,33 @@ namespace ClassroomManagement.Views
             }
         }
 
+        private async void CaptureAll_Click(object sender, RoutedEventArgs e)
+        {
+             try
+            {
+                var msg = new NetworkMessage
+                {
+                    Type = MessageType.ScreenshotCaptureRequest,
+                    SenderId = "server",
+                    Payload = System.Text.Json.JsonSerializer.Serialize(new ScreenshotRequest())
+                };
+                await SessionManager.Instance.NetworkServer.BroadcastToAllAsync(msg);
+                ToastService.Instance.ShowInfo("Đang chụp tất cả",
+                    $"Đang gửi yêu cầu chụp màn hình tới {_session.OnlineStudents.Count} học sinh...");
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Instance.Error("MainTeacher", "Error capturing all screens", ex);
+            }
+        }
+
+        private void OpenGallery_Click(object sender, RoutedEventArgs e)
+        {
+             var gallery = new ScreenshotGalleryWindow();
+             gallery.Owner = this;
+             gallery.Show();
+        }
+
         private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
         {
             if (parent == null) return null;

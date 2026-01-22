@@ -19,6 +19,7 @@ namespace ClassroomManagement.Services
         private readonly DatabaseService _db;
         private readonly NetworkServerService _networkServer;
         private readonly ScreenCaptureService _screenCapture;
+        private readonly ScreenshotService _screenshotService;
 
         private User? _currentUser;
         private Session? _currentSession;
@@ -55,6 +56,7 @@ namespace ClassroomManagement.Services
 
         public NetworkServerService NetworkServer => _networkServer;
         public ScreenCaptureService ScreenCapture => _screenCapture;
+        public ScreenshotService ScreenshotService => _screenshotService;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<Student>? StudentConnected;
@@ -67,12 +69,14 @@ namespace ClassroomManagement.Services
             _db = DatabaseService.Instance;
             _networkServer = new NetworkServerService();
             _screenCapture = new ScreenCaptureService();
+            _screenshotService = new ScreenshotService();
 
             // Wire up network events
             _networkServer.ClientConnected += OnClientConnected;
             _networkServer.ClientDisconnected += OnClientDisconnected;
             _networkServer.MessageReceived += OnMessageReceived;
             _networkServer.ScreenDataReceived += OnScreenDataReceived;
+            _networkServer.ScreenshotReceived += OnScreenshotReceived;
 
             ChatService.Instance.Initialize(_networkServer, null);
         }
@@ -634,6 +638,27 @@ namespace ClassroomManagement.Services
             if (RemoteControlService.Instance.IsSessionActive(e.ClientId))
             {
                 RemoteControlService.Instance.HandleScreenData(e.ClientId, e.ScreenData.ImageData);
+            }
+        }
+
+        private async void OnScreenshotReceived(object? sender, ScreenDataReceivedEventArgs e)
+        {
+            try
+            {
+                var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
+                string studentName = student?.DisplayName ?? "Unknown";
+                int sessionId = CurrentSession?.Id ?? 0;
+
+                var screenshot = await _screenshotService.CaptureAndSaveAsync(e.ClientId, studentName, sessionId, e.ScreenData.ImageData);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ToastService.Instance.ShowSuccess("Chụp ảnh thành công", $"Đã lưu ảnh màn hình của {studentName}");
+                });
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.Error("SessionManager", "Error saving screenshot", ex);
             }
         }
 

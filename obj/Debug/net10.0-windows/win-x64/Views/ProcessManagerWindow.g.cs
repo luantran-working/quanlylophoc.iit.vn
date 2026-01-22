@@ -78,7 +78,7 @@ namespace ClassroomManagement.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;V1.0.0.0;component/views/processmanagerwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;component/views/processmanagerwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\ProcessManagerWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

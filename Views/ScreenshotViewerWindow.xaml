@@ -1,0 +1,73 @@
+<Window x:Class="ClassroomManagement.Views.ScreenshotViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Chi tiết ảnh chụp" Height="700" Width="1000"
+        WindowStartupLocation="CenterOwner"
+        Background="Black">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#212121" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock x:Name="TitleText" Text="Học sinh A - 10:30 20/05/2024" FontWeight="Bold" FontSize="16" Foreground="White" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="PathText" Text="C:\Path\To\File.jpg" FontSize="12" Foreground="#CCC"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="White" BorderBrush="White"
+                            Content="Xóa ảnh" Click="Delete_Click" Margin="0,0,8,0"/>
+                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                            Content="Đóng" Click="Close_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Image Area -->
+        <Border Grid.Row="1" Background="#333" ClipToBounds="True">
+             <!-- Simple Zoom/Pan could be added here later. For now just standard Image -->
+             <Image x:Name="MainImage" Stretch="Uniform"/>
+        </Border>
+
+        <!-- Footer / Note -->
+        <Border Grid.Row="2" Background="White" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="NoteTextBox"
+                         materialDesign:HintAssist.Hint="Ghi chú cho ảnh này..."
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         VerticalAlignment="Top"
+                         Height="60"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         Margin="0,0,16,0"/>
+
+                <Button Grid.Column="1"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Content="Lưu ghi chú"
+                        Click="SaveNote_Click"
+                        VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

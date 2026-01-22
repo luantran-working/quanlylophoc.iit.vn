@@ -39,6 +39,7 @@ namespace ClassroomManagement.Services
         public event EventHandler? ScreenUnlocked;
         public event EventHandler? RemoteControlStarted;
         public event EventHandler? RemoteControlStopped;
+        public event EventHandler<ScreenshotRequest>? ScreenshotRequested;
 
         private readonly FileCollectionService _fileCollectionService; // Add field
 
@@ -576,6 +577,26 @@ namespace ClassroomManagement.Services
                     {
                         var update = JsonSerializer.Deserialize<PollResultUpdate>(message.Payload);
                         if (update != null) PollService.Instance.HandlePollUpdate(update);
+                    }
+                    break;
+
+                case MessageType.ScreenshotCaptureRequest:
+                    try
+                    {
+                        var request = message.Payload != null
+                            ? JsonSerializer.Deserialize<ScreenshotRequest>(message.Payload)
+                            : new ScreenshotRequest();
+
+                        // If TargetStudentId is specified and doesn't match ours, ignore (though usually server filters this)
+                        if (request != null && (string.IsNullOrEmpty(request.TargetStudentId) || request.TargetStudentId == MachineId))
+                        {
+                            _log.Info("NetworkClient", "Screenshot request received");
+                            ScreenshotRequested?.Invoke(this, request);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warning("NetworkClient", $"Error processing screenshot request: {ex.Message}");
                     }
                     break;
 

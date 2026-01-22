@@ -182,6 +182,27 @@ namespace ClassroomManagement.Controls
         // Context Menu Handlers
         private void ViewDetail_Click(object sender, RoutedEventArgs e) => FullscreenButton_Click(sender, e);
 
+        private async void Screenshot_Click(object sender, RoutedEventArgs e)
+        {
+            if (_student == null) return;
+            try
+            {
+                 var msg = new NetworkMessage
+                {
+                    Type = MessageType.ScreenshotCaptureRequest,
+                    SenderId = "server",
+                    TargetId = _student.MachineId,
+                    Payload = System.Text.Json.JsonSerializer.Serialize(new ScreenshotRequest { TargetStudentId = _student.MachineId })
+                };
+                await SessionManager.Instance.NetworkServer.SendToClientAsync(_student.MachineId, msg);
+                ToastService.Instance.ShowInfo("Đã gửi yêu cầu", $"Đang chụp màn hình của {_student.DisplayName}...");
+            }
+            catch (Exception ex)
+            {
+                 _log.Error("ScreenThumbnail", "Error sending screenshot request", ex);
+            }
+        }
+
         private void RemoteControl_Click(object sender, RoutedEventArgs e)
         {
             if (_student == null) return;

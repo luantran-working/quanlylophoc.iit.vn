@@ -351,6 +351,28 @@
                                                 </StackPanel>
                                             </Button>
 
+                                            <Button x:Name="CaptureAllBtn"
+                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                    Margin="8,0,0,0" Height="32"
+                                                    Click="CaptureAll_Click"
+                                                    ToolTip="Chụp màn hình tất cả học sinh">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Kind="Camera" Width="16" Height="16" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Chụp tất cả" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                                </StackPanel>
+                                            </Button>
+
+                                            <Button x:Name="GalleryBtn"
+                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                    Margin="8,0,0,0" Height="32"
+                                                    Click="OpenGallery_Click"
+                                                    ToolTip="Xem thư viện ảnh đã chụp">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Kind="ImageMultiple" Width="16" Height="16" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Thư viện ảnh" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                                </StackPanel>
+                                            </Button>
+
                                             <TextBlock x:Name="ScreenCountText"
                                                        Text="{Binding OnlineStudents.Count, StringFormat='Đang hiển thị {0} màn hình'}"
                                                        VerticalAlignment="Center" Margin="16,0,0,0"

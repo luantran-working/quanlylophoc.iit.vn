@@ -54,7 +54,7 @@ namespace ClassroomManagement.Controls {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;V1.0.0.0;component/controls/studentcardcontrol.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;component/controls/studentcardcontrol.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Controls\StudentCardControl.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -26,6 +26,11 @@
                         <materialDesign:PackIcon Kind="MonitorDashboard"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="Chụp màn hình" Click="Screenshot_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Camera"/>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Điều khiển từ xa" Click="RemoteControl_Click">
                     <MenuItem.Icon>
                         <materialDesign:PackIcon Kind="RemoteDesktop"/>

@@ -94,7 +94,12 @@ namespace ClassroomManagement.Models
         PollStart = 0xE0,
         PollVote = 0xE1,
         PollStop = 0xE2,
-        PollUpdate = 0xE3
+        PollUpdate = 0xE3,
+
+        // Screenshot (Feature 8)
+        ScreenshotCaptureRequest = 0xF0,   // Yêu cầu chụp màn hình
+        ScreenshotCaptureData = 0xF1,      // Dữ liệu ảnh chụp
+        ScreenshotCaptureConfirm = 0xF2    // Xác nhận đã nhận
     }
 
     /// <summary>

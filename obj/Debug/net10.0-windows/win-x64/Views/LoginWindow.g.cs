@@ -94,7 +94,7 @@ namespace ClassroomManagement.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;V1.0.0.0;component/views/loginwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;component/views/loginwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\LoginWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -207,6 +207,25 @@ namespace ClassroomManagement.Services
 
             // Insert default admin user if not exists
             InsertDefaultUser(connection);
+
+            // Feature 8: Screenshots table
+            var screenshotTable = @"
+                CREATE TABLE IF NOT EXISTS Screenshots (
+                    Id TEXT PRIMARY KEY,
+                    StudentId TEXT NOT NULL,
+                    StudentName TEXT NOT NULL,
+                    SessionId INTEGER,
+                    CapturedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FilePath TEXT NOT NULL,
+                    ThumbnailPath TEXT,
+                    Note TEXT,
+                    Tags TEXT,
+                    FOREIGN KEY (SessionId) REFERENCES Sessions(Id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_screenshots_session ON Screenshots(SessionId);
+                CREATE INDEX IF NOT EXISTS idx_screenshots_student ON Screenshots(StudentId);
+            ";
+            new SqliteCommand(screenshotTable, connection).ExecuteNonQuery();
         }
 
         private void InsertDefaultUser(SqliteConnection connection)
@@ -699,6 +718,92 @@ namespace ClassroomManagement.Services
                 });
             }
             return files;
+        }
+
+        #endregion
+
+        #region Screenshot Methods (Feature 8)
+
+        public void SaveScreenshot(Screenshot screenshot)
+        {
+            using var connection = GetConnection();
+            var sql = @"INSERT INTO Screenshots (Id, StudentId, StudentName, SessionId, CapturedAt, FilePath, ThumbnailPath, Note, Tags)
+                        VALUES (@id, @studentId, @studentName, @sessionId, @capturedAt, @filePath, @thumbnailPath, @note, @tags)";
+
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@id", screenshot.Id);
+            command.Parameters.AddWithValue("@studentId", screenshot.StudentId);
+            command.Parameters.AddWithValue("@studentName", screenshot.StudentName);
+            command.Parameters.AddWithValue("@sessionId", string.IsNullOrEmpty(screenshot.SessionId) ? DBNull.Value : screenshot.SessionId);
+            command.Parameters.AddWithValue("@capturedAt", screenshot.CapturedAt);
+            command.Parameters.AddWithValue("@filePath", screenshot.FilePath);
+            command.Parameters.AddWithValue("@thumbnailPath", screenshot.ThumbnailPath ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@note", screenshot.Note ?? (object)DBNull.Value);
+
+            // Serialize tags list to simple comma separated string or JSON for now
+            var tagsStr = screenshot.Tags != null ? string.Join(",", screenshot.Tags) : "";
+            command.Parameters.AddWithValue("@tags", tagsStr);
+
+            command.ExecuteNonQuery();
+        }
+
+        public List<Screenshot> GetScreenshots(string? sessionId = null, string? studentId = null)
+        {
+            using var connection = GetConnection();
+            var sql = "SELECT * FROM Screenshots WHERE 1=1";
+
+            if (!string.IsNullOrEmpty(sessionId))
+                sql += " AND SessionId = @sessionId";
+            if (!string.IsNullOrEmpty(studentId))
+                sql += " AND StudentId = @studentId";
+
+            sql += " ORDER BY CapturedAt DESC";
+
+            using var command = new SqliteCommand(sql, connection);
+            if (!string.IsNullOrEmpty(sessionId))
+                command.Parameters.AddWithValue("@sessionId", sessionId);
+            if (!string.IsNullOrEmpty(studentId))
+                command.Parameters.AddWithValue("@studentId", studentId);
+
+            var list = new List<Screenshot>();
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var tagsRaw = reader.IsDBNull(reader.GetOrdinal("Tags")) ? "" : reader.GetString(reader.GetOrdinal("Tags"));
+
+                list.Add(new Screenshot
+                {
+                    Id = reader.GetString(reader.GetOrdinal("Id")),
+                    StudentId = reader.GetString(reader.GetOrdinal("StudentId")),
+                    StudentName = reader.GetString(reader.GetOrdinal("StudentName")),
+                    SessionId = reader.IsDBNull(reader.GetOrdinal("SessionId")) ? "" : reader.GetInt32(reader.GetOrdinal("SessionId")).ToString(), // SessionId stored as INTEGER but model uses string
+                    CapturedAt = reader.GetDateTime(reader.GetOrdinal("CapturedAt")),
+                    FilePath = reader.GetString(reader.GetOrdinal("FilePath")),
+                    ThumbnailPath = reader.IsDBNull(reader.GetOrdinal("ThumbnailPath")) ? "" : reader.GetString(reader.GetOrdinal("ThumbnailPath")),
+                    Note = reader.IsDBNull(reader.GetOrdinal("Note")) ? null : reader.GetString(reader.GetOrdinal("Note")),
+                    Tags = string.IsNullOrEmpty(tagsRaw) ? new List<string>() : new List<string>(tagsRaw.Split(','))
+                });
+            }
+            return list;
+        }
+
+        public bool DeleteScreenshot(string id)
+        {
+            using var connection = GetConnection();
+            var sql = "DELETE FROM Screenshots WHERE Id = @id";
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@id", id);
+            return command.ExecuteNonQuery() > 0;
+        }
+
+        public bool UpdateScreenshotNote(string id, string note)
+        {
+            using var connection = GetConnection();
+            var sql = "UPDATE Screenshots SET Note = @note WHERE Id = @id";
+            using var command = new SqliteCommand(sql, connection);
+            command.Parameters.AddWithValue("@id", id);
+            command.Parameters.AddWithValue("@note", note ?? "");
+            return command.ExecuteNonQuery() > 0;
         }
 
         #endregion

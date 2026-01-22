@@ -38,6 +38,7 @@ namespace ClassroomManagement.Services
         public event EventHandler<ClientDisconnectedEventArgs>? ClientDisconnected;
         public event EventHandler<MessageReceivedEventArgs>? MessageReceived;
         public event EventHandler<ScreenDataReceivedEventArgs>? ScreenDataReceived;
+        public event EventHandler<ScreenDataReceivedEventArgs>? ScreenshotReceived;
 
         public async Task StartAsync(int port = 5000)
         {
@@ -282,6 +283,29 @@ namespace ClassroomManagement.Services
                                 catch (JsonException)
                                 {
                                     _log.Warning("NetworkServer", $"Failed to parse ScreenData from {clientId}");
+                                }
+                            }
+                            break;
+
+                        case MessageType.ScreenshotCaptureData:
+                            if (message.Payload != null)
+                            {
+                                try
+                                {
+                                    // Reuse ScreenData for screenshot payload as it has the same structure
+                                    var screenData = JsonSerializer.Deserialize<ScreenData>(message.Payload);
+                                    if (screenData != null)
+                                    {
+                                        ScreenshotReceived?.Invoke(this, new ScreenDataReceivedEventArgs
+                                        {
+                                            ClientId = message.SenderId,
+                                            ScreenData = screenData
+                                        });
+                                    }
+                                }
+                                catch (JsonException)
+                                {
+                                    _log.Warning("NetworkServer", $"Failed to parse ScreenshotCaptureData from {clientId}");
                                 }
                             }
                             break;

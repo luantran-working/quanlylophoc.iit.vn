@@ -182,7 +182,7 @@ namespace ClassroomManagement.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;V1.0.0.0;component/views/remotecontrolwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/ClassroomManagement;component/views/remotecontrolwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\RemoteControlWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
