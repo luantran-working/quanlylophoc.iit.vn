@@ -54,7 +54,7 @@
     <!-- Sidebar Tool Button -->
     <Style x:Key="SidebarToolButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
         <Setter Property="Height" Value="56"/>
-        <Setter Property="Margin" Value="0,4"/>
+        <Setter Property="Margin" Value="0,1"/>
         <Setter Property="Padding" Value="12,8"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4"/>

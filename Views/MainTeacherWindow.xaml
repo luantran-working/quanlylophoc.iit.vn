@@ -479,61 +479,79 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="16">
                             <!-- Header -->
-                            <TextBlock Text="Công cụ" FontWeight="Bold" Foreground="#757575" Margin="0,0,0,16"/>
+                            <TextBlock Text="Công cụ" FontWeight="Bold" Foreground="#757575" Margin="0,0,0,8"/>
 
                             <!-- Communication Group -->
                             <TextBlock Text="Giao tiếp" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,8"/>
+                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,2"/>
 
                             <controls:ToolButton ButtonText="Chat nhóm"
                                                   IconKind="Forum"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenGroupChat_Click"/>
+                                                  Click="OpenGroupChat_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Chat nhóm"/>
 
                             <controls:ToolButton ButtonText="Chat riêng"
                                                   IconKind="MessageText"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"/>
+                                                  IconBackground="{StaticResource AppPrimaryBrush}"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Chat riêng"/>
 
                             <controls:ToolButton ButtonText="Bảng trắng"
                                                   IconKind="DrawPen"
                                                   IconBackground="#4CAF50"
-                                                  Click="OpenWhiteboard_Click"/>
+                                                  Click="OpenWhiteboard_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Bảng trắng"/>
 
                             <!-- Management Group -->
                             <TextBlock Text="Quản lý" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,16,0,8"/>
+                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
 
                             <controls:ToolButton ButtonText="Thu thập File"
                                                   IconKind="FolderDownload"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenFileCollection_Click"/>
+                                                  Click="OpenFileCollection_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Thu thập File"/>
 
                             <controls:ToolButton ButtonText="Gửi File"
                                                   IconKind="FileUpload"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenBulkFileSend_Click"/>
+                                                  Click="OpenBulkFileSend_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Gửi File"/>
 
                             <controls:ToolButton ButtonText="Bình chọn"
                                                   IconKind="Poll"
                                                   IconBackground="#E91E63"
-                                                  Click="OpenCreatePoll_Click"/>
+                                                  Click="OpenCreatePoll_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Bình chọn"/>
 
                             <controls:ToolButton ButtonText="Cấu hình máy"
                                                   IconKind="Monitor"
                                                   IconBackground="#673AB7"
-                                                  Click="OpenConfigTable_Click"/>
+                                                  Click="OpenConfigTable_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Cấu hình máy"/>
 
                             <controls:ToolButton ButtonText="Bài tập đã nộp"
                                                   IconKind="AssignmentTurnedIn"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenAssignmentList_Click"/>
+                                                  Click="OpenAssignmentList_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Bài tập đã nộp"/>
 
                             <controls:ToolButton ButtonText="Khóa máy"
                                                   IconKind="Lock"
-                                                  IconBackground="#F44336"/>
+                                                  IconBackground="#F44336"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Khóa máy"/>
 
                             <!-- Toggle Controls (Light Theme) -->
-                            <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,8">
+                            <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,4">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -552,13 +570,14 @@
 
                             <!-- Learning Tools Group -->
                             <TextBlock Text="Học tập" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,16,0,8"/>
+                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
 
                             <controls:ToolButton ButtonText="Tạo bài kiểm tra"
                                                   IconKind="ClipboardText"
                                                   IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenTestCreation_Click"/>
-
+                                                  Click="OpenTestCreation_Click"
+                                                  Margin="0,1,0,0"
+                                                  ToolTipText="Tạo bài kiểm tra"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Border>
