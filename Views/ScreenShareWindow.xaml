@@ -121,7 +121,7 @@
                                         Click="ShareScreen_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Monitor" VerticalAlignment="Center" Width="20" Height="20"/>
-                                        <TextBlock Text="Toàn màn hình" Margin="12,0,0,0" FontSize="14" FontWeight="Medium"/>
+                                        <TextBlock Text="Toàn màn hình" Margin="12,0,0,0" FontSize="14" FontWeight="Medium" Foreground="white"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Style="{StaticResource MaterialDesignOutlinedButton}"
@@ -165,14 +165,14 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button x:Name="PauseButton"
                                 Style="{StaticResource MaterialDesignFloatingActionButton}"
-                                Width="50" Height="50"
+                                Width="32" Height="32"
                                 Background="#FF9800" BorderBrush="#FF9800"
                                 ToolTip="Tạm dừng (F6)"
                                 Click="PauseButton_Click">
                             <materialDesign:PackIcon x:Name="PauseIcon" Kind="Pause" Width="24" Height="24"/>
                         </Button>
                         <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
-                                Width="50" Height="50"
+                                Width="32" Height="32"
                                 Background="#F44336" BorderBrush="#F44336"
                                 ToolTip="Dừng trình chiếu (F5)"
                                 Margin="16,0,0,0"

@@ -449,6 +449,7 @@
                                            Background="{StaticResource AppPrimaryBrush}"
                                            Content="Bắt đầu chia sẻ màn hình"
                                            Height="44"
+										   Foreground="white"
                                            materialDesign:ButtonAssist.CornerRadius="8"
                                            Click="StartPresentation_Click"/>
                                </StackPanel>
