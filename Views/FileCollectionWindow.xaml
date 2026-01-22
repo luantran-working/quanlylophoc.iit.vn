@@ -18,9 +18,9 @@
         <!-- Header -->
         <materialDesign:ColorZone Mode="PrimaryMid" Padding="16" materialDesign:ElevationAssist.Elevation="Dp4">
             <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="FolderDownload" Width="24" Height="24" VerticalAlignment="Center"/>
-                <TextBlock VerticalAlignment="Center" Text="THU THẬP TÀI LIỆU TỪ HỌC SINH"
-                           Margin="16,0,0,0" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                <materialDesign:PackIcon Kind="FolderDownload" Foreground="white" Width="24" Height="24" VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center" Text="THU THẬP TÀI LIỆU HỌC SINH"
+                           Margin="16,0,0,0" Foreground="white" FontWeight="Bold" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
             </StackPanel>
         </materialDesign:ColorZone>
 
@@ -30,12 +30,16 @@
                 <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="160"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="SourcePathBox" materialDesign:HintAssist.Hint="Đường dẫn thư mục nguồn trên máy học sinh (VD: Documents, Desktop...)"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             Text="Documents" Margin="0,0,16,0"/>
+                    <TextBox x:Name="SourcePathBox"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                             materialDesign:TextFieldAssist.LeadingIcon="Folder"
+                             materialDesign:HintAssist.Hint="Đường dẫn thư mục nguồn trên máy học sinh (VD: Documents, Desktop...)"
+                             Text="Documents" BorderBrush="#E0E0E0" Padding="12,10" Margin="8,0"
+                             FontSize="14" Height="48" VerticalAlignment="Bottom"/>
 
                     <CheckBox x:Name="RecursiveCheck" Content="Quét thư mục con" IsChecked="True" Grid.Column="1" VerticalAlignment="Bottom"/>
                 </Grid>
@@ -43,15 +47,20 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="ExtensionsBox" materialDesign:HintAssist.Hint="Loại file (cách nhau bởi dấu phẩy, để trống = tất cả)"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             Text="doc,docx,xls,xlsx,ppt,pptx,pdf,txt,cpp,cs,py"/>
+                    <TextBox x:Name="ExtensionsBox"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                             materialDesign:TextFieldAssist.LeadingIcon="FileDocument"
+							 materialDesign:HintAssist.Hint="Định dạng các tập tin, cách nhau bởi dấu phẩy..."
+							 BorderBrush="#E0E0E0" Padding="12,10"
+                             Text="doc,docx,xls,xlsx,ppt,pptx,pdf,txt,cpp,cs,py" Margin="8,0"
+                             FontSize="14" Height="48"/>
 
-                    <Button Grid.Column="1" Content="BẮT ĐẦU THU THẬP" Click="StartCollection_Click"
-                            Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" VerticalAlignment="Bottom"/>
+                    <Button Grid.Column="1" Content="Bắt đầu thu thập" Foreground="white" Click="StartCollection_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}" VerticalAlignment="Bottom"/>
                 </Grid>
             </StackPanel>
         </materialDesign:Card>
@@ -88,7 +97,6 @@
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16">
             <Button Style="{StaticResource MaterialDesignOutlinedButton}" Content="Mở thư mục lưu file"
                     Click="OpenFolder_Click" Margin="0,0,8,0"/>
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Đóng" IsCancel="True"/>
         </StackPanel>
     </Grid>
 </Window>
