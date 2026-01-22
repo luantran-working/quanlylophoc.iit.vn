@@ -68,10 +68,18 @@ namespace ClassroomManagement.Services
         public event EventHandler<List<ServerDiscoveryInfo>>? ScanCompleted;
 
         /// <summary>
-        /// Lấy IP local hiện tại
+        /// Lấy IP local hiện tại (ưu tiên Ethernet/WiFi thực, loại bỏ virtual adapters)
         /// </summary>
         public static string GetLocalIP()
         {
+            // Thử lấy tất cả IPs thực, chọn cái đầu tiên
+            var realIps = GetAllRealLocalIPs();
+            if (realIps.Count > 0)
+            {
+                return realIps[0];
+            }
+
+            // Fallback: thử kết nối internet
             try
             {
                 using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
@@ -84,24 +92,88 @@ namespace ClassroomManagement.Services
             }
             catch { }
 
-            // Fallback
+            return "127.0.0.1";
+        }
+
+        /// <summary>
+        /// Lấy tất cả IPs thực từ các network interfaces (loại bỏ VMware, Hyper-V, WSL, Loopback)
+        /// </summary>
+        public static List<string> GetAllRealLocalIPs()
+        {
+            var ips = new List<string>();
+
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.OperationalStatus == OperationalStatus.Up &&
-                    ni.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                if (ni.OperationalStatus != OperationalStatus.Up) continue;
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+                // Loại bỏ virtual adapters
+                var name = ni.Name.ToLowerInvariant();
+                var description = ni.Description.ToLowerInvariant();
+
+                if (IsVirtualAdapter(name, description)) continue;
+
+                var ipProps = ni.GetIPProperties();
+                foreach (var addr in ipProps.UnicastAddresses)
                 {
-                    var ipProps = ni.GetIPProperties();
-                    foreach (var addr in ipProps.UnicastAddresses)
+                    if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
+                        var ip = addr.Address.ToString();
+                        // Loại bỏ link-local (169.254.x.x)
+                        if (!ip.StartsWith("169.254."))
                         {
-                            return addr.Address.ToString();
+                            ips.Add(ip);
                         }
                     }
                 }
             }
 
-            return "127.0.0.1";
+            return ips;
+        }
+
+        /// <summary>
+        /// Kiểm tra xem adapter có phải là virtual không
+        /// </summary>
+        private static bool IsVirtualAdapter(string name, string description)
+        {
+            var virtualKeywords = new[]
+            {
+                "vmware", "vmnet", "virtualbox", "vbox",
+                "hyper-v", "vethernet", "wsl",
+                "docker", "podman",
+                "loopback", "pseudo",
+                "bluetooth", "teredo", "isatap",
+                "6to4", "tunneling"
+            };
+
+            foreach (var keyword in virtualKeywords)
+            {
+                if (name.Contains(keyword) || description.Contains(keyword))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Lấy danh sách tất cả subnets từ tất cả network interfaces thực
+        /// </summary>
+        public static List<string> GetAllRealSubnets()
+        {
+            var subnets = new HashSet<string>();
+
+            foreach (var ip in GetAllRealLocalIPs())
+            {
+                var parts = ip.Split('.');
+                if (parts.Length == 4)
+                {
+                    subnets.Add($"{parts[0]}.{parts[1]}.{parts[2]}");
+                }
+            }
+
+            return subnets.ToList();
         }
 
         /// <summary>
@@ -110,33 +182,35 @@ namespace ClassroomManagement.Services
         /// </summary>
         public static List<string> GetNeighboringSubnets(string localIp, int range = 3)
         {
-            var subnets = new List<string>();
+            var subnets = new HashSet<string>();
 
+            // Thêm subnets từ tất cả real interfaces trước
+            foreach (var realSubnet in GetAllRealSubnets())
+            {
+                subnets.Add(realSubnet);
+            }
+
+            // Thêm subnets lân cận từ IP được chỉ định
             try
             {
                 var parts = localIp.Split('.');
-                if (parts.Length != 4) return subnets;
-
-                // Parse octets
-                if (!int.TryParse(parts[0], out int o1) ||
-                    !int.TryParse(parts[1], out int o2) ||
-                    !int.TryParse(parts[2], out int o3))
+                if (parts.Length == 4)
                 {
-                    return subnets;
-                }
-
-                // Tạo subnet base (ví dụ: "192.168")
-                string basePrefix = $"{o1}.{o2}";
-
-                // Quét các subnet lân cận
-                for (int i = Math.Max(0, o3 - range); i <= Math.Min(255, o3 + range); i++)
-                {
-                    subnets.Add($"{basePrefix}.{i}");
+                    if (int.TryParse(parts[0], out int o1) &&
+                        int.TryParse(parts[1], out int o2) &&
+                        int.TryParse(parts[2], out int o3))
+                    {
+                        string basePrefix = $"{o1}.{o2}";
+                        for (int i = Math.Max(0, o3 - range); i <= Math.Min(255, o3 + range); i++)
+                        {
+                            subnets.Add($"{basePrefix}.{i}");
+                        }
+                    }
                 }
             }
             catch { }
 
-            return subnets;
+            return subnets.ToList();
         }
 
         /// <summary>

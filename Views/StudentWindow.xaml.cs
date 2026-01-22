@@ -101,8 +101,14 @@ namespace ClassroomManagement.Views
         {
             UpdateConnectionStatus("Đang tìm phòng học...");
 
-            // Try to discover server
-            var serverInfo = await _networkClient.DiscoverServerAsync(10);
+            // Try to discover server using auto discovery:
+            // 1. First try UDP broadcast (for same subnet)
+            // 2. If broadcast fails, use subnet scanning (for cross-VLAN)
+            var serverInfo = await _networkClient.DiscoverServerAutoAsync(
+                subnetsToScan: null, // Auto-detect based on local interfaces
+                broadcastTimeoutSeconds: 5,
+                scanTimeoutMs: 3000
+            );
 
             if (serverInfo != null)
             {

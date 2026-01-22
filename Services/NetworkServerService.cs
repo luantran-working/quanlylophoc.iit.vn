@@ -58,6 +58,15 @@ namespace ClassroomManagement.Services
                 ServerIp = GetLocalIPAddress();
                 _log.Network("NetworkServer", $"Local IP detected: {ServerIp}");
 
+                // Log all real IPs for debugging
+                var allRealIps = SubnetDiscoveryService.GetAllRealLocalIPs();
+                _log.Info("NetworkServer", $"All real IPs found: [{string.Join(", ", allRealIps)}]");
+
+                if (allRealIps.Count == 0)
+                {
+                    _log.Warning("NetworkServer", "⚠ No real network interfaces found! Check Ethernet/WiFi connection.");
+                }
+
                 // Log network interfaces
                 LogNetworkInterfaces();
 
@@ -506,9 +515,20 @@ namespace ClassroomManagement.Services
 
         private static string GetLocalIPAddress()
         {
+            // First try: get real IPs from SubnetDiscoveryService (excludes virtual adapters)
             try
             {
-                // Try to get the IP that can reach the internet
+                var realIps = SubnetDiscoveryService.GetAllRealLocalIPs();
+                if (realIps.Count > 0)
+                {
+                    return realIps[0];
+                }
+            }
+            catch { }
+
+            // Fallback: Try to get the IP that can reach the internet
+            try
+            {
                 using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
                 socket.Connect("8.8.8.8", 65530);
                 var endPoint = socket.LocalEndPoint as IPEndPoint;
@@ -519,7 +539,7 @@ namespace ClassroomManagement.Services
             }
             catch { }
 
-            // Fallback: enumerate network interfaces
+            // Last fallback: enumerate network interfaces
             try
             {
                 var host = Dns.GetHostEntry(Dns.GetHostName());
