@@ -72,7 +72,7 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border x:Name="MainBorder" CornerRadius="16" Background="White" RenderTransformOrigin="0.5,0.5">
+    <Border x:Name="MainBorder" CornerRadius="4" Background="White" RenderTransformOrigin="0.5,0.5">
         <Border.RenderTransform>
             <TranslateTransform/>
         </Border.RenderTransform>
@@ -107,7 +107,7 @@
                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="Đăng nhập" FontSize="26" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Chào mừng giáo viên quay trở lại" FontSize="14" Foreground="#757575" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                    <TextBlock Text="Chào mừng giáo viên quay trở lại." FontSize="14" Foreground="#757575" HorizontalAlignment="Center" Margin="0,6,0,0"/>
                 </StackPanel>
 
                 <!-- Login Form -->
@@ -115,7 +115,6 @@
                     <!-- Username -->
                     <TextBox x:Name="UsernameTextBox"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             materialDesign:HintAssist.Hint="Tên đăng nhập"
                              materialDesign:TextFieldAssist.HasLeadingIcon="True"
                              materialDesign:TextFieldAssist.LeadingIcon="AccountOutline"
                              FontSize="14" Height="48" Margin="0,0,0,16"
@@ -125,7 +124,6 @@
                     <!-- Password -->
                     <PasswordBox x:Name="PasswordBox"
                                  Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
-                                 materialDesign:HintAssist.Hint="Mật khẩu"
                                  materialDesign:TextFieldAssist.HasLeadingIcon="True"
                                  materialDesign:TextFieldAssist.LeadingIcon="LockOutline"
                                  FontSize="14" Height="48"

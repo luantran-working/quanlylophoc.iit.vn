@@ -72,7 +72,7 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border CornerRadius="12" ClipToBounds="True" Background="#FAFAFA" BorderBrush="#EEEEEE" BorderThickness="1">
+    <Border CornerRadius="4" ClipToBounds="True" Background="#FAFAFA" BorderBrush="#EEEEEE" BorderThickness="1">
         <Border.Effect>
             <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.1" Color="Black"/>
         </Border.Effect>
@@ -109,13 +109,13 @@
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         
-                        <TextBlock Text="HỆ THỐNG QUẢN LÝ PHÒNG HỌC THÔNG MINH"
+                        <TextBlock Text="QUẢN LÝ PHÒNG HỌC THÔNG MINH"
                                    FontSize="28" FontWeight="Bold"
                                    Foreground="{StaticResource AppPrimaryBrush}"
                                    HorizontalAlignment="Center"
                                    TextAlignment="Center"/>
                                    
-                        <TextBlock Text="Chọn vai trò của bạn để bắt đầu"
+                        <TextBlock Text="Hệ thống quản lý lớp học dành cho giáo viên và học sinh, giúp tối ưu hóa trải nghiệm giảng dạy và học tập."
                                    FontSize="16" 
                                    Foreground="#757575"
                                    HorizontalAlignment="Center"
@@ -231,7 +231,7 @@
 
                     </StackPanel>
 
-                    <TextBlock Text="© 2026 Innovation Instruction Technology" 
+                    <TextBlock Text="Copyright © 2026 bởi công ty cổ phần IIT. All rights reserved." 
                                FontSize="12" Foreground="#BDBDBD" HorizontalAlignment="Center" Margin="0,20,0,0"/>
 
                 </StackPanel>
