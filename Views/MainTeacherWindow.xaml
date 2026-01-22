@@ -30,15 +30,6 @@
                         <Border x:Name="border" CornerRadius="16" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#EEE"/>
-                                <Setter Property="Foreground" Value="#333"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#DDD"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -69,6 +60,31 @@
             <Setter Property="Width" Value="120"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <!-- Custom ScrollBar Style for Compact and Beautiful Scrollbar -->
+        <Style x:Key="CompactScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb Margin="1">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="#CCCCCC" CornerRadius="4"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
@@ -477,12 +493,12 @@
                 <!-- ============================================ -->
                 <Border Grid.Column="2" Background="White" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer.Resources>
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource CompactScrollBarStyle}"/>
+                        </ScrollViewer.Resources>
                         <StackPanel Margin="16">
-                            <!-- Header -->
-                            <TextBlock Text="Công cụ" FontWeight="Bold" Foreground="#757575" Margin="0,0,0,8"/>
-
                             <!-- Communication Group -->
-                            <TextBlock Text="Giao tiếp" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="Công cụ giao tiếp" FontSize="11" FontWeight="SemiBold"
                                        Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,2"/>
 
                             <controls:ToolButton ButtonText="Chat nhóm"
@@ -506,7 +522,7 @@
                                                   ToolTipText="Bảng trắng"/>
 
                             <!-- Management Group -->
-                            <TextBlock Text="Quản lý" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="Quản lý học sinh" FontSize="11" FontWeight="SemiBold"
                                        Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
 
                             <controls:ToolButton ButtonText="Thu thập File"
@@ -569,7 +585,7 @@
                             </Border>
 
                             <!-- Learning Tools Group -->
-                            <TextBlock Text="Học tập" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="Chế độ học tập" FontSize="11" FontWeight="SemiBold"
                                        Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
 
                             <controls:ToolButton ButtonText="Tạo bài kiểm tra"

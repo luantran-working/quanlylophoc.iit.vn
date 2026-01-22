@@ -104,17 +104,17 @@
                         <!-- Actions Group -->
                         <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="2">
                             <StackPanel Orientation="Horizontal">
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Undo_Click" ToolTip="Hoàn tác">
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Undo_Click" Margin="1,0" ToolTip="Hoàn tác">
                                     <materialDesign:PackIcon Kind="Undo" Width="18" Height="18"/>
                                 </Button>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Redo_Click" ToolTip="Làm lại">
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Redo_Click" Margin="1,0" ToolTip="Làm lại">
                                     <materialDesign:PackIcon Kind="Redo" Width="18" Height="18"/>
                                 </Button>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="2,0"/>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Clear_Click" ToolTip="Xóa tất cả">
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Clear_Click" Margin="1,0" ToolTip="Xóa tất cả">
                                     <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
                                 </Button>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Save_Click" ToolTip="Lưu ảnh">
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Save_Click" Margin="1,0" ToolTip="Lưu ảnh">
                                     <materialDesign:PackIcon Kind="ContentSave" Width="18" Height="18"/>
                                 </Button>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="2,0"/>
