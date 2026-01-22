@@ -282,40 +282,6 @@ namespace ClassroomManagement.Views
             }
         }
 
-        private void GridSize_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.Tag is string tagStr && int.TryParse(tagStr, out int columns))
-            {
-                // Find the UniformGrid and update columns
-                var itemsControl = ScreenGrid;
-                if (itemsControl?.ItemsPanel?.Template != null)
-                {
-                    // We need to access the actual panel
-                    var panel = FindVisualChild<System.Windows.Controls.Primitives.UniformGrid>(itemsControl);
-                    if (panel != null)
-                    {
-                        panel.Columns = columns;
-                    }
-                }
-
-                // Update button styles
-                ResetGridButtonStyles();
-                button.FontWeight = FontWeights.Bold;
-                button.Foreground = FindResource("PrimaryHueMidBrush") as System.Windows.Media.Brush;
-            }
-        }
-
-        private void ResetGridButtonStyles()
-        {
-            var normalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
-            Grid2x2Btn.FontWeight = FontWeights.Normal;
-            Grid2x2Btn.Foreground = normalBrush;
-            Grid4x4Btn.FontWeight = FontWeights.Normal;
-            Grid4x4Btn.Foreground = normalBrush;
-            Grid6x6Btn.FontWeight = FontWeights.Normal;
-            Grid6x6Btn.Foreground = normalBrush;
-        }
-
         private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
         {
             if (parent == null) return null;

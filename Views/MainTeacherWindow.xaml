@@ -338,7 +338,6 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0" Orientation="Horizontal">
@@ -356,20 +355,6 @@
                                                        Text="{Binding OnlineStudents.Count, StringFormat='Đang hiển thị {0} màn hình'}"
                                                        VerticalAlignment="Center" Margin="16,0,0,0"
                                                        Foreground="#666" FontSize="12"/>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <Button x:Name="Grid2x2Btn" Style="{StaticResource MaterialDesignFlatButton}"
-                                                    Content="2x2" Height="32" Padding="8,0" Tag="2"
-                                                    Click="GridSize_Click"/>
-                                            <Button x:Name="Grid4x4Btn" Style="{StaticResource MaterialDesignFlatButton}"
-                                                    Content="4x4" FontWeight="Bold"
-                                                    Foreground="{StaticResource AppPrimaryBrush}"
-                                                    Height="32" Padding="8,0" Tag="4"
-                                                    Click="GridSize_Click"/>
-                                            <Button x:Name="Grid6x6Btn" Style="{StaticResource MaterialDesignFlatButton}"
-                                                    Content="6x6" Height="32" Padding="8,0" Tag="6"
-                                                    Click="GridSize_Click"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

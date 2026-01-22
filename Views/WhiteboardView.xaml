@@ -17,108 +17,109 @@
 
             <!-- Toolbar -->
             <Border Grid.Row="0" Background="White" Padding="8" BorderBrush="#EEE" BorderThickness="0,0,0,1">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
                         <!-- Drawing Tools Group -->
-                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="4" Margin="0,0,8,0">
+                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="2" Margin="0,0,4,0">
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton x:Name="SelectTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Chọn / Di chuyển" Margin="2,0" Click="Tool_Click" Tag="Select">
-                                    <materialDesign:PackIcon Kind="CursorMove" Width="20" Height="20"/>
+                                             ToolTip="Chọn / Di chuyển" Click="Tool_Click" Tag="Select">
+                                    <materialDesign:PackIcon Kind="CursorMove" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="PenTool" GroupName="DrawingTool" IsChecked="True"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Bút vẽ" Margin="2,0" Click="Tool_Click" Tag="Pen">
-                                    <materialDesign:PackIcon Kind="Pen" Width="20" Height="20"/>
+                                             ToolTip="Bút vẽ" Click="Tool_Click" Tag="Pen">
+                                    <materialDesign:PackIcon Kind="Pen" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="HighlighterTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Bút dạ quang" Margin="2,0" Click="Tool_Click" Tag="Highlighter">
-                                    <materialDesign:PackIcon Kind="Marker" Width="20" Height="20"/>
+                                             ToolTip="Bút dạ quang" Click="Tool_Click" Tag="Highlighter">
+                                    <materialDesign:PackIcon Kind="Marker" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="EraserTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Tẩy" Margin="2,0" Click="Tool_Click" Tag="Eraser">
-                                    <materialDesign:PackIcon Kind="Eraser" Width="20" Height="20"/>
+                                             ToolTip="Tẩy" Click="Tool_Click" Tag="Eraser">
+                                    <materialDesign:PackIcon Kind="Eraser" Width="18" Height="18"/>
                                 </RadioButton>
                             </StackPanel>
                         </Border>
 
                         <!-- Shapes Group -->
-                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="4" Margin="0,0,8,0">
+                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="2" Margin="0,0,4,0">
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton x:Name="LineTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Đường thẳng" Margin="2,0" Click="Tool_Click" Tag="Line">
-                                    <materialDesign:PackIcon Kind="VectorLine" Width="20" Height="20"/>
+                                             ToolTip="Đường thẳng" Click="Tool_Click" Tag="Line">
+                                    <materialDesign:PackIcon Kind="VectorLine" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="ArrowTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Mũi tên" Margin="2,0" Click="Tool_Click" Tag="Arrow">
-                                    <materialDesign:PackIcon Kind="ArrowRight" Width="20" Height="20"/>
+                                             ToolTip="Mũi tên" Click="Tool_Click" Tag="Arrow">
+                                    <materialDesign:PackIcon Kind="ArrowRight" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="RectangleTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Hình chữ nhật" Margin="2,0" Click="Tool_Click" Tag="Rectangle">
-                                    <materialDesign:PackIcon Kind="RectangleOutline" Width="20" Height="20"/>
+                                             ToolTip="Hình chữ nhật" Click="Tool_Click" Tag="Rectangle">
+                                    <materialDesign:PackIcon Kind="RectangleOutline" Width="18" Height="18"/>
                                 </RadioButton>
                                 <RadioButton x:Name="CircleTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Hình tròn" Margin="2,0" Click="Tool_Click" Tag="Circle">
-                                    <materialDesign:PackIcon Kind="CircleOutline" Width="20" Height="20"/>
+                                             ToolTip="Hình tròn" Click="Tool_Click" Tag="Circle">
+                                    <materialDesign:PackIcon Kind="CircleOutline" Width="18" Height="18"/>
                                 </RadioButton>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="4,0"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="2,0"/>
                                 <RadioButton x:Name="TextTool" GroupName="DrawingTool"
                                              Style="{StaticResource MaterialDesignToolRadioButton}"
-                                             ToolTip="Văn bản" Margin="2,0" Click="Tool_Click" Tag="Text">
-                                    <materialDesign:PackIcon Kind="FormatText" Width="20" Height="20"/>
+                                             ToolTip="Văn bản" Click="Tool_Click" Tag="Text">
+                                    <materialDesign:PackIcon Kind="FormatText" Width="18" Height="18"/>
                                 </RadioButton>
                             </StackPanel>
                         </Border>
 
                         <!-- Style Group -->
-                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="4" Margin="0,0,8,0">
+                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="2" Margin="0,0,4,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <!-- Colors -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#000000" Margin="2" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#000000" ToolTip="Đen"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#F44336" Margin="2" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#F44336" ToolTip="Đỏ"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#2196F3" Margin="2" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#2196F3" ToolTip="Xanh"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#4CAF50" Margin="2" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#4CAF50" ToolTip="Lá"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
+                                    <Border Width="16" Height="16" CornerRadius="8" Background="#000000" Margin="1" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#000000" ToolTip="Đen"/>
+                                    <Border Width="16" Height="16" CornerRadius="8" Background="#F44336" Margin="1" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#F44336" ToolTip="Đỏ"/>
+                                    <Border Width="16" Height="16" CornerRadius="8" Background="#2196F3" Margin="1" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#2196F3" ToolTip="Xanh"/>
+                                    <Border Width="16" Height="16" CornerRadius="8" Background="#4CAF50" Margin="1" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#4CAF50" ToolTip="Lá"/>
+									<Border Width="16" Height="16" CornerRadius="8" Background="#FFFF00" Margin="1" Cursor="Hand" MouseDown="QuickColor_Click" Tag="#FFFF00" ToolTip="Vàng"/>
                                 </StackPanel>
-                                <Button x:Name="ColorButton" Width="24" Height="24"
+                                <Button x:Name="ColorButton" Width="20" Height="20"
                                         Background="Black" BorderThickness="1" BorderBrush="#CCC"
                                         Click="ColorButton_Click" materialDesign:ButtonAssist.CornerRadius="4"
-                                        ToolTip="Chọn màu khác" Margin="0,0,8,0"/>
+                                        ToolTip="Chọn màu khác" Margin="0,0,4,0"/>
 
                                 <!-- Thickness -->
-                                <Slider x:Name="ThicknessSlider" Width="80" Minimum="1" Maximum="20" Value="2"
+                                <Slider x:Name="ThicknessSlider" Width="60" Minimum="1" Maximum="20" Value="2"
                                         TickFrequency="1" VerticalAlignment="Center"
                                         ValueChanged="ThicknessSlider_ValueChanged" ToolTip="Độ dày"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Actions Group -->
-                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="4">
+                        <Border BorderBrush="#EEEEEE" BorderThickness="1" CornerRadius="4" Padding="2">
                             <StackPanel Orientation="Horizontal">
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Height="30" Click="Undo_Click" ToolTip="Hoàn tác">
-                                    <materialDesign:PackIcon Kind="Undo" Width="16" Height="16"/>
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Undo_Click" ToolTip="Hoàn tác">
+                                    <materialDesign:PackIcon Kind="Undo" Width="18" Height="18"/>
                                 </Button>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Height="30" Click="Redo_Click" ToolTip="Làm lại">
-                                    <materialDesign:PackIcon Kind="Redo" Width="16" Height="16"/>
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Redo_Click" ToolTip="Làm lại">
+                                    <materialDesign:PackIcon Kind="Redo" Width="18" Height="18"/>
                                 </Button>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="4,0"/>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Height="30" Click="Clear_Click" ToolTip="Xóa tất cả">
-                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="2,0"/>
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Clear_Click" ToolTip="Xóa tất cả">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
                                 </Button>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Height="30" Click="Save_Click" ToolTip="Lưu ảnh">
-                                    <materialDesign:PackIcon Kind="ContentSave" Width="16" Height="16"/>
+                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="26" Height="26" Click="Save_Click" ToolTip="Lưu ảnh">
+                                    <materialDesign:PackIcon Kind="ContentSave" Width="18" Height="18"/>
                                 </Button>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="4,0"/>
-                                <Button Style="{StaticResource MaterialDesignToolButton}" Width="30" Height="30" Click="FullScreen_Click" ToolTip="Chế độ cửa sổ riêng" Background="{StaticResource AppPrimaryBrush}" Foreground="White">
-                                    <materialDesign:PackIcon Kind="Overscan" Width="16" Height="16"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="2,0"/>
+                                <Button Style="{StaticResource MaterialDesignIconButton}" Width="26" Height="26" Click="FullScreen_Click" ToolTip="Chế độ cửa sổ riêng" Background="{StaticResource AppPrimaryBrush}" Foreground="White">
+                                    <materialDesign:PackIcon Kind="FullScreen" Width="18" Height="18"/>
                                 </Button>
                             </StackPanel>
                         </Border>
