@@ -20,6 +20,7 @@ namespace ClassroomManagement.Services
     {
         private TcpListener? _tcpListener;
         private UdpClient? _udpBroadcaster;
+        private DiscoveryResponderService? _discoveryResponder;
         private CancellationTokenSource? _cts;
         private readonly ConcurrentDictionary<string, TcpClient> _clients = new();
         private readonly ConcurrentDictionary<string, string> _clientNames = new();
@@ -71,8 +72,14 @@ namespace ClassroomManagement.Services
                 // Start accepting clients
                 _ = AcceptClientsAsync(_cts.Token);
 
-                // Start UDP Discovery Broadcast
+                // Start UDP Discovery Broadcast (for same subnet)
                 _ = BroadcastDiscoveryAsync(_cts.Token);
+
+                // Start Discovery Responder (for cross-VLAN/Subnet discovery via unicast)
+                await StartDiscoveryResponderAsync();
+
+                // Auto-configure firewall rules (non-blocking)
+                _ = Task.Run(() => FirewallHelper.EnsureClassroomManagementRules(Port, DiscoveryPort));
 
                 await Task.CompletedTask;
             }
@@ -110,6 +117,33 @@ namespace ClassroomManagement.Services
             }
         }
 
+        /// <summary>
+        /// Khởi động Discovery Responder để phản hồi UDP unicast requests từ các VLAN khác
+        /// </summary>
+        private async Task StartDiscoveryResponderAsync()
+        {
+            try
+            {
+                _discoveryResponder = new DiscoveryResponderService
+                {
+                    ListenPort = DiscoveryPort,
+                    ServerIp = ServerIp,
+                    ServerPort = Port,
+                    ClassName = ClassName,
+                    TeacherName = TeacherName,
+                    GetOnlineCount = () => _clients.Count
+                };
+
+                await _discoveryResponder.StartAsync();
+                _log.Info("NetworkServer", $"Discovery Responder started on UDP port {DiscoveryPort}");
+            }
+            catch (Exception ex)
+            {
+                _log.Warning("NetworkServer", $"Failed to start Discovery Responder: {ex.Message}");
+                // Non-fatal - broadcast discovery still works for same-subnet clients
+            }
+        }
+
         public void Stop()
         {
             _log.Info("NetworkServer", "Stopping server...");
@@ -136,6 +170,7 @@ namespace ClassroomManagement.Services
 
             try { _tcpListener?.Stop(); } catch { }
             try { _udpBroadcaster?.Close(); } catch { }
+            try { _discoveryResponder?.Stop(); } catch { }
 
             _log.Info("NetworkServer", "Server stopped");
         }

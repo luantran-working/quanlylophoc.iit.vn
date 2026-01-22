@@ -42,12 +42,100 @@ namespace ClassroomManagement.Services
         public event EventHandler<ScreenshotRequest>? ScreenshotRequested;
 
         private readonly FileCollectionService _fileCollectionService; // Add field
+        private SubnetDiscoveryService? _subnetDiscoveryService;
 
         public NetworkClientService()
         {
             MachineId = GetMachineId();
             _log.Info("NetworkClient", $"Initialized with MachineId: {MachineId}");
             _fileCollectionService = new FileCollectionService(this); // Initialize
+        }
+
+        /// <summary>
+        /// Tìm Server bằng UDP Unicast Scanning (quét qua nhiều subnet/VLAN)
+        /// Sử dụng khi broadcast không hoạt động do VLAN/Subnet restrictions
+        /// </summary>
+        /// <param name="subnetsToScan">Danh sách subnet cần quét (vd: "192.168.0", "192.168.1"). Null = auto-detect</param>
+        /// <param name="timeoutMs">Timeout cho quá trình quét (ms)</param>
+        /// <returns>Thông tin Server nếu tìm thấy</returns>
+        public async Task<ServerDiscoveryInfo?> DiscoverServerViaScanAsync(
+            List<string>? subnetsToScan = null,
+            int timeoutMs = 2000)
+        {
+            if (_isDiscovering)
+            {
+                _log.Warning("NetworkClient", "Discovery already in progress");
+                return null;
+            }
+
+            _isDiscovering = true;
+            _log.Info("NetworkClient", $"Starting subnet scan discovery (timeout: {timeoutMs}ms)...");
+
+            try
+            {
+                _subnetDiscoveryService?.Dispose();
+                _subnetDiscoveryService = new SubnetDiscoveryService
+                {
+                    DiscoveryPort = 5001,
+                    ScanTimeoutMs = timeoutMs,
+                    MaxParallelism = 100,
+                    UseDirectedBroadcast = true
+                };
+
+                // Subscribe to discovered event để nhận kết quả ngay khi tìm thấy
+                ServerDiscoveryInfo? foundServer = null;
+                _subnetDiscoveryService.ServerDiscovered += (s, info) =>
+                {
+                    if (foundServer == null)
+                    {
+                        foundServer = info;
+                        ServerDiscovered?.Invoke(this, info);
+                    }
+                };
+
+                // Perform scan
+                var results = await _subnetDiscoveryService.ScanForServersAsync(subnetsToScan);
+
+                if (results.Count > 0)
+                {
+                    return results[0];
+                }
+
+                _log.Warning("NetworkClient", "No server found via subnet scan");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _log.Error("NetworkClient", "Error during subnet scan", ex);
+                return null;
+            }
+            finally
+            {
+                _isDiscovering = false;
+            }
+        }
+
+        /// <summary>
+        /// Tìm Server kết hợp: thử broadcast trước, nếu thất bại thì dùng subnet scanning
+        /// </summary>
+        public async Task<ServerDiscoveryInfo?> DiscoverServerAutoAsync(
+            List<string>? subnetsToScan = null,
+            int broadcastTimeoutSeconds = 5,
+            int scanTimeoutMs = 2000)
+        {
+            _log.Info("NetworkClient", "Starting auto discovery (broadcast + scan)...");
+
+            // Thử broadcast trước (nhanh nếu cùng subnet)
+            var result = await DiscoverServerAsync(broadcastTimeoutSeconds);
+            if (result != null)
+            {
+                _log.Info("NetworkClient", "Server found via broadcast");
+                return result;
+            }
+
+            // Nếu broadcast không tìm thấy, dùng subnet scanning
+            _log.Info("NetworkClient", "Broadcast failed, trying subnet scan...");
+            return await DiscoverServerViaScanAsync(subnetsToScan, scanTimeoutMs);
         }
 
 
@@ -821,6 +909,7 @@ namespace ClassroomManagement.Services
             try { _discoveryCts?.Dispose(); } catch { }
             try { _connectionCts?.Dispose(); } catch { }
             try { _udpListener?.Dispose(); } catch { }
+            try { _subnetDiscoveryService?.Dispose(); } catch { }
         }
     }
 }
