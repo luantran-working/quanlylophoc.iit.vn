@@ -353,18 +353,6 @@ namespace ClassroomManagement.Views
             }
         }
 
-        private void SelectAllCheckbox_Checked(object sender, RoutedEventArgs e)
-        {
-            SetAllStudentsSelection(true);
-        }
-
-        private void SelectAllCheckbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            // Only update if triggered by user interaction, not by code
-            if (_selectedCount == _session.OnlineStudents.Count)
-                SetAllStudentsSelection(false);
-        }
-
         private void SetAllStudentsSelection(bool selected)
         {
             foreach (var student in _session.OnlineStudents)
@@ -380,13 +368,11 @@ namespace ClassroomManagement.Views
             {
                 // Bỏ chọn tất cả
                 SetAllStudentsSelection(false);
-                SelectAllCheckbox.IsChecked = false;
             }
             else
             {
                 // Chọn tất cả
                 SetAllStudentsSelection(true);
-                SelectAllCheckbox.IsChecked = true;
             }
         }
 
@@ -400,19 +386,11 @@ namespace ClassroomManagement.Views
             {
                 SelectionCountText.Text = $"({_selectedCount} đã chọn)";
                 ToggleSelectionBtn.Content = "Bỏ chọn";
-
-                // Update checkbox header state without triggering event loop if possible
-                // (Simple IsChecked assignment is fine here due to check in handler)
-                if (_selectedCount == _session.OnlineStudents.Count)
-                    SelectAllCheckbox.IsChecked = true;
-                else
-                    SelectAllCheckbox.IsChecked = null; // Indeterminate if partially selected
             }
             else
             {
                 SelectionCountText.Text = "";
                 ToggleSelectionBtn.Content = "Chọn tất cả";
-                SelectAllCheckbox.IsChecked = false;
             }
         }
 

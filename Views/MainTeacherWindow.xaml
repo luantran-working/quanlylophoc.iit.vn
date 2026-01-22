@@ -199,13 +199,6 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <CheckBox x:Name="SelectAllCheckbox"
-                                                  VerticalAlignment="Center"
-                                                  Foreground="White"
-                                                  Margin="0,0,10,0"
-                                                  Checked="SelectAllCheckbox_Checked"
-                                                  Unchecked="SelectAllCheckbox_Unchecked"
-                                                  ToolTip="Chọn tất cả học sinh"/>
                                         <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
                                                                   Foreground="White" VerticalAlignment="Center"/>
                                         <TextBlock Text="Danh sách học sinh" FontSize="14" FontWeight="Bold"
