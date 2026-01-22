@@ -11,6 +11,8 @@ namespace ClassroomManagement.Views
         public LoginWindow()
         {
             InitializeComponent();
+            UsernameTextBox.Text = "admin";
+            PasswordBox.Password = "123456";
             UsernameTextBox.Focus();
         }
 

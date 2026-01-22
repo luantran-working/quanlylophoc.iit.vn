@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IIT Vietnam")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+415fd78ab3707e55060f6c1432492bb5894e622c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a60a500fae67bc611a7341550e878908e30577cb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Quản lý Lớp học IIT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClassroomManagement")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
