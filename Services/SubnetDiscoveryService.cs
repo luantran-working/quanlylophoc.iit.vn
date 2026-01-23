@@ -244,6 +244,19 @@ namespace ClassroomManagement.Services
         }
 
         /// <summary>
+        /// Tạo danh sách subnet tuần tự từ 0 tăng dần (192.168.0.x, .1.x, ...)
+        /// </summary>
+        public static List<string> GetSequentialSubnets(int count = 10)
+        {
+            var list = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                list.Add($"192.168.{i}");
+            }
+            return list;
+        }
+
+        /// <summary>
         /// Quét các subnet để tìm Server
         /// Sử dụng UDP Unicast + Directed Broadcast
         /// </summary>
@@ -251,6 +264,9 @@ namespace ClassroomManagement.Services
             List<string>? customSubnets = null,
             CancellationToken cancellationToken = default)
         {
+            // Chạy trên thread pool để tránh block UI
+            await Task.Yield();
+
             _discoveredServers.Clear();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
@@ -258,10 +274,22 @@ namespace ClassroomManagement.Services
             var subnetsToScan = customSubnets ?? TargetSubnets;
             if (subnetsToScan == null || subnetsToScan.Count == 0)
             {
-                // Auto-detect based on local IP
+                // Theo yêu cầu: Bắt đầu quét từ lớp mạng 0 sau đó tăng dần
+                // Quét rộng hơn (0-50) để đảm bảo tìm thấy trong các VLAN phổ biến
+                subnetsToScan = GetSequentialSubnets(50);
+
+                // Bổ sung subnet local nếu chưa có
                 var localIp = GetLocalIP();
-                subnetsToScan = GetNeighboringSubnets(localIp);
-                _log.Info("SubnetDiscovery", $"Auto-detected subnets: {string.Join(", ", subnetsToScan)}");
+                var neighbors = GetNeighboringSubnets(localIp);
+                foreach (var s in neighbors)
+                {
+                    if (!subnetsToScan.Contains(s))
+                    {
+                        subnetsToScan.Add(s);
+                    }
+                }
+
+                _log.Info("SubnetDiscovery", $"Scanning subnets: {subnetsToScan.Count} subnets (starts with 192.168.0.x...)");
             }
 
             _log.Info("SubnetDiscovery", $"Starting scan on {subnetsToScan.Count} subnets, port {DiscoveryPort}");
@@ -320,10 +348,13 @@ namespace ClassroomManagement.Services
         }
 
         /// <summary>
-        /// Gửi UDP discovery packets song song sử dụng Parallel
+        /// Gửi UDP discovery packets song song sử dụng Parallel với Batching để tránh treo UI
         /// </summary>
         private async Task SendDiscoveryPacketsParallelAsync(List<string> targetIps, CancellationToken ct)
         {
+            // Yield để đảm bảo task chạy trên background thread ngay lập tức
+            await Task.Yield();
+
             // Tạo discovery request packet
             var discoveryRequest = new
             {
@@ -333,48 +364,48 @@ namespace ClassroomManagement.Services
             };
             var requestBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(discoveryRequest));
 
-            // Sử dụng SemaphoreSlim để giới hạn số lượng concurrent operations
-            var semaphore = new SemaphoreSlim(MaxParallelism);
+            // Sử dụng SemaphoreSlim để giới hạn số lượng concurrent operations thực tế
+            using var semaphore = new SemaphoreSlim(MaxParallelism);
             var tasks = new List<Task>();
 
-            foreach (var targetIp in targetIps)
+            // Chia nhỏ thành các batch để add tasks dần, tránh lag khi loop quá nhiều
+            const int BATCH_SIZE = 500;
+            for (int i = 0; i < targetIps.Count; i += BATCH_SIZE)
             {
                 if (ct.IsCancellationRequested) break;
 
-                await semaphore.WaitAsync(ct);
-
-                var task = Task.Run(async () =>
+                var batch = targetIps.Skip(i).Take(BATCH_SIZE);
+                foreach (var targetIp in batch)
                 {
-                    try
-                    {
-                        using var udpClient = new UdpClient();
-                        udpClient.Client.ReceiveTimeout = 100;
-                        udpClient.Client.SendTimeout = 100;
+                    if (ct.IsCancellationRequested) break;
 
-                        var endpoint = new IPEndPoint(IPAddress.Parse(targetIp), DiscoveryPort);
-                        await udpClient.SendAsync(requestBytes, requestBytes.Length, endpoint);
+                    await semaphore.WaitAsync(ct);
 
-                        _log.Debug("SubnetDiscovery", $"Sent discovery to {targetIp}:{DiscoveryPort}");
-                    }
-                    catch (FormatException)
+                    var task = Task.Run(async () =>
                     {
-                        // Invalid IP format, skip
-                    }
-                    catch (SocketException)
-                    {
-                        // Network unreachable, host down, etc. - normal during scanning
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Debug("SubnetDiscovery", $"Error sending to {targetIp}: {ex.Message}");
-                    }
-                    finally
-                    {
-                        semaphore.Release();
-                    }
-                }, ct);
+                        try
+                        {
+                            using var udpClient = new UdpClient();
+                            // Timeout cực ngắn để fail fast
+                            udpClient.Client.ReceiveTimeout = 50;
+                            udpClient.Client.SendTimeout = 50;
 
-                tasks.Add(task);
+                            var endpoint = new IPEndPoint(IPAddress.Parse(targetIp), DiscoveryPort);
+                            // Fire and forget send
+                            await udpClient.SendAsync(requestBytes, requestBytes.Length, endpoint);
+                        }
+                        catch { /* Ignore all errors during scan */ }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }, ct);
+
+                    tasks.Add(task);
+                }
+
+                // Yield sau mỗi batch để UI thread (nếu có) kịp thở
+                await Task.Delay(10, ct);
             }
 
             await Task.WhenAll(tasks);

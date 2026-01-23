@@ -97,81 +97,66 @@ namespace ClassroomManagement.Views
             _networkClient.Dispose();
         }
 
+        private bool _isScanning = false;
+
         private async Task ConnectToServerAsync()
         {
-            UpdateConnectionStatus("Đang tìm phòng học...");
+            if (_isScanning) return;
+            _isScanning = true;
 
-            // Try to discover server using auto discovery:
-            // 1. First try UDP broadcast (for same subnet)
-            // 2. If broadcast fails, use subnet scanning (for cross-VLAN)
-            var serverInfo = await _networkClient.DiscoverServerAutoAsync(
-                subnetsToScan: null, // Auto-detect based on local interfaces
-                broadcastTimeoutSeconds: 5,
-                scanTimeoutMs: 3000
-            );
-
-            if (serverInfo != null)
+            try
             {
-                await TryConnectToServer(serverInfo.ServerIp, serverInfo.ServerPort, serverInfo.ClassName);
+                while (!_isConnected && !_networkClient.IsConnected)
+                {
+                     UpdateConnectionStatus("Đang quét tìm lớp học (192.168.0.x - 192.168.50.x)...");
+
+                     // Run discovery on background thread to keep UI responsive
+                     var serverInfo = await Task.Run(async () =>
+                     {
+                         return await _networkClient.DiscoverServerAutoAsync(
+                            subnetsToScan: null,
+                            broadcastTimeoutSeconds: 2,
+                            scanTimeoutMs: 1500
+                         );
+                     });
+
+                     if (serverInfo != null)
+                     {
+                         UpdateConnectionStatus($"Tìm thấy lớp {serverInfo.ClassName} tại {serverInfo.ServerIp}");
+                         await TryConnectToServer(serverInfo.ServerIp, serverInfo.ServerPort, serverInfo.ClassName);
+
+                         if (_isConnected)
+                         {
+                             _isScanning = false;
+                             return;
+                         }
+                         else
+                         {
+                             UpdateConnectionStatus("Kết nối thất bại. Đang thử lại...");
+                             await Task.Delay(2000);
+                         }
+                     }
+                     else
+                     {
+                         UpdateConnectionStatus("Không tìm thấy lớp học. Đang thử lại...");
+                         // Short delay before retry
+                         await Task.Delay(1000);
+                     }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Show manual connect dialog
-                await ShowManualConnectDialog();
+                Services.LogService.Instance.Error("StudentWindow", "Error in auto-connect loop", ex);
+                await Task.Delay(3000);
+                _ = ConnectToServerAsync(); // Restart if crashed
+            }
+            finally
+            {
+                _isScanning = false;
             }
         }
 
-        private async Task ShowManualConnectDialog()
-        {
-            var dialog = new ManualConnectDialog();
-            dialog.Owner = this;
-
-            if (dialog.ShowDialog() == true)
-            {
-                if (dialog.ContinueSearching)
-                {
-                    // User wants to continue auto-discovery
-                    await ConnectToServerAsync();
-                }
-                else if (!string.IsNullOrEmpty(dialog.ServerIp))
-                {
-                    string targetIp = dialog.ServerIp;
-
-                    // Check if input is a connection code
-                    if (targetIp.StartsWith("CONNECTION_CODE:"))
-                    {
-                        var code = targetIp.Substring("CONNECTION_CODE:".Length);
-                        UpdateConnectionStatus($"Đang tìm server từ mã kết nối {code}...");
-
-                        // Try to convert code to IP (scan common ranges)
-                        var resolvedIp = await Task.Run(() => ConnectionPasswordService.Instance.TryGetIPFromPassword(code));
-
-                        if (resolvedIp != null)
-                        {
-                            targetIp = resolvedIp;
-                        }
-                        else
-                        {
-                            MessageBox.Show(
-                                "Không tìm thấy server với mã kết nối này trong mạng 192.168.x.x.\nVui lòng kiểm tra lại hoặc nhập IP trực tiếp.",
-                                "Không tìm thấy", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            await ShowManualConnectDialog(); // Retry
-                            return;
-                        }
-                    }
-
-                    // User entered IP manually or resolved from code
-                    await TryConnectToServer(targetIp, 5000, "Phòng học");
-                }
-            }
-            else
-            {
-                // User cancelled, go back to role selection
-                var roleWindow = new RoleSelectionWindow();
-                roleWindow.Show();
-                Close();
-            }
-        }
+        // ShowManualConnectDialog removed as requested
 
         private async Task TryConnectToServer(string serverIp, int port, string className)
         {
@@ -193,16 +178,8 @@ namespace ClassroomManagement.Views
             }
             else
             {
-                Dispatcher.Invoke(async () =>
-                {
-                    MessageBox.Show(
-                        $"Không thể kết nối đến {serverIp}:{port}\n\nKiểm tra:\n- Firewall trên máy giáo viên\n- Cùng mạng WiFi/LAN\n- Giáo viên đã khởi động phiên học",
-                        "Lỗi kết nối",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-
-                    await ShowManualConnectDialog();
-                });
+                Services.LogService.Instance.Warning("StudentWindow", $"Failed to connect to {serverIp}:{port}");
+                // No dialog, let the loop retry
             }
         }
 
