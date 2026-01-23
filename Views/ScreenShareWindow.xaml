@@ -166,6 +166,7 @@
                         <Button x:Name="PauseButton"
                                 Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 Width="32" Height="32"
+                                Foreground="White"
                                 Background="#FF9800" BorderBrush="#FF9800"
                                 ToolTip="Tạm dừng (F6)"
                                 Click="PauseButton_Click">
@@ -173,6 +174,7 @@
                         </Button>
                         <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 Width="32" Height="32"
+                                Foreground="White"
                                 Background="#F44336" BorderBrush="#F44336"
                                 ToolTip="Dừng trình chiếu (F5)"
                                 Margin="16,0,0,0"

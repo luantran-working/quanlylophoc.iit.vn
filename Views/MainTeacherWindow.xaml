@@ -272,6 +272,7 @@
                                         Height="32"
                                         FontSize="12"
                                         IsEnabled="False"
+                                        Foreground="White"
                                         Click="BatchActionsBtn_Click"
                                         materialDesign:ButtonAssist.CornerRadius="4">
                                     <Button.ContextMenu>
