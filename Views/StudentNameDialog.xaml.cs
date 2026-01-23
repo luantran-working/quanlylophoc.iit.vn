@@ -10,6 +10,8 @@ namespace ClassroomManagement.Views
         public StudentNameDialog()
         {
             InitializeComponent();
+            NameTextBox.Text = "Nguyễn Văn A"; // Default name as requested
+            NameTextBox.SelectAll();
             NameTextBox.Focus();
         }
 
@@ -40,7 +42,7 @@ namespace ClassroomManagement.Views
         private void Submit()
         {
             var name = NameTextBox.Text.Trim();
-            
+
             if (string.IsNullOrEmpty(name))
             {
                 ErrorText.Text = "Vui lòng nhập họ tên";

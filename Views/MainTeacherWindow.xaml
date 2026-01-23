@@ -130,8 +130,8 @@
                                        Foreground="#424242" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-                    <!-- Connection Code -->
-                    <Border Background="#FFF3E0" CornerRadius="4" Padding="10,6" Margin="0,0,8,0">
+                    <!-- Connection Code (Hidden/Removed as requested) -->
+                    <Border Background="#FFF3E0" CornerRadius="4" Padding="10,6" Margin="0,0,8,0" Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Key" Width="16" Height="16"
                                                       Foreground="#EF6C00" VerticalAlignment="Center" Margin="0,0,6,0"/>

@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -106,9 +107,14 @@ namespace ClassroomManagement.Views
 
             try
             {
+                // 1. Ưu tiên kết nối lại IP cũ
+                await TryConnectLastIpAsync();
+                if (_isConnected) return;
+
+                // 2. Nếu không được thì quét mạng
                 while (!_isConnected && !_networkClient.IsConnected)
                 {
-                     UpdateConnectionStatus("Đang quét tìm lớp học (192.168.0.x - 192.168.50.x)...");
+                     UpdateConnectionStatus("Đang kết nối đến máy tính giáo viên...");
 
                      // Run discovery on background thread to keep UI responsive
                      var serverInfo = await Task.Run(async () =>
@@ -138,7 +144,7 @@ namespace ClassroomManagement.Views
                      }
                      else
                      {
-                         UpdateConnectionStatus("Không tìm thấy lớp học. Đang thử lại...");
+                         UpdateConnectionStatus("Không tìm thấy giáo viên. Đang thử lại...");
                          // Short delay before retry
                          await Task.Delay(1000);
                      }
@@ -154,6 +160,44 @@ namespace ClassroomManagement.Views
             {
                 _isScanning = false;
             }
+        }
+
+        private string _lastConnectedIpFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClassroomManagement", "last_server_ip.txt");
+
+        private async Task TryConnectLastIpAsync()
+        {
+            try
+            {
+                if (File.Exists(_lastConnectedIpFile))
+                {
+                    var ip = await File.ReadAllTextAsync(_lastConnectedIpFile);
+                    ip = ip.Trim();
+                    if (!string.IsNullOrEmpty(ip))
+                    {
+                        UpdateConnectionStatus($"Đang thử kết nối lại giáo viên cũ ({ip})...");
+
+                        var connected = await _networkClient.ConnectAsync(ip, 5000);
+                        if (connected)
+                        {
+                            _isConnected = true;
+                            UpdateConnectionStatus("Đã kết nối lại thành công");
+                            _ = SendScreenDataAsync();
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private async void SaveLastConnectedIp(string ip)
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(_lastConnectedIpFile);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir!);
+                await File.WriteAllTextAsync(_lastConnectedIpFile, ip);
+            }
+            catch { }
         }
 
         // ShowManualConnectDialog removed as requested
@@ -172,6 +216,9 @@ namespace ClassroomManagement.Views
                 ToastService.Instance.ShowSuccess(
                     "Kết nối thành công",
                     $"Đã kết nối đến {className}\nServer: {serverIp}:{port}");
+
+                // Save IP for next time
+                SaveLastConnectedIp(serverIp);
 
                 // Start sending screen thumbnails periodically
                 _ = SendScreenDataAsync();
