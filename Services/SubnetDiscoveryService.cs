@@ -369,7 +369,7 @@ namespace ClassroomManagement.Services
             var tasks = new List<Task>();
 
             // Chia nhỏ thành các batch để add tasks dần, tránh lag khi loop quá nhiều
-            const int BATCH_SIZE = 500;
+            const int BATCH_SIZE = 100; // Giảm batch size vì làm thêm TCP
             for (int i = 0; i < targetIps.Count; i += BATCH_SIZE)
             {
                 if (ct.IsCancellationRequested) break;
@@ -385,16 +385,21 @@ namespace ClassroomManagement.Services
                     {
                         try
                         {
-                            using var udpClient = new UdpClient();
-                            // Timeout cực ngắn để fail fast
-                            udpClient.Client.ReceiveTimeout = 50;
-                            udpClient.Client.SendTimeout = 50;
+                            // 1. Gửi UDP Discovery (Classic)
+                            try
+                            {
+                                using var udpClient = new UdpClient();
+                                udpClient.Client.ReceiveTimeout = 50;
+                                udpClient.Client.SendTimeout = 50;
+                                var endpoint = new IPEndPoint(IPAddress.Parse(targetIp), DiscoveryPort);
+                                await udpClient.SendAsync(requestBytes, requestBytes.Length, endpoint);
+                            }
+                            catch { }
 
-                            var endpoint = new IPEndPoint(IPAddress.Parse(targetIp), DiscoveryPort);
-                            // Fire and forget send
-                            await udpClient.SendAsync(requestBytes, requestBytes.Length, endpoint);
+                            // 2. Check TCP Port 5000 (Backup)
+                            await TryCheckTcpPortAsync(targetIp, 5000, ct);
                         }
-                        catch { /* Ignore all errors during scan */ }
+                        catch { /* Ignore */ }
                         finally
                         {
                             semaphore.Release();
@@ -405,10 +410,49 @@ namespace ClassroomManagement.Services
                 }
 
                 // Yield sau mỗi batch để UI thread (nếu có) kịp thở
-                await Task.Delay(10, ct);
+                await Task.Delay(20, ct);
             }
 
             await Task.WhenAll(tasks);
+        }
+
+        /// <summary>
+        /// Thử kiểm tra cổng TCP xem có mở không (Fallback khi UDP bị chặn)
+        /// </summary>
+        private async Task TryCheckTcpPortAsync(string ip, int port, CancellationToken ct)
+        {
+            try
+            {
+                using var tcpClient = new TcpClient();
+                // Timeout rất ngắn cho TCP connect (200ms) để quét nhanh
+                var connectTask = tcpClient.ConnectAsync(ip, port);
+                var timeoutTask = Task.Delay(200, ct);
+
+                var completedTerm = await Task.WhenAny(connectTask, timeoutTask);
+                if (completedTerm == connectTask && !connectTask.IsFaulted && tcpClient.Connected)
+                {
+                    // Scan connect thành công -> Có thể là Teacher
+                    if (!_discoveredServers.Any(s => s.ServerIp == ip))
+                    {
+                        var info = new ServerDiscoveryInfo
+                        {
+                            ServerIp = ip,
+                            ServerPort = port,
+                            ClassName = $"TCP Detected ({ip})",
+                            TeacherName = "Giáo viên",
+                            OnlineCount = 0
+                        };
+
+                        _discoveredServers.Add(info);
+                        _log.Info("SubnetDiscovery", $"Found Server via TCP Scan at: {ip}:{port}");
+                        ServerDiscovered?.Invoke(this, info);
+
+                        // Thử gửi UDP unicast trực tiếp tới IP này để lấy full tên lớp (fire and forget)
+                        _ = SendDiscoveryPacketsParallelAsync(new List<string> { ip }, ct);
+                    }
+                }
+            }
+            catch { }
         }
 
         /// <summary>
