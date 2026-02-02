@@ -267,31 +267,10 @@ namespace ClassroomManagement.Services
             };
 
             // Save to DB
-            _db.SaveChatMessage(chatMessage);
+            chatMessage.Id = _db.SaveChatMessage(chatMessage);
 
-            // Send to clients
-            var networkMsg = new NetworkMessage
-            {
-                Type = studentId.HasValue ? MessageType.ChatPrivate : MessageType.ChatMessage,
-                SenderId = "server",
-                SenderName = CurrentUser.DisplayName,
-                TargetId = studentId?.ToString(),
-                Payload = content
-            };
-
-            if (studentId.HasValue)
-            {
-                // Find client ID by student ID
-                var student = OnlineStudents.FirstOrDefault(s => s.Id == studentId);
-                if (student != null)
-                {
-                    await _networkServer.SendToClientAsync(student.MachineId, networkMsg);
-                }
-            }
-            else
-            {
-                await _networkServer.BroadcastToAllAsync(networkMsg);
-            }
+            // Use ChatService to broadcast (handles both group and private messages)
+            await ChatService.Instance.BroadcastMessageAsync(chatMessage);
 
             // Update UI
             Application.Current.Dispatcher.Invoke(() =>

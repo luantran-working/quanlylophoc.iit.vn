@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ClassroomManagement.Models;
@@ -42,7 +43,8 @@ namespace ClassroomManagement.Services
 
         private void Client_MessageReceived(object? sender, NetworkMessage msg)
         {
-            if (msg.Type == MessageType.ChatMessage)
+            // Handle both public and private chat messages
+            if (msg.Type == MessageType.ChatMessage || msg.Type == MessageType.ChatPrivate)
             {
                 try
                 {
@@ -126,14 +128,35 @@ namespace ClassroomManagement.Services
         {
             if (_server != null)
             {
+                // Determine message type based on whether it's a group message or private
+                var messageType = msg.IsGroup ? MessageType.ChatMessage : MessageType.ChatPrivate;
+                
                 var netMsg = new NetworkMessage
                 {
-                    Type = MessageType.ChatMessage,
+                    Type = messageType,
                     SenderId = "server",
                     SenderName = "Server",
+                    TargetId = msg.ReceiverId?.ToString(),
                     Payload = JsonSerializer.Serialize(msg)
                 };
-                await _server.BroadcastToAllAsync(netMsg);
+                
+                // For private messages, send only to the specific student
+                if (!msg.IsGroup && msg.ReceiverId.HasValue)
+                {
+                    // Find the student's MachineId from their Id
+                    var student = SessionManager.Instance.OnlineStudents
+                        .FirstOrDefault(s => s.Id == msg.ReceiverId.Value);
+                    
+                    if (student != null && !string.IsNullOrEmpty(student.MachineId))
+                    {
+                        await _server.SendToClientAsync(student.MachineId, netMsg);
+                    }
+                }
+                else
+                {
+                    // Group message: broadcast to all
+                    await _server.BroadcastToAllAsync(netMsg);
+                }
 
                 // Trigger local event for Teacher View
                 MessageReceived?.Invoke(this, msg);

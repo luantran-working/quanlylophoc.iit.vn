@@ -323,27 +323,17 @@ namespace ClassroomManagement.Views
                 {
                     case MessageType.ChatMessage:
                     case MessageType.ChatPrivate:
-                        // Trigger ChatService event so ChatView receives the message
+                        // ChatService.Client_MessageReceived already handles these messages
+                        // We only need to update the badge for unread messages here
                         if (message.Payload != null)
                         {
-                            try
+                            // If not in Chat Tab, show badge
+                            if (MainTabControl.SelectedIndex != 1)
                             {
-                                var chatMsg = System.Text.Json.JsonSerializer.Deserialize<ChatMessage>(message.Payload);
-                                if (chatMsg != null)
-                                {
-                                    ChatService.Instance.OnMessageReceived(chatMsg);
-                                    
-                                    // If not in Chat Tab, show badge
-                                    if (MainTabControl.SelectedIndex != 1)
-                                    {
-                                        _unreadMessages++;
-                                        ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : null;
-                                    }
-                                }
+                                _unreadMessages++;
+                                ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : null;
                             }
-                            catch { }
                         }
-                        // ShowChatNotification(message.SenderName, notifContent); // Disabled as requested
                         break;
 
                     case MessageType.TestStart:
