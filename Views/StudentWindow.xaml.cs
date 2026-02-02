@@ -22,6 +22,7 @@ namespace ClassroomManagement.Views
         private bool _isConnected = false;
         private bool _isLocked = false;
         private bool _isRemoteControlled = false;
+        private int _unreadMessages = 0;
 
         public StudentWindow() : this("Học sinh")
         {
@@ -54,6 +55,18 @@ namespace ClassroomManagement.Views
 
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
+            
+            // Handle Tab Selection
+            MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+        }
+
+        private void MainTabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (MainTabControl.SelectedIndex == 1) // Chat Tab
+            {
+                _unreadMessages = 0;
+                if (ChatBadge != null) ChatBadge.Badge = "";
+            }
         }
 
         // Window Control Events
@@ -308,7 +321,6 @@ namespace ClassroomManagement.Views
                     case MessageType.ChatMessage:
                     case MessageType.ChatPrivate:
                         // Trigger ChatService event so ChatView receives the message
-                        string notifContent = message.Payload ?? "";
                         if (message.Payload != null)
                         {
                             try
@@ -317,12 +329,18 @@ namespace ClassroomManagement.Views
                                 if (chatMsg != null)
                                 {
                                     ChatService.Instance.OnMessageReceived(chatMsg);
-                                    notifContent = chatMsg.Content;
+                                    
+                                    // If not in Chat Tab, show badge
+                                    if (MainTabControl.SelectedIndex != 1)
+                                    {
+                                        _unreadMessages++;
+                                        ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : "";
+                                    }
                                 }
                             }
                             catch { }
                         }
-                        ShowChatNotification(message.SenderName, notifContent);
+                        // ShowChatNotification(message.SenderName, notifContent); // Disabled as requested
                         break;
 
                     case MessageType.TestStart:

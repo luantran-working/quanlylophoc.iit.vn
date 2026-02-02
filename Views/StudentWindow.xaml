@@ -332,12 +332,14 @@
                 </TabItem>
 
                 <!-- TAB 2: MESSAGING -->
-                <TabItem>
+                <TabItem x:Name="ChatTabItem">
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Forum" Width="20" Height="20" VerticalAlignment="Center"/>
-                            <TextBlock Text="Nhắn tin" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <materialDesign:Badged x:Name="ChatBadge" Badge="" BadgeColorZoneMode="Accent" BadgeBackground="Red" BadgeForeground="White">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Forum" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBlock Text="Nhắn tin" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </materialDesign:Badged>
                     </TabItem.Header>
                     
                     <views:ChatView x:Name="StudentChatView"/>
