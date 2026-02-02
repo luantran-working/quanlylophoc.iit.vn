@@ -69,6 +69,7 @@ namespace ClassroomManagement.Views
             if (IsTeacherMode)
             {
                  LoadGroups();
+                 LoadOnlineStudents();
             }
             else
             {
@@ -82,7 +83,7 @@ namespace ClassroomManagement.Views
             LoadMessages();
         }
 
-        public void SetPrivateChat(Student student)
+        public void SetPrivateChat(Student student, bool select = true)
         {
             // Find existing private chat
             var conv = Conversations.FirstOrDefault(c => c.Type == ChatGroupType.Private && c.PartnerId == student.Id);
@@ -99,7 +100,10 @@ namespace ClassroomManagement.Views
                 Conversations.Add(conv);
             }
 
-            ConversationList.SelectedItem = conv;
+            if (select)
+            {
+                ConversationList.SelectedItem = conv;
+            }
         }
 
         private void LoadGroups()
@@ -116,6 +120,18 @@ namespace ClassroomManagement.Views
                     });
                 }
             } catch {}
+        }
+
+        private void LoadOnlineStudents()
+        {
+            try
+            {
+                foreach (var student in SessionManager.Instance.OnlineStudents)
+                {
+                    SetPrivateChat(student, select: false);
+                }
+            }
+            catch { }
         }
 
         private void LoadMessages()
@@ -253,7 +269,7 @@ namespace ClassroomManagement.Views
             {
                 msg.Id = DatabaseService.Instance.SaveChatMessage(msg);
                 await ChatService.Instance.BroadcastMessageAsync(msg);
-                AddMessageIfVisible(msg); 
+                // AddMessageIfVisible(msg); // Removed to prevent duplicate, BroadcastMessageAsync triggers MessageReceived event
             }
             else
             {

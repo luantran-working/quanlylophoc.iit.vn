@@ -50,7 +50,7 @@ namespace ClassroomManagement.Views
 
             FileReceiverService.Instance.FileRequestReceived += OnFileRequestReceived;
 
-            // PollService.Instance.PollStarted += OnPollStarted;
+            PollService.Instance.PollStarted += OnPollStarted;
 
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
@@ -72,6 +72,7 @@ namespace ClassroomManagement.Views
 
         private void StudentWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
+            PollService.Instance.PollStarted -= OnPollStarted;
             _networkClient.Disconnect();
             _networkClient.Dispose();
         }
@@ -307,6 +308,7 @@ namespace ClassroomManagement.Views
                     case MessageType.ChatMessage:
                     case MessageType.ChatPrivate:
                         // Trigger ChatService event so ChatView receives the message
+                        string notifContent = message.Payload ?? "";
                         if (message.Payload != null)
                         {
                             try
@@ -315,11 +317,12 @@ namespace ClassroomManagement.Views
                                 if (chatMsg != null)
                                 {
                                     ChatService.Instance.OnMessageReceived(chatMsg);
+                                    notifContent = chatMsg.Content;
                                 }
                             }
                             catch { }
                         }
-                        ShowChatNotification(message.SenderName, message.Payload ?? "");
+                        ShowChatNotification(message.SenderName, notifContent);
                         break;
 
                     case MessageType.TestStart:

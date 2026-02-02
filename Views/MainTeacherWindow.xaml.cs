@@ -121,6 +121,12 @@ namespace ClassroomManagement.Views
         {
             student.PropertyChanged += OnStudentPropertyChanged;
             UpdateStatusBar();
+            
+            // Add student to chat list automatically
+            Dispatcher.Invoke(() => {
+                MainChatView.SetPrivateChat(student, select: false);
+            });
+
             // Show notification
             // TODO: Show toast notification
         }
