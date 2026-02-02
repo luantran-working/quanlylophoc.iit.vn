@@ -362,17 +362,17 @@
                         </Grid>
                     </TabItem>
 
-                    <!-- TAB 2: Remote Control -->
+                    <!-- TAB 2: Chat -->
                     <TabItem>
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="RemoteDesktop" Width="20" Height="20"
+                                <materialDesign:PackIcon Kind="MessageText" Width="20" Height="20"
                                                           VerticalAlignment="Center"/>
-                                <TextBlock Text="Điều khiển" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Nhắn tin" Margin="8,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </TabItem.Header>
-                        <Grid Background="#212121">
-                           <TextBlock Text="Khu vực điều khiển từ xa" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Grid>
+                            <views:ChatView x:Name="MainChatView"/>
                         </Grid>
                     </TabItem>
 
@@ -427,13 +427,6 @@
                         <!-- Communication Group -->
                         <TextBlock Text="Công cụ giao tiếp" FontSize="11" FontWeight="SemiBold"
                                    Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,2"/>
-
-                        <controls:ToolButton ButtonText="Chat nhóm"
-                                              IconKind="Forum"
-                                              IconBackground="{StaticResource AppPrimaryBrush}"
-                                              Click="OpenGroupChat_Click"
-                                              Margin="0,1,0,0"
-                                              ToolTipText="Chat nhóm"/>
 
                         <controls:ToolButton ButtonText="Chat riêng"
                                               IconKind="MessageText"
