@@ -39,6 +39,9 @@ namespace ClassroomManagement.Views
             PollService.Instance.InitializeClient(_networkClient);
             ChatService.Instance.Initialize(null, _networkClient);
 
+            // Explicitly initialize ChatView after ChatService is ready
+            StudentChatView.InitializeConversations();
+
             // Wire up network events
             _networkClient.Connected += OnConnected;
             _networkClient.Disconnected += OnDisconnected;

@@ -53,10 +53,8 @@ namespace ClassroomManagement.Views
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        public void InitializeConversations()
         {
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this)) return;
-            
             // Only init once
             if (Conversations.Count > 0) return;
 
@@ -100,6 +98,17 @@ namespace ClassroomManagement.Views
 
             // Load initial messages
             LoadMessages();
+        }
+        
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this)) return;
+            
+            // Delay initialization to ensure ChatService is ready
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                InitializeConversations();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         public void SetPrivateChat(Student student, bool select = true)
