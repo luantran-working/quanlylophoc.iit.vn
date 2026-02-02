@@ -65,7 +65,7 @@ namespace ClassroomManagement.Views
             if (MainTabControl.SelectedIndex == 1) // Chat Tab
             {
                 _unreadMessages = 0;
-                if (ChatBadge != null) ChatBadge.Badge = "";
+                if (ChatBadge != null) ChatBadge.Badge = null;
             }
         }
 
@@ -334,7 +334,7 @@ namespace ClassroomManagement.Views
                                     if (MainTabControl.SelectedIndex != 1)
                                     {
                                         _unreadMessages++;
-                                        ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : "";
+                                        ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : null;
                                     }
                                 }
                             }

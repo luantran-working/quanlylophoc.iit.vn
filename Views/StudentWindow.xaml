@@ -334,7 +334,7 @@
                 <!-- TAB 2: MESSAGING -->
                 <TabItem x:Name="ChatTabItem">
                     <TabItem.Header>
-                        <materialDesign:Badged x:Name="ChatBadge" Badge="" BadgeColorZoneMode="Accent" BadgeBackground="Red" BadgeForeground="White">
+                        <materialDesign:Badged x:Name="ChatBadge" Badge="{x:Null}" BadgeBackground="#F44336" BadgeForeground="White">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Forum" Width="20" Height="20" VerticalAlignment="Center"/>
                                 <TextBlock Text="Nhắn tin" Margin="8,0,0,0" VerticalAlignment="Center"/>
