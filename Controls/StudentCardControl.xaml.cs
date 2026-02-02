@@ -21,6 +21,19 @@ namespace ClassroomManagement.Controls
             return DataContext as Student;
         }
 
+        private void Border_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var student = GetStudent();
+            if (student == null) return;
+
+            // Notify MainTeacherWindow to switch chat
+            var mainWindow = Window.GetWindow(this) as MainTeacherWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.FocusStudentChat(student);
+            }
+        }
+
         private void ViewScreen_Click(object sender, RoutedEventArgs e)
         {
             var student = GetStudent();
@@ -44,9 +57,11 @@ namespace ClassroomManagement.Controls
             var student = GetStudent();
             if (student == null) return;
 
-            var chatWindow = new ChatWindow();
-            chatWindow.Title = $"Chat với {student.DisplayName}";
-            chatWindow.Show();
+            var mainWindow = Window.GetWindow(this) as MainTeacherWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.FocusStudentChat(student);
+            }
         }
 
         private void SendFile_Click(object sender, RoutedEventArgs e)

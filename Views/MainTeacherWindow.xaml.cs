@@ -108,6 +108,15 @@ namespace ClassroomManagement.Views
             // StatusText would be bound in XAML
         }
 
+        public void FocusStudentChat(Student student)
+        {
+            // Switch to Chat Tab (index 1)
+            MainTabControl.SelectedIndex = 1;
+            
+            // Focus student in ChatView
+            MainChatView.SetPrivateChat(student);
+        }
+
         private void OnStudentConnected(object? sender, Student student)
         {
             student.PropertyChanged += OnStudentPropertyChanged;

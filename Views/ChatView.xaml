@@ -77,10 +77,11 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Avatar Placeholder -->
-                                <Border Width="36" Height="36" CornerRadius="18" Background="#E0E7FF">
-                                    <TextBlock Text="{Binding Name[0]}"
+                                <Border x:Name="AvatarBorder" Width="36" Height="36" CornerRadius="18" Background="#E0E7FF">
+                                    <TextBlock x:Name="AvatarText" Text="{Binding Name[0]}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
                                                Foreground="#4F46E5" FontWeight="Bold"/>
                                 </Border>
@@ -88,9 +89,27 @@
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Name}" FontWeight="Medium" Foreground="#1F2937"/>
                                     <TextBlock Text="{Binding LastMessage}" FontSize="12" Foreground="#6B7280"
-                                               TextTrimming="CharacterEllipsis" MaxWidth="160"/>
+                                               TextTrimming="CharacterEllipsis" MaxWidth="140"/>
                                 </StackPanel>
+
+                                <!-- Unread Count -->
+                                <Border Grid.Column="2" VerticalAlignment="Center" Background="#EF4444" 
+                                        CornerRadius="10" MinWidth="20" Height="20" Padding="5,0"
+                                        Visibility="{Binding UnreadCount, Converter={StaticResource BoolToVis}}"> <!-- Note: Need int to vis converter or use simple trigger -->
+                                    <TextBlock Text="{Binding UnreadCount}" Foreground="White" FontSize="11" 
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
                             </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Type}" Value="Private">
+                                    <Setter TargetName="AvatarBorder" Property="Background" Value="#DCFCE7"/>
+                                    <Setter TargetName="AvatarText" Property="Foreground" Value="#166534"/>
+                                    <Setter TargetName="AvatarText" Property="Text" Value="👤"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding UnreadCount}" Value="0">
+                                    <Setter Property="Visibility" TargetName="AvatarBorder" Value="Visible"/> <!-- Dummy to trigger trigger -->
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

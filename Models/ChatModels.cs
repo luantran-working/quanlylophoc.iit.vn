@@ -14,18 +14,34 @@ namespace ClassroomManagement.Models
         public const string SystemString = "system";
     }
 
+    public enum ChatGroupType
+    {
+        Public,
+        Group,
+        Private
+    }
+
     public class ChatGroupViewModel : INotifyPropertyChanged
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public ObservableCollection<Student> Members { get; set; } = new();
         public bool IsSelected { get; set; }
+        public ChatGroupType Type { get; set; } = ChatGroupType.Group;
+        public int PartnerId { get; set; } // For Private type
 
         private string _lastMessage = string.Empty;
         public string LastMessage
         {
             get => _lastMessage;
             set { _lastMessage = value; OnPropertyChanged(); }
+        }
+
+        private int _unreadCount = 0;
+        public int UnreadCount
+        {
+            get => _unreadCount;
+            set { _unreadCount = value; OnPropertyChanged(); }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
