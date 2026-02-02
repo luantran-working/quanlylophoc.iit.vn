@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:controls="clr-namespace:ClassroomManagement.Controls"
+        xmlns:views="clr-namespace:ClassroomManagement.Views"
         mc:Ignorable="d"
         Title="Phòng học - Học sinh"
         Height="768" Width="1024"
@@ -14,6 +15,15 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         FontFamily="{materialDesign:MaterialDesignFont}">
+
+    <Window.Resources>
+        <Style x:Key="MainTabStyle" TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -80,231 +90,260 @@
         </Grid>
 
         <!-- ============================================ -->
-        <!-- MAIN CONTENT -->
+        <!-- MAIN CONTENT (TABS) -->
         <!-- ============================================ -->
-        <Grid Grid.Row="1" Margin="16">
-            <Grid.ColumnDefinitions>
-                <!-- Main Display Area -->
-                <ColumnDefinition Width="*"/>
-                <!-- Sidebar Tools -->
-                <ColumnDefinition Width="280"/>
-            </Grid.ColumnDefinitions>
+        <Border Grid.Row="1" Background="White" Margin="16" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
+            <TabControl x:Name="MainTabControl" materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+                        TabStripPlacement="Top"
+                        Style="{StaticResource MaterialDesignTabControl}">
+                
+                <!-- TAB 1: DASHBOARD / SCREEN -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock Text="Phòng học" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </TabItem.Header>
 
-            <!-- ============================================ -->
-            <!-- MAIN DISPLAY AREA - PRESENTATION VIEW -->
-            <!-- ============================================ -->
-            <Border Grid.Column="0" Background="White" CornerRadius="8" Margin="0,0,16,0" materialDesign:ElevationAssist.Elevation="Dp1">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <!-- Main Display Area -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Sidebar Tools -->
+                            <ColumnDefinition Width="280"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Header -->
-                    <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}"
-                            Padding="16" CornerRadius="8,8,0,0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Presentation" Width="20" Height="20"
-                                                          Foreground="White" VerticalAlignment="Center"/>
-                                <TextBlock Text="MÀN HÌNH TRÌNH CHIẾU" FontSize="14" FontWeight="Bold"
-                                           Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <controls:StatusIndicator StatusText="Đang kết nối"
-                                                          DotColor="#A5D6A7"
-                                                          StatusBackground="#FFFFFF20"
-                                                          TextColor="White"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Presentation Display -->
-                    <Border Grid.Row="1" Background="#212121" Margin="16" CornerRadius="8">
-                        <Grid>
-                            <!-- Placeholder when no presentation -->
-                            <StackPanel x:Name="NoPresentationPlaceholder"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center">
-                                <Border Width="120" Height="120" CornerRadius="60"
-                                        Background="#333333" HorizontalAlignment="Center">
-                                    <materialDesign:PackIcon Kind="PresentationPlay" Width="60" Height="60"
-                                                              Foreground="#555"
-                                                              HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock Text="Đang chờ giáo viên trình chiếu..."
-                                           Foreground="#888" FontSize="16"
-                                           HorizontalAlignment="Center" Margin="0,24,0,0"/>
-                                <TextBlock Text="Bạn sẽ thấy nội dung bài giảng ở đây khi giáo viên bắt đầu"
-                                           Foreground="#666" FontSize="13"
-                                           HorizontalAlignment="Center" Margin="0,8,0,0"/>
-
-                                <!-- Animation Loading -->
-                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                             Width="30" Height="30"
-                                             IsIndeterminate="True"
-                                             Foreground="{StaticResource AppPrimaryBrush}"
-                                             Margin="0,24,0,0"/>
-                            </StackPanel>
-
-                            <!-- Actual presentation content would go here -->
-                            <Image x:Name="PresentationImage"
-                                   Stretch="Uniform"
-                                   Visibility="Collapsed"/>
-                        </Grid>
-                    </Border>
-
-                    <!-- Control Bar -->
-                    <Border Grid.Row="2" Background="#FAFAFA" Padding="12" CornerRadius="0,0,8,8" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="InformationOutline" Width="18" Height="18"
-                                                          Foreground="#757575" VerticalAlignment="Center"/>
-                                <TextBlock Text="Giáo viên: Trần Văn Bình đang điều khiển phiên học"
-                                           FontSize="12" Foreground="#757575"
-                                           Margin="8,0,0,0" VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Style="{StaticResource MaterialDesignIconButton}"
-                                        ToolTip="Phóng to" Width="32" Height="32">
-                                    <materialDesign:PackIcon Kind="Fullscreen" Width="20" Height="20"/>
-                                </Button>
-                                <Button Style="{StaticResource MaterialDesignIconButton}"
-                                        ToolTip="Thu nhỏ" Width="32" Height="32">
-                                    <materialDesign:PackIcon Kind="FullscreenExit" Width="20" Height="20"/>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </Border>
-
-            <!-- ============================================ -->
-            <!-- SIDEBAR - STUDENT TOOLS -->
-            <!-- ============================================ -->
-            <Border Grid.Column="1" Background="White" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="16">
-                        <!-- Header -->
-                        <TextBlock Text="Công cụ học tập" FontWeight="Bold" Foreground="#757575" Margin="0,0,0,16"/>
-
-                        <!-- Main Actions -->
-                        <controls:ToolButton ButtonText="Nộp Bài Tập"
-                                              IconKind="FileUpload"
-                                              IconBackground="{StaticResource AppPrimaryBrush}"
-                                              ToolTipText="Nộp bài tập cho giáo viên"
-                                              Click="SubmitAssignment_Click"/>
-
-                        <!-- Raise Hand Toggle -->
-                        <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,8"
-                                x:Name="RaiseHandBorder" Cursor="Hand"
-                                MouseLeftButtonDown="RaiseHand_Click">
+                        <!-- ============================================ -->
+                        <!-- MAIN DISPLAY AREA - PRESENTATION VIEW -->
+                        <!-- ============================================ -->
+                        <Border Grid.Column="0" Background="White" CornerRadius="8" Margin="0,0,16,0" materialDesign:ElevationAssist.Elevation="Dp1">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <Border Width="32" Height="32" CornerRadius="16"
-                                            Background="#FFC107" Margin="0,0,12,0">
-                                        <materialDesign:PackIcon Kind="HandBackRight" Width="18" Height="18"
-                                                                  Foreground="White"
-                                                                  HorizontalAlignment="Center"
-                                                                  VerticalAlignment="Center"/>
-                                    </Border>
+                                <!-- Header -->
+                                <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}"
+                                        Padding="16" CornerRadius="8,8,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="GIƠ TAY" FontSize="13" FontWeight="Medium" Foreground="#424242"/>
-                                        <TextBlock x:Name="RaiseHandStatus" Text="Nhấn để giơ tay"
-                                                   FontSize="11" Foreground="#757575"/>
-                                    </StackPanel>
-                                </StackPanel>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="Presentation" Width="20" Height="20"
+                                                                      Foreground="White" VerticalAlignment="Center"/>
+                                            <TextBlock Text="MÀN HÌNH TRÌNH CHIẾU" FontSize="14" FontWeight="Bold"
+                                                       Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
 
-                                <ToggleButton Grid.Column="1"
-                                              x:Name="RaiseHandToggle"
-                                              Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <controls:StatusIndicator StatusText="Đang kết nối"
+                                                                      DotColor="#A5D6A7"
+                                                                      StatusBackground="#FFFFFF20"
+                                                                      TextColor="White"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Presentation Display -->
+                                <Border Grid.Row="1" Background="#212121" Margin="16" CornerRadius="8">
+                                    <Grid>
+                                        <!-- Placeholder when no presentation -->
+                                        <StackPanel x:Name="NoPresentationPlaceholder"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center">
+                                            <Border Width="120" Height="120" CornerRadius="60"
+                                                    Background="#333333" HorizontalAlignment="Center">
+                                                <materialDesign:PackIcon Kind="PresentationPlay" Width="60" Height="60"
+                                                                          Foreground="#555"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="Đang chờ giáo viên trình chiếu..."
+                                                       Foreground="#888" FontSize="16"
+                                                       HorizontalAlignment="Center" Margin="0,24,0,0"/>
+                                            <TextBlock Text="Bạn sẽ thấy nội dung bài giảng ở đây khi giáo viên bắt đầu"
+                                                       Foreground="#666" FontSize="13"
+                                                       HorizontalAlignment="Center" Margin="0,8,0,0"/>
+
+                                            <!-- Animation Loading -->
+                                            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                                         Width="30" Height="30"
+                                                         IsIndeterminate="True"
+                                                         Foreground="{StaticResource AppPrimaryBrush}"
+                                                         Margin="0,24,0,0"/>
+                                        </StackPanel>
+
+                                        <!-- Actual presentation content would go here -->
+                                        <Image x:Name="PresentationImage"
+                                               Stretch="Uniform"
+                                               Visibility="Collapsed"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Control Bar -->
+                                <Border Grid.Row="2" Background="#FAFAFA" Padding="12" CornerRadius="0,0,8,8" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="InformationOutline" Width="18" Height="18"
+                                                                      Foreground="#757575" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Giáo viên: Trần Văn Bình đang điều khiển phiên học"
+                                                       FontSize="12" Foreground="#757575"
+                                                       Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Button Style="{StaticResource MaterialDesignIconButton}"
+                                                    ToolTip="Phóng to" Width="32" Height="32">
+                                                <materialDesign:PackIcon Kind="Fullscreen" Width="20" Height="20"/>
+                                            </Button>
+                                            <Button Style="{StaticResource MaterialDesignIconButton}"
+                                                    ToolTip="Thu nhỏ" Width="32" Height="32">
+                                                <materialDesign:PackIcon Kind="FullscreenExit" Width="20" Height="20"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
                             </Grid>
                         </Border>
 
-                        <controls:ToolButton ButtonText="Chat với Giáo viên"
-                                              IconKind="Forum"
-                                              IconBackground="{StaticResource AppPrimaryBrush}"
-                                              ToolTipText="Mở cửa sổ chat"
-                                              Click="OpenChat_Click"/>
+                        <!-- ============================================ -->
+                        <!-- SIDEBAR - STUDENT TOOLS -->
+                        <!-- ============================================ -->
+                        <Border Grid.Column="1" Background="White" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="16">
+                                    <!-- Header -->
+                                    <TextBlock Text="Công cụ học tập" FontWeight="Bold" Foreground="#757575" Margin="0,0,0,16"/>
 
-                        <!-- Test Progress -->
-                        <TextBlock Text="BÀI KIỂM TRA" FontSize="11" FontWeight="SemiBold"
-                                   Foreground="{StaticResource AppPrimaryBrush}" Margin="0,20,0,8"/>
+                                    <!-- Main Actions -->
+                                    <controls:ToolButton ButtonText="Nộp Bài Tập"
+                                                          IconKind="FileUpload"
+                                                          IconBackground="{StaticResource AppPrimaryBrush}"
+                                                          ToolTipText="Nộp bài tập cho giáo viên"
+                                                          Click="SubmitAssignment_Click"/>
 
-                        <Border Background="#F5F5F7" CornerRadius="8" Padding="16">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+                                    <!-- Raise Hand Toggle -->
+                                    <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,8"
+                                            x:Name="RaiseHandBorder" Cursor="Hand"
+                                            MouseLeftButtonDown="RaiseHand_Click">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" Text="Bài kiểm tra 15p"
-                                               FontSize="13" FontWeight="Medium" Foreground="#424242"/>
-                                    <Border Grid.Column="1" Background="{StaticResource AppPrimaryBrush}" CornerRadius="4" Padding="8,2">
-                                        <TextBlock Text="Đang làm" FontSize="10" Foreground="White"/>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                <Border Width="32" Height="32" CornerRadius="16"
+                                                        Background="#FFC107" Margin="0,0,12,0">
+                                                    <materialDesign:PackIcon Kind="HandBackRight" Width="18" Height="18"
+                                                                              Foreground="White"
+                                                                              HorizontalAlignment="Center"
+                                                                              VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="GIƠ TAY" FontSize="13" FontWeight="Medium" Foreground="#424242"/>
+                                                    <TextBlock x:Name="RaiseHandStatus" Text="Nhấn để giơ tay"
+                                                               FontSize="11" Foreground="#757575"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <ToggleButton Grid.Column="1"
+                                                          x:Name="RaiseHandToggle"
+                                                          Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+                                        </Grid>
                                     </Border>
-                                </Grid>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                    <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
-                                                              Foreground="#FF9800" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Còn lại:" FontSize="12" Foreground="#757575"
-                                               Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                    <controls:ToolButton ButtonText="Chat với Giáo viên"
+                                                          IconKind="Forum"
+                                                          IconBackground="{StaticResource AppPrimaryBrush}"
+                                                          ToolTipText="Mở cửa sổ chat"
+                                                          Click="OpenChat_Click"/>
+
+                                    <!-- Test Progress -->
+                                    <TextBlock Text="BÀI KIỂM TRA" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AppPrimaryBrush}" Margin="0,20,0,8"/>
+
+                                    <Border Background="#F5F5F7" CornerRadius="8" Padding="16">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Text="Bài kiểm tra 15p"
+                                                           FontSize="13" FontWeight="Medium" Foreground="#424242"/>
+                                                <Border Grid.Column="1" Background="{StaticResource AppPrimaryBrush}" CornerRadius="4" Padding="8,2">
+                                                    <TextBlock Text="Đang làm" FontSize="10" Foreground="White"/>
+                                                </Border>
+                                            </Grid>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                                <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
+                                                                          Foreground="#FF9800" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Còn lại:" FontSize="12" Foreground="#757575"
+                                                           Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <TextBlock Text="14:32" FontSize="24" FontWeight="Bold"
+                                                       Foreground="#FF9800" Margin="0,4,0,0"/>
+
+                                            <ProgressBar Value="85" Height="6"
+                                                         Style="{StaticResource MaterialDesignLinearProgressBar}"
+                                                         Foreground="#4CAF50" Background="#E0E0E0"
+                                                         Margin="0,12,0,0"/>
+
+                                            <TextBlock Text="Đã hoàn thành: 8/10 câu" FontSize="11"
+                                                       Foreground="#757575" Margin="0,8,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Quick Notes -->
+                                    <TextBlock Text="GHI CHÚ NHANH" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AppPrimaryBrush}" Margin="0,20,0,8"/>
+
+                                    <Border Background="#F5F5F7" CornerRadius="8" Padding="8">
+                                        <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                                 materialDesign:HintAssist.Hint="Ghi chú của bạn..."
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 Height="80"
+                                                 Background="White"
+                                                 Foreground="Black"
+                                                 BorderBrush="#E0E0E0"/>
+                                    </Border>
+
                                 </StackPanel>
-
-                                <TextBlock Text="14:32" FontSize="24" FontWeight="Bold"
-                                           Foreground="#FF9800" Margin="0,4,0,0"/>
-
-                                <ProgressBar Value="85" Height="6"
-                                             Style="{StaticResource MaterialDesignLinearProgressBar}"
-                                             Foreground="#4CAF50" Background="#E0E0E0"
-                                             Margin="0,12,0,0"/>
-
-                                <TextBlock Text="Đã hoàn thành: 8/10 câu" FontSize="11"
-                                           Foreground="#757575" Margin="0,8,0,0"/>
-                            </StackPanel>
+                            </ScrollViewer>
                         </Border>
+                    </Grid>
+                </TabItem>
 
-                        <!-- Quick Notes -->
-                        <TextBlock Text="GHI CHÚ NHANH" FontSize="11" FontWeight="SemiBold"
-                                   Foreground="{StaticResource AppPrimaryBrush}" Margin="0,20,0,8"/>
-
-                        <Border Background="#F5F5F7" CornerRadius="8" Padding="8">
-                            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="Ghi chú của bạn..."
-                                     AcceptsReturn="True"
-                                     TextWrapping="Wrap"
-                                     Height="80"
-                                     Background="White"
-                                     Foreground="Black"
-                                     BorderBrush="#E0E0E0"/>
-                        </Border>
-
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
-        </Grid>
+                <!-- TAB 2: MESSAGING -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Forum" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock Text="Nhắn tin" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    
+                    <views:ChatView x:Name="StudentChatView"/>
+                </TabItem>
+            </TabControl>
+        </Border>
 
         <!-- ============================================ -->
         <!-- FOOTER STATUS BAR -->

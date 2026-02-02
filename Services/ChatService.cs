@@ -156,12 +156,20 @@ namespace ClassroomManagement.Services
                     IsGroup = true,
                     CreatedAt = DateTime.Now
                 };
+                await SendChatMessageAsync(msg);
+            }
+        }
 
+        public async Task SendChatMessageAsync(ChatMessage msg)
+        {
+            if (_client != null)
+            {
                 var netMsg = new NetworkMessage
                 {
-                    Type = MessageType.ChatMessage,
+                    Type = msg.IsGroup ? MessageType.ChatMessage : MessageType.ChatPrivate,
                     SenderId = _client.MachineId,
                     SenderName = _client.DisplayName,
+                    TargetId = msg.ReceiverId?.ToString(),
                     Payload = JsonSerializer.Serialize(msg)
                 };
                 await _client.SendMessageAsync(netMsg);

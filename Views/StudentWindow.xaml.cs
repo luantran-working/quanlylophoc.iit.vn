@@ -539,10 +539,8 @@ namespace ClassroomManagement.Views
 
         private void OpenChat_Click(object sender, RoutedEventArgs e)
         {
-            var chatWindow = new ChatWindow();
-            chatWindow.Title = "Chat với Giáo viên";
-            chatWindow.Owner = this;
-            chatWindow.Show();
+            // Switch to Chat Tab (index 1)
+            MainTabControl.SelectedIndex = 1;
         }
 
         private async void RequestHelp_Click(object sender, RoutedEventArgs e)

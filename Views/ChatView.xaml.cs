@@ -74,6 +74,15 @@ namespace ClassroomManagement.Views
             else
             {
                  if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Collapsed;
+                 
+                 // Student Mode: Add Teacher Conversation
+                 Conversations.Add(new ChatGroupViewModel
+                 {
+                     Id = "teacher",
+                     Name = "Giáo viên",
+                     Type = ChatGroupType.Private,
+                     PartnerId = 0 // Convention: 0 or special ID for Teacher
+                 });
             }
 
             ChatService.Instance.MessageReceived += OnMessageReceived;
@@ -273,7 +282,7 @@ namespace ClassroomManagement.Views
             }
             else
             {
-                await ChatService.Instance.SendTextMessageAsync(content);
+                await ChatService.Instance.SendChatMessageAsync(msg);
             }
         }
 
