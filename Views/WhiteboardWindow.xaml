@@ -8,53 +8,42 @@
         Height="700" Width="1200"
         MinHeight="600" MinWidth="800"
         WindowStartupLocation="CenterScreen"
-        Background="Transparent"
-        AllowsTransparency="True"
-        WindowStyle="None">
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
 
-    <Border CornerRadius="8" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="1">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="15" ShadowDepth="5" Color="Black" Opacity="0.15"/>
-        </Border.Effect>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Header Bar (Optional for Info) -->
+        <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}">
+            <Grid Margin="16,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Header Bar -->
-            <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}" CornerRadius="8,8,0,0"
-                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
-                <Grid Margin="16,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="DrawPen" Width="24" Height="24"
+                                              Foreground="White" VerticalAlignment="Center"/>
+                    <TextBlock Text="Bảng Trắng" FontSize="16" FontWeight="Bold"
+                               Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="DrawPen" Width="24" Height="24"
-                                                  Foreground="White" VerticalAlignment="Center"/>
-                        <TextBlock Text="Bảng Trắng" FontSize="16" FontWeight="Bold"
-                                   Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
+                <TextBlock x:Name="ParticipantCountText" Grid.Column="1"
+                           Text=""
+                           FontSize="12"
+                           Foreground="White"
+                           Opacity="0.8"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
 
-                    <TextBlock x:Name="ParticipantCountText" Grid.Column="1"
-                               Text=""
-                               FontSize="12"
-                               Foreground="White"
-                               Opacity="0.8"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                    <!-- Window Controls -->
-                    <controls:WindowControlButtons Grid.Column="2"/>
-                </Grid>
-            </Border>
-
-            <!-- Main Content -->
-            <views:WhiteboardView Grid.Row="1"/>
-        </Grid>
-    </Border>
+        <!-- Main Content -->
+        <views:WhiteboardView Grid.Row="1"/>
+    </Grid>
 </Window>

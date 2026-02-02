@@ -4,15 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:controls="clr-namespace:ClassroomManagement.Controls"
         mc:Ignorable="d"
         Title="Phần mềm quản lý phòng học" 
         Height="700" Width="1000"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        ResizeMode="CanMinimize">
+        ResizeMode="CanMinimize"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
@@ -25,163 +24,149 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border CornerRadius="4" ClipToBounds="True" Background="#FAFAFA" BorderBrush="#EEEEEE" BorderThickness="1">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.1" Color="Black"/>
-        </Border.Effect>
+    <Grid x:Name="MainContent">
+        <!-- Background Decoration (Subtle) -->
+        <Ellipse Width="800" Height="800" Fill="#F0F7FF" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-400,-200,0" Opacity="0.5"/>
+        <Ellipse Width="600" Height="600" Fill="#F5F5F5" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="-200,0,0,-300" Opacity="0.5"/>
 
-        <Grid>
-            <!-- Background Decoration (Subtle) -->
-            <Ellipse Width="800" Height="800" Fill="#F0F7FF" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-400,-200,0" Opacity="0.5"/>
-            <Ellipse Width="600" Height="600" Fill="#F5F5F5" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="-200,0,0,-300" Opacity="0.5"/>
-
-            <!-- Window Controls -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20" Panel.ZIndex="100">
-                <controls:WindowControlButtons ShowMaximize="False"/>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            
+            <!-- Header -->
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,50">
+                <Border Width="80" Height="80" CornerRadius="24" Background="White" Margin="0,0,0,20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.1"/>
+                    </Border.Effect>
+                    <materialDesign:PackIcon Kind="School" Width="48" Height="48" 
+                                              Foreground="{StaticResource AppPrimaryBrush}" 
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                
+                <TextBlock Text="QUẢN LÝ PHÒNG HỌC THÔNG MINH"
+                           FontSize="28" FontWeight="Bold"
+                           Foreground="{StaticResource AppPrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+                           
+                <TextBlock Text="Hệ thống quản lý lớp học dành cho giáo viên và học sinh, giúp tối ưu hóa trải nghiệm giảng dạy và học tập."
+                           FontSize="16" 
+                           Foreground="#757575"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"/>
             </StackPanel>
 
-            <!-- Main Content with Animation Wrapper -->
-            <Grid x:Name="MainContent">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!-- Role Selection Cards -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                
+                <!-- Teacher Card -->
+                <materialDesign:Card Width="280" Height="360" Margin="20,0" UniformCornerRadius="16" Cursor="Hand"
+                                   Background="White" materialDesign:ElevationAssist.Elevation="Dp2"
+                                   x:Name="TeacherCard">
+                    <materialDesign:Card.Style>
+                        <Style TargetType="materialDesign:Card">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
+                                    <Setter Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="1.02" ScaleY="1.02" CenterX="140" CenterY="180"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </materialDesign:Card.Style>
                     
-                    <!-- Header -->
-                    <StackPanel HorizontalAlignment="Center" Margin="0,0,0,50">
-                        <Border Width="80" Height="80" CornerRadius="24" Background="White" Margin="0,0,0,20">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.1"/>
-                            </Border.Effect>
-                            <materialDesign:PackIcon Kind="School" Width="48" Height="48" 
-                                                      Foreground="{StaticResource AppPrimaryBrush}" 
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="140"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header Image/Icon -->
+                        <Border Grid.Row="0" Background="#E3F2FD" CornerRadius="16,16,0,0">
+                            <materialDesign:PackIcon Kind="Teacher" Width="64" Height="64" 
+                                                      Foreground="{StaticResource AppPrimaryBrush}"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        
-                        <TextBlock Text="QUẢN LÝ PHÒNG HỌC THÔNG MINH"
-                                   FontSize="28" FontWeight="Bold"
-                                   Foreground="{StaticResource AppPrimaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
-                                   
-                        <TextBlock Text="Hệ thống quản lý lớp học dành cho giáo viên và học sinh, giúp tối ưu hóa trải nghiệm giảng dạy và học tập."
-                                   FontSize="16" 
-                                   Foreground="#757575"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,10,0,0"/>
-                    </StackPanel>
 
-                    <!-- Role Selection Cards -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-                        
-                        <!-- Teacher Card -->
-                        <materialDesign:Card Width="280" Height="360" Margin="20,0" UniformCornerRadius="16" Cursor="Hand"
-                                           Background="White" materialDesign:ElevationAssist.Elevation="Dp2"
-                                           x:Name="TeacherCard">
-                            <materialDesign:Card.Style>
-                                <Style TargetType="materialDesign:Card">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <ScaleTransform ScaleX="1.02" ScaleY="1.02" CenterX="140" CenterY="180"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </materialDesign:Card.Style>
-                            
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="140"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                        <!-- Content -->
+                        <StackPanel Grid.Row="1" Margin="24,20,24,0">
+                            <TextBlock Text="Giáo viên" FontSize="22" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Quản lý lớp học, giảng bài và kiểm soát máy học sinh" 
+                                       FontSize="14" Foreground="#757575" TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0" LineHeight="22"/>
+                        </StackPanel>
 
-                                <!-- Header Image/Icon -->
-                                <Border Grid.Row="0" Background="#E3F2FD" CornerRadius="16,16,0,0">
-                                    <materialDesign:PackIcon Kind="Teacher" Width="64" Height="64" 
-                                                              Foreground="{StaticResource AppPrimaryBrush}"
-                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
+                        <!-- Button -->
+                        <Button Grid.Row="2" Margin="24,0,24,24" Height="44"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Content="Đăng nhập"
+                                Background="{StaticResource AppPrimaryBrush}"
+                                Foreground="White"
+                                BorderThickness="0"
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Click="TeacherLogin_Click"/>
+                    </Grid>
+                </materialDesign:Card>
 
-                                <!-- Content -->
-                                <StackPanel Grid.Row="1" Margin="24,20,24,0">
-                                    <TextBlock Text="Giáo viên" FontSize="22" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Quản lý lớp học, giảng bài và kiểm soát máy học sinh" 
-                                               FontSize="14" Foreground="#757575" TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0" LineHeight="22"/>
-                                </StackPanel>
+                <!-- Student Card -->
+                <materialDesign:Card Width="280" Height="360" Margin="20,0" UniformCornerRadius="16" Cursor="Hand"
+                                   Background="White" materialDesign:ElevationAssist.Elevation="Dp2"
+                                   x:Name="StudentCard">
+                     <materialDesign:Card.Style>
+                        <Style TargetType="materialDesign:Card">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
+                                    <Setter Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="1.02" ScaleY="1.02" CenterX="140" CenterY="180"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </materialDesign:Card.Style>
 
-                                <!-- Button -->
-                                <Button Grid.Row="2" Margin="24,0,24,24" Height="44"
-                                        Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Content="Đăng nhập"
-                                        Background="{StaticResource AppPrimaryBrush}"
-                                        Foreground="White"
-                                        BorderThickness="0"
-                                        materialDesign:ButtonAssist.CornerRadius="8"
-                                        Click="TeacherLogin_Click"/>
-                            </Grid>
-                        </materialDesign:Card>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="140"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <!-- Student Card -->
-                        <materialDesign:Card Width="280" Height="360" Margin="20,0" UniformCornerRadius="16" Cursor="Hand"
-                                           Background="White" materialDesign:ElevationAssist.Elevation="Dp2"
-                                           x:Name="StudentCard">
-                             <materialDesign:Card.Style>
-                                <Style TargetType="materialDesign:Card">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <ScaleTransform ScaleX="1.02" ScaleY="1.02" CenterX="140" CenterY="180"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </materialDesign:Card.Style>
+                        <!-- Header Image/Icon -->
+                        <Border Grid.Row="0" Background="#E8F5E9" CornerRadius="16,16,0,0">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="64" Height="64" 
+                                                      Foreground="#2E7D32"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
 
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="140"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                        <!-- Content -->
+                        <StackPanel Grid.Row="1" Margin="24,20,24,0">
+                            <TextBlock Text="Học sinh" FontSize="22" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Tham gia lớp học, nhận bài tập và tương tác" 
+                                       FontSize="14" Foreground="#757575" TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0" LineHeight="22"/>
+                        </StackPanel>
 
-                                <!-- Header Image/Icon -->
-                                <Border Grid.Row="0" Background="#E8F5E9" CornerRadius="16,16,0,0">
-                                    <materialDesign:PackIcon Kind="AccountGroup" Width="64" Height="64" 
-                                                              Foreground="#2E7D32"
-                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
+                        <!-- Button -->
+                        <Button Grid.Row="2" Margin="24,0,24,24" Height="44"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Content="Tham gia"
+                                Background="#2E7D32"
+                                Foreground="White"
+                                BorderThickness="0"
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Click="StudentJoin_Click"/>
+                    </Grid>
+                </materialDesign:Card>
 
-                                <!-- Content -->
-                                <StackPanel Grid.Row="1" Margin="24,20,24,0">
-                                    <TextBlock Text="Học sinh" FontSize="22" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Tham gia lớp học, nhận bài tập và tương tác" 
-                                               FontSize="14" Foreground="#757575" TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0" LineHeight="22"/>
-                                </StackPanel>
+            </StackPanel>
 
-                                <!-- Button -->
-                                <Button Grid.Row="2" Margin="24,0,24,24" Height="44"
-                                        Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Content="Tham gia"
-                                        Background="#2E7D32"
-                                        Foreground="White"
-                                        BorderThickness="0"
-                                        materialDesign:ButtonAssist.CornerRadius="8"
-                                        Click="StudentJoin_Click"/>
-                            </Grid>
-                        </materialDesign:Card>
+            <TextBlock Text="Copyright © 2026 bởi công ty cổ phần IIT. All rights reserved." 
+                       FontSize="12" Foreground="#BDBDBD" HorizontalAlignment="Center" Margin="0,20,0,0"/>
 
-                    </StackPanel>
-
-                    <TextBlock Text="Copyright © 2026 bởi công ty cổ phần IIT. All rights reserved." 
-                               FontSize="12" Foreground="#BDBDBD" HorizontalAlignment="Center" Margin="0,20,0,0"/>
-
-                </StackPanel>
-            </Grid>
-        </Grid>
-    </Border>
+        </StackPanel>
+    </Grid>
 </Window>

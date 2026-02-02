@@ -102,12 +102,6 @@ namespace ClassroomManagement.Views
 
         #region Window Controls
 
-        private void TopBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ButtonState == MouseButtonState.Pressed)
-                DragMove();
-        }
-
         private void FullscreenButton_Click(object sender, RoutedEventArgs e)
         {
             if (WindowState == WindowState.Maximized && WindowStyle == WindowStyle.None)

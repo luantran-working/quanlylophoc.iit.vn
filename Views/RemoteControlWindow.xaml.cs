@@ -131,18 +131,6 @@ namespace ClassroomManagement.Views
             }
         }
 
-        // Window Controls
-        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ButtonState == MouseButtonState.Pressed && !_isFullscreen)
-                DragMove();
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
         private void FullscreenButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleFullscreen();
@@ -152,7 +140,7 @@ namespace ClassroomManagement.Views
         {
             if (_isFullscreen)
             {
-                WindowStyle = WindowStyle.None;
+                WindowStyle = WindowStyle.SingleBorderWindow;
                 WindowState = _previousWindowState;
                 ResizeMode = ResizeMode.CanResize;
                 FullscreenIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Fullscreen;
@@ -167,11 +155,6 @@ namespace ClassroomManagement.Views
                 FullscreenIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.FullscreenExit;
                 _isFullscreen = true;
             }
-        }
-
-        private async void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            await ConfirmAndClose();
         }
 
         private async System.Threading.Tasks.Task ConfirmAndClose()
@@ -393,7 +376,6 @@ namespace ClassroomManagement.Views
             await _remoteService.SendMouseInputAsync(_student.MachineId, input);
         }
 
-        // Keyboard Events
         private async void Window_KeyDown(object sender, KeyEventArgs e)
         {
             // Handle special keys
@@ -402,7 +384,18 @@ namespace ClassroomManagement.Views
                 if (_isFullscreen)
                     ToggleFullscreen();
                 else
-                    await ConfirmAndClose();
+                {
+                    var result = MessageBox.Show(
+                        "Bạn có chắc chắn muốn kết thúc phiên điều khiển?",
+                        "Xác nhận",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Close();
+                    }
+                }
                 return;
             }
 

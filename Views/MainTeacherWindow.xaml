@@ -11,10 +11,10 @@
         Height="800" Width="1400"
         MinHeight="700" MinWidth="1200"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="CanResizeWithGrip"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
 
     <Window.Resources>
         <!-- Tab Style -->
@@ -26,551 +26,546 @@
         </Style>
     </Window.Resources>
 
-    <Border Style="{StaticResource MainWindowBorderStyle}">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <!-- ============================================ -->
-            <!-- TOP HEADER BAR (Draggable) -->
-            <!-- ============================================ -->
-            <Grid Grid.Row="0" Background="White" MouseLeftButtonDown="Window_MouseLeftButtonDown">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <!-- ============================================ -->
+        <!-- TOP HEADER BAR -->
+        <!-- ============================================ -->
+        <Grid Grid.Row="0" Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-                <!-- Logo & Title -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,12">
-                    <Border Width="36" Height="36" CornerRadius="8" Margin="0,0,12,0" Background="{StaticResource AppPrimaryBrush}">
-                        <materialDesign:PackIcon Kind="School" Width="20" Height="20"
-                                                  Foreground="White"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Quản lý Lớp học" FontSize="15" FontWeight="Bold" Foreground="#212121"/>
-                        <TextBlock Text="Giáo viên" FontSize="11" Foreground="{StaticResource AppPrimaryBrush}"/>
+            <!-- Logo & Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,12">
+                <Border Width="36" Height="36" CornerRadius="8" Margin="0,0,12,0" Background="{StaticResource AppPrimaryBrush}">
+                    <materialDesign:PackIcon Kind="School" Width="20" Height="20"
+                                              Foreground="White"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Quản lý Lớp học" FontSize="15" FontWeight="Bold" Foreground="#212121"/>
+                    <TextBlock Text="Giáo viên" FontSize="11" Foreground="{StaticResource AppPrimaryBrush}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Center - Class Info & Server IP -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Background="#F5F5F7" CornerRadius="4" Padding="12,6" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="GoogleClassroom" Width="18" Height="18"
+                                                  Foreground="{StaticResource AppPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="ClassNameText" Text="Lớp học" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="#424242" VerticalAlignment="Center"/>
                     </StackPanel>
-                </StackPanel>
+                </Border>
+                <!-- Connection Code -->
+                <Border Background="#FFF3E0" CornerRadius="4" Padding="10,6" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Key" Width="16" Height="16"
+                                                  Foreground="#EF6C00" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="Mã: " FontSize="12" Foreground="#E65100" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ConnectionCodeText" Text="------" FontSize="13" FontWeight="Bold"
+                                   Foreground="#E65100" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Button Style="{StaticResource MaterialDesignToolButton}"
+                                Width="20" Height="20" Padding="0" Click="CopyCode_Click"
+                                ToolTip="Sao chép Mã kết nối" BorderThickness="0" Background="Transparent">
+                             <materialDesign:PackIcon Kind="ContentCopy" Width="14" Height="14" Foreground="#EF6C00"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+                <!-- Server IP for manual connection -->
+                <Border Background="#E3F2FD" CornerRadius="4" Padding="10,6">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Lan" Width="16" Height="16"
+                                                  Foreground="#1976D2" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="IP: " FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ServerIpText" Text="---.---.---.---" FontSize="12" FontWeight="Bold"
+                                   Foreground="#1565C0" VerticalAlignment="Center"/>
+                        <TextBlock Text=":5000" FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
 
-                <!-- Center - Class Info & Server IP -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Border Background="#F5F5F7" CornerRadius="4" Padding="12,6" Margin="0,0,8,0">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="GoogleClassroom" Width="18" Height="18"
-                                                      Foreground="{StaticResource AppPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock x:Name="ClassNameText" Text="Lớp học" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="#424242" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <!-- Connection Code (Hidden/Removed as requested) -->
-                    <Border Background="#FFF3E0" CornerRadius="4" Padding="10,6" Margin="0,0,8,0" Visibility="Collapsed">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Key" Width="16" Height="16"
-                                                      Foreground="#EF6C00" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Mã kết nối: " FontSize="12" Foreground="#E65100" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="ConnectionCodeText" Text="------" FontSize="13" FontWeight="Bold"
-                                       Foreground="#E65100" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <Button Style="{StaticResource MaterialDesignToolButton}"
-                                    Width="20" Height="20" Padding="0" Click="CopyCode_Click"
-                                    ToolTip="Sao chép Mã kết nối" BorderThickness="0" Background="Transparent">
-                                 <materialDesign:PackIcon Kind="ContentCopy" Width="14" Height="14" Foreground="#EF6C00"/>
-                            </Button>
-                        </StackPanel>
-                    </Border>
-                    <!-- Server IP for manual connection -->
-                    <Border Background="#E3F2FD" CornerRadius="4" Padding="10,6">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Lan" Width="16" Height="16"
-                                                      Foreground="#1976D2" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="IP: " FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="ServerIpText" Text="---.---.---.---" FontSize="12" FontWeight="Bold"
-                                       Foreground="#1565C0" VerticalAlignment="Center"/>
-                            <TextBlock Text=":5000" FontSize="12" Foreground="#1565C0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+            <!-- Right - Actions -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                 <!-- Profile -->
+                 <Border Width="32" Height="32" CornerRadius="16" Background="#F5F5F7" Cursor="Hand" ToolTip="Tài khoản">
+                    <materialDesign:PackIcon Kind="Account" Width="20" Height="20"
+                                              Foreground="{StaticResource AppPrimaryBrush}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+        </Grid>
 
-                <!-- Right - Actions & Window Controls -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,8,8,0">
-                     <!-- Profile -->
-                     <Border Width="32" Height="32" CornerRadius="16" Background="#F5F5F7" Margin="0,0,16,0" Cursor="Hand" ToolTip="Tài khoản">
-                        <materialDesign:PackIcon Kind="Account" Width="20" Height="20"
-                                                  Foreground="{StaticResource AppPrimaryBrush}"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-
-                    <!-- Window Controls -->
-                    <controls:WindowControlButtons/>
-                </StackPanel>
-            </Grid>
+        <!-- ============================================ -->
+        <!-- MAIN CONTENT AREA -->
+        <!-- ============================================ -->
+        <Grid Grid.Row="1" Margin="8">
+            <Grid.ColumnDefinitions>
+                <!-- Left Sidebar - Student List -->
+                <ColumnDefinition Width="300"/>
+                <!-- Main Content -->
+                <ColumnDefinition Width="*"/>
+                <!-- Right Sidebar - Tools -->
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
 
             <!-- ============================================ -->
-            <!-- MAIN CONTENT AREA -->
+            <!-- LEFT SIDEBAR - STUDENT LIST -->
             <!-- ============================================ -->
-            <Grid Grid.Row="1" Margin="8">
-                <Grid.ColumnDefinitions>
-                    <!-- Left Sidebar - Student List -->
-                    <ColumnDefinition Width="300"/>
-                    <!-- Main Content -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- Right Sidebar - Tools -->
-                    <ColumnDefinition Width="260"/>
-                </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Background="White" CornerRadius="8" Margin="0,0,8,0" materialDesign:ElevationAssist.Elevation="Dp1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- ============================================ -->
-                <!-- LEFT SIDEBAR - STUDENT LIST -->
-                <!-- ============================================ -->
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Margin="0,0,8,0" materialDesign:ElevationAssist.Elevation="Dp1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Header -->
-                        <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}"
-                                Padding="16" CornerRadius="8,8,0,0">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
-                                                                  Foreground="White" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Danh sách học sinh" FontSize="14" FontWeight="Bold"
-                                                   Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                    <TextBlock x:Name="SelectionCountText" Grid.Column="1"
-                                               Text=""
-                                               FontSize="11"
-                                               Foreground="White"
-                                               Opacity="0.9"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                    <controls:StatusIndicator x:Name="OnlineCountIndicator"
-                                                               StatusText="{Binding OnlineStudents.Count, StringFormat='{}{0} học sinh đang online'}"
-                                                               DotColor="#A5D6A7"
-                                                               StatusBackground="#FFFFFF20" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Search Box -->
-                        <Border Grid.Row="1" Padding="12">
-                            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     FontSize="13" Height="40" Padding="8"
-                                     materialDesign:HintAssist.Hint="Tìm học sinh..."
-                                     materialDesign:TextFieldAssist.HasLeadingIcon="True"
-                                     materialDesign:TextFieldAssist.LeadingIcon="Magnify"/>
-                        </Border>
-
-                        <!-- Student List -->
-                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="8,0">
-                            <ItemsControl x:Name="StudentList" ItemsSource="{Binding OnlineStudents}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <controls:StudentCardControl DataContext="{Binding}" Margin="0,4"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-
-                        <!-- Quick Actions -->
-                        <Border Grid.Row="3" Padding="12" Background="#FAFAFA" CornerRadius="0,0,8,8" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0">
+                    <!-- Header -->
+                    <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}"
+                            Padding="16" CornerRadius="8,8,0,0">
+                        <StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" x:Name="BatchActionsBtn"
-                                        Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Background="{StaticResource AppPrimaryBrush}"
-                                        Content="Thao tác"
-                                        Margin="0,0,4,0"
-                                        Height="32"
-                                        FontSize="12"
-                                        IsEnabled="False"
-                                        Foreground="White"
-                                        Click="BatchActionsBtn_Click"
-                                        materialDesign:ButtonAssist.CornerRadius="4">
-                                    <Button.ContextMenu>
-                                        <ContextMenu x:Name="BatchActionsMenu">
-                                            <MenuItem Header="Khóa máy đã chọn" Click="BatchLock_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="Lock"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem Header="Mở khóa đã chọn" Click="BatchUnlock_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="LockOpen"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <Separator/>
-                                            <MenuItem Header="Gửi tin nhắn cho đã chọn" Click="BatchMessage_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="Message"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem Header="Gửi file cho đã chọn" Click="BatchSendFile_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="FileDocument"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <Separator/>
-                                            <MenuItem Header="Tắt camera đã chọn" Click="BatchCameraOff_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="CameraOff"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem Header="Tắt mic đã chọn" Click="BatchMicOff_Click">
-                                                <MenuItem.Icon>
-                                                    <materialDesign:PackIcon Kind="MicrophoneOff"/>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                        </ContextMenu>
-                                    </Button.ContextMenu>
-                                </Button>
-                                <Button Grid.Column="1" x:Name="ToggleSelectionBtn"
-                                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                                        Content="Chọn tất cả"
-                                        Margin="4,0,0,0"
-                                        Height="32"
-                                        FontSize="12"
-                                        Click="ToggleSelection_Click"
-                                        IsEnabled="True"
-                                        materialDesign:ButtonAssist.CornerRadius="4"/>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <!-- ============================================ -->
-                <!-- MAIN CONTENT - TAB CONTROL -->
-                <!-- ============================================ -->
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Margin="0,0,8,0" materialDesign:ElevationAssist.Elevation="Dp1">
-                    <TabControl materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-                                TabStripPlacement="Top"
-                                Style="{StaticResource MaterialDesignTabControl}">
-
-                        <!-- TAB 1: Student Screens -->
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="MonitorDashboard" Width="20" Height="20"
-                                                              VerticalAlignment="Center"/>
-                                    <TextBlock Text="Màn hình" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20"
+                                                              Foreground="White" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Danh sách học sinh" FontSize="14" FontWeight="Bold"
+                                               Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
-                            </TabItem.Header>
-
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- Toolbar -->
-                                <Border Grid.Row="0" Background="#FAFAFA" Padding="12" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                            <Button x:Name="RefreshScreensBtn"
-                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                                    Margin="0" Height="32"
-                                                    Click="RefreshScreens_Click">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <materialDesign:PackIcon Kind="Refresh" Width="16" Height="16" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Làm mới" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="CaptureAllBtn"
-                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                                    Margin="8,0,0,0" Height="32"
-                                                    Click="CaptureAll_Click"
-                                                    ToolTip="Chụp màn hình tất cả học sinh">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <materialDesign:PackIcon Kind="Camera" Width="16" Height="16" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Chụp tất cả" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="GalleryBtn"
-                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                                    Margin="8,0,0,0" Height="32"
-                                                    Click="OpenGallery_Click"
-                                                    ToolTip="Xem thư viện ảnh đã chụp">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <materialDesign:PackIcon Kind="ImageMultiple" Width="16" Height="16" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Thư viện ảnh" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <TextBlock x:Name="ScreenCountText"
-                                                       Text="{Binding OnlineStudents.Count, StringFormat='Đang hiển thị {0} màn hình'}"
-                                                       VerticalAlignment="Center" Margin="16,0,0,0"
-                                                       Foreground="#666" FontSize="12"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Screen Grid -->
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
-                                              Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToVisibilityConverter}}">
-                                    <ItemsControl x:Name="ScreenGrid"
-                                                  ItemsSource="{Binding OnlineStudents}"
-                                                  Margin="12"
-                                                  VerticalAlignment="Top"
-                                                  HorizontalAlignment="Stretch">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <UniformGrid x:Name="ScreenGridPanel" Columns="4"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <controls:ScreenThumbnailControl DataContext="{Binding}"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
-
-                                <!-- Empty State -->
-                                <StackPanel x:Name="NoStudentsPanel"
-                                            Grid.Row="1"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToInverseVisibilityConverter}}">
-                                    <materialDesign:PackIcon Kind="MonitorOff" Width="64" Height="64" Foreground="#CCC"/>
-                                    <TextBlock Text="Chưa có học sinh nào kết nối"
-                                               FontSize="16" Foreground="#999"
-                                               Margin="0,16,0,0" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Học sinh sẽ xuất hiện ở đây khi kết nối vào lớp học"
-                                               FontSize="12" Foreground="#BBB"
-                                               Margin="0,8,0,0" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                <TextBlock x:Name="SelectionCountText" Grid.Column="1"
+                                           Text=""
+                                           FontSize="11"
+                                           Foreground="White"
+                                           Opacity="0.9"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"/>
                             </Grid>
-                        </TabItem>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <controls:StatusIndicator x:Name="OnlineCountIndicator"
+                                                          StatusText="{Binding OnlineStudents.Count, StringFormat='{}{0} học sinh đang online'}"
+                                                          DotColor="#A5D6A7"
+                                                          StatusBackground="#FFFFFF20" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
 
-                        <!-- TAB 2: Remote Control -->
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="RemoteDesktop" Width="20" Height="20"
-                                                              VerticalAlignment="Center"/>
-                                    <TextBlock Text="Điều khiển" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                            <Grid Background="#212121">
-                               <TextBlock Text="Khu vực điều khiển từ xa" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                        </TabItem>
+                    <!-- Search Box -->
+                    <Border Grid.Row="1" Padding="12">
+                        <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 FontSize="13" Height="40" Padding="8"
+                                 materialDesign:HintAssist.Hint="Tìm học sinh..."
+                                 materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                                 materialDesign:TextFieldAssist.LeadingIcon="Magnify"/>
+                    </Border>
 
-                        <!-- TAB 3: Presentation -->
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Presentation" Width="20" Height="20"
-                                                              VerticalAlignment="Center"/>
-                                    <TextBlock Text="Trình chiếu" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                             <Grid Background="White">
-                               <!-- Simplified Presentation Mode -->
-                               <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                   <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                                           Background="{StaticResource AppPrimaryBrush}"
-                                           Content="Bắt đầu chia sẻ màn hình"
-                                           Height="44"
-										   Foreground="white"
-                                           materialDesign:ButtonAssist.CornerRadius="8"
-                                           Click="StartPresentation_Click"/>
-                               </StackPanel>
-                            </Grid>
-                        </TabItem>
+                    <!-- Student List -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="8,0">
+                        <ItemsControl x:Name="StudentList" ItemsSource="{Binding OnlineStudents}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:StudentCardControl DataContext="{Binding}" Margin="0,4"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
 
-                        <!-- TAB 4: Whiteboard -->
-                        <TabItem>
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="PencilRuler" Width="20" Height="20"
-                                                              VerticalAlignment="Center"/>
-                                    <TextBlock Text="Bảng trắng" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                            <Grid Background="#F5F5F5">
-                                <views:WhiteboardView Margin="8"/>
-                            </Grid>
-                        </TabItem>
-                    </TabControl>
-                </Border>
+                    <!-- Quick Actions -->
+                    <Border Grid.Row="3" Padding="12" Background="#FAFAFA" CornerRadius="0,0,8,8" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" x:Name="BatchActionsBtn"
+                                    Style="{StaticResource MaterialDesignRaisedButton}"
+                                    Background="{StaticResource AppPrimaryBrush}"
+                                    Content="Thao tác"
+                                    Margin="0,0,4,0"
+                                    Height="32"
+                                    FontSize="12"
+                                    IsEnabled="False"
+                                    Foreground="White"
+                                    Click="BatchActionsBtn_Click"
+                                    materialDesign:ButtonAssist.CornerRadius="4">
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="BatchActionsMenu">
+                                        <MenuItem Header="Khóa máy đã chọn" Click="BatchLock_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="Lock"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Mở khóa đã chọn" Click="BatchUnlock_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="LockOpen"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="Gửi tin nhắn cho đã chọn" Click="BatchMessage_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="Message"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Gửi file cho đã chọn" Click="BatchSendFile_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="FileDocument"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="Tắt camera đã chọn" Click="BatchCameraOff_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="CameraOff"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Tắt mic đã chọn" Click="BatchMicOff_Click">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="MicrophoneOff"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
+                            <Button Grid.Column="1" x:Name="ToggleSelectionBtn"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Content="Chọn tất cả"
+                                    Margin="4,0,0,0"
+                                    Height="32"
+                                    FontSize="12"
+                                    Click="ToggleSelection_Click"
+                                    IsEnabled="True"
+                                    materialDesign:ButtonAssist.CornerRadius="4"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
 
-                <!-- ============================================ -->
-                <!-- RIGHT SIDEBAR - TOOLS -->
-                <!-- ============================================ -->
-                <Border Grid.Column="2" Background="White" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ScrollViewer.Resources>
-                            <Style TargetType="ScrollBar" BasedOn="{StaticResource CompactScrollBarStyle}"/>
-                        </ScrollViewer.Resources>
-                        <StackPanel Margin="16">
-                            <!-- Communication Group -->
-                            <TextBlock Text="Công cụ giao tiếp" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,2"/>
+            <!-- ============================================ -->
+            <!-- MAIN CONTENT - TAB CONTROL -->
+            <!-- ============================================ -->
+            <Border Grid.Column="1" Background="White" CornerRadius="8" Margin="0,0,8,0" materialDesign:ElevationAssist.Elevation="Dp1">
+                <TabControl materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+                            TabStripPlacement="Top"
+                            Style="{StaticResource MaterialDesignTabControl}">
 
-                            <controls:ToolButton ButtonText="Chat nhóm"
-                                                  IconKind="Forum"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenGroupChat_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Chat nhóm"/>
+                    <!-- TAB 1: Student Screens -->
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="MonitorDashboard" Width="20" Height="20"
+                                                          VerticalAlignment="Center"/>
+                                <TextBlock Text="Màn hình" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </TabItem.Header>
 
-                            <controls:ToolButton ButtonText="Chat riêng"
-                                                  IconKind="MessageText"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Chat riêng"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                            <controls:ToolButton ButtonText="Bảng trắng"
-                                                  IconKind="DrawPen"
-                                                  IconBackground="#4CAF50"
-                                                  Click="OpenWhiteboard_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Bảng trắng"/>
-
-                            <!-- Management Group -->
-                            <TextBlock Text="Quản lý học sinh" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
-
-                            <controls:ToolButton ButtonText="Thu thập File"
-                                                  IconKind="FolderDownload"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenFileCollection_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Thu thập File"/>
-
-                            <controls:ToolButton ButtonText="Gửi File"
-                                                  IconKind="FileUpload"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenBulkFileSend_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Gửi File"/>
-
-                            <controls:ToolButton ButtonText="Bình chọn"
-                                                  IconKind="Poll"
-                                                  IconBackground="#E91E63"
-                                                  Click="OpenCreatePoll_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Bình chọn"/>
-
-                            <controls:ToolButton ButtonText="Cấu hình máy"
-                                                  IconKind="Monitor"
-                                                  IconBackground="#673AB7"
-                                                  Click="OpenConfigTable_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Cấu hình máy"/>
-
-                            <controls:ToolButton ButtonText="Bài tập đã nộp"
-                                                  IconKind="AssignmentTurnedIn"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenAssignmentList_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Bài tập đã nộp"/>
-
-                            <controls:ToolButton ButtonText="Khóa máy"
-                                                  IconKind="Lock"
-                                                  IconBackground="#F44336"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Khóa máy"/>
-
-                            <!-- Toggle Controls (Light Theme) -->
-                            <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,4">
+                            <!-- Toolbar -->
+                            <Border Grid.Row="0" Background="#FAFAFA" Padding="12" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="MicrophoneOff" Width="20" Height="20"
-                                                                  Foreground="#616161" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Tắt mic tất cả" Foreground="#424242" FontSize="13"
-                                                   Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        <Button x:Name="RefreshScreensBtn"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Margin="0" Height="32"
+                                                Click="RefreshScreens_Click">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="Refresh" Width="16" Height="16" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Làm mới" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button x:Name="CaptureAllBtn"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Margin="8,0,0,0" Height="32"
+                                                Click="CaptureAll_Click"
+                                                ToolTip="Chụp màn hình tất cả học sinh">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="Camera" Width="16" Height="16" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Chụp tất cả" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button x:Name="GalleryBtn"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Margin="8,0,0,0" Height="32"
+                                                Click="OpenGallery_Click"
+                                                ToolTip="Xem thư viện ảnh đã chụp">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="ImageMultiple" Width="16" Height="16" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Thư viện ảnh" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <TextBlock x:Name="ScreenCountText"
+                                                   Text="{Binding OnlineStudents.Count, StringFormat='Đang hiển thị {0} màn hình'}"
+                                                   VerticalAlignment="Center" Margin="16,0,0,0"
+                                                   Foreground="#666" FontSize="12"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                                                  IsChecked="False"/>
                                 </Grid>
                             </Border>
 
-                            <!-- Learning Tools Group -->
-                            <TextBlock Text="Chế độ học tập" FontSize="11" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
+                            <!-- Screen Grid -->
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                          Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToVisibilityConverter}}">
+                                <ItemsControl x:Name="ScreenGrid"
+                                              ItemsSource="{Binding OnlineStudents}"
+                                              Margin="12"
+                                              VerticalAlignment="Top"
+                                              HorizontalAlignment="Stretch">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid x:Name="ScreenGridPanel" Columns="4"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:ScreenThumbnailControl DataContext="{Binding}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
 
-                            <controls:ToolButton ButtonText="Tạo bài kiểm tra"
-                                                  IconKind="ClipboardText"
-                                                  IconBackground="{StaticResource AppPrimaryBrush}"
-                                                  Click="OpenTestCreation_Click"
-                                                  Margin="0,1,0,0"
-                                                  ToolTipText="Tạo bài kiểm tra"/>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Border>
-            </Grid>
+                            <!-- Empty State -->
+                            <StackPanel x:Name="NoStudentsPanel"
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding OnlineStudents.Count, Converter={StaticResource CountToInverseVisibilityConverter}}">
+                                <materialDesign:PackIcon Kind="MonitorOff" Width="64" Height="64" Foreground="#CCC"/>
+                                <TextBlock Text="Chưa có học sinh nào kết nối"
+                                           FontSize="16" Foreground="#999"
+                                           Margin="0,16,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Học sinh sẽ xuất hiện ở đây khi kết nối vào lớp học"
+                                           FontSize="12" Foreground="#BBB"
+                                           Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- TAB 2: Remote Control -->
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="RemoteDesktop" Width="20" Height="20"
+                                                          VerticalAlignment="Center"/>
+                                <TextBlock Text="Điều khiển" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Background="#212121">
+                           <TextBlock Text="Khu vực điều khiển từ xa" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- TAB 3: Presentation -->
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Presentation" Width="20" Height="20"
+                                                          VerticalAlignment="Center"/>
+                                <TextBlock Text="Trình chiếu" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                         <Grid Background="White">
+                           <!-- Simplified Presentation Mode -->
+                           <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                               <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                       Background="{StaticResource AppPrimaryBrush}"
+                                       Content="Bắt đầu chia sẻ màn hình"
+                                       Height="44"
+                                       Foreground="white"
+                                       materialDesign:ButtonAssist.CornerRadius="8"
+                                       Click="StartPresentation_Click"/>
+                           </StackPanel>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- TAB 4: Whiteboard -->
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="PencilRuler" Width="20" Height="20"
+                                                          VerticalAlignment="Center"/>
+                                <TextBlock Text="Bảng trắng" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Background="#F5F5F5">
+                            <views:WhiteboardView Margin="8"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
 
             <!-- ============================================ -->
-            <!-- BOTTOM STATUS BAR -->
+            <!-- RIGHT SIDEBAR - TOOLS -->
             <!-- ============================================ -->
-            <Border Grid.Row="2" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="12,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <Border Grid.Column="2" Background="White" CornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource CompactScrollBarStyle}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel Margin="16">
+                        <!-- Communication Group -->
+                        <TextBlock Text="Công cụ giao tiếp" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AppPrimaryBrush}" Margin="0,0,0,2"/>
 
-                    <!-- Status Info -->
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"/>
-                        <TextBlock Text="Hệ thống sẵn sàng" Foreground="#757575" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                    </StackPanel>
+                        <controls:ToolButton ButtonText="Chat nhóm"
+                                              IconKind="Forum"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Click="OpenGroupChat_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Chat nhóm"/>
 
-                    <!-- Actions -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#2196F3" Height="30" Padding="8,0"
-                                Click="OpenLogWindow_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Console" Width="16" Height="16" VerticalAlignment="Center"/>
-                                <TextBlock Text="Debug Log" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#757575" Height="30" Padding="8,0">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Cog" Width="16" Height="16" VerticalAlignment="Center"/>
-                                <TextBlock Text="Cài đặt" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#F44336" Height="30" Padding="8,0"
-                                Click="ExitButton_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ExitToApp" Width="16" Height="16" VerticalAlignment="Center"/>
-                                <TextBlock Text="Thoát" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
-                            </StackPanel>
-                        </Button>
+                        <controls:ToolButton ButtonText="Chat riêng"
+                                              IconKind="MessageText"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Chat riêng"/>
+
+                        <controls:ToolButton ButtonText="Bảng trắng"
+                                              IconKind="DrawPen"
+                                              IconBackground="#4CAF50"
+                                              Click="OpenWhiteboard_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Bảng trắng"/>
+
+                        <!-- Management Group -->
+                        <TextBlock Text="Quản lý học sinh" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
+
+                        <controls:ToolButton ButtonText="Thu thập File"
+                                              IconKind="FolderDownload"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Click="OpenFileCollection_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Thu thập File"/>
+
+                        <controls:ToolButton ButtonText="Gửi File"
+                                              IconKind="FileUpload"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Click="OpenBulkFileSend_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Gửi File"/>
+
+                        <controls:ToolButton ButtonText="Bình chọn"
+                                              IconKind="Poll"
+                                              IconBackground="#E91E63"
+                                              Click="OpenCreatePoll_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Bình chọn"/>
+
+                        <controls:ToolButton ButtonText="Cấu hình máy"
+                                              IconKind="Monitor"
+                                              IconBackground="#673AB7"
+                                              Click="OpenConfigTable_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Cấu hình máy"/>
+
+                        <controls:ToolButton ButtonText="Bài tập đã nộp"
+                                              IconKind="AssignmentTurnedIn"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Click="OpenAssignmentList_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Bài tập đã nộp"/>
+
+                        <controls:ToolButton ButtonText="Khóa máy"
+                                              IconKind="Lock"
+                                              IconBackground="#F44336"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Khóa máy"/>
+
+                        <!-- Toggle Controls (Light Theme) -->
+                        <Border Background="#F5F5F7" CornerRadius="8" Padding="12" Margin="0,4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="MicrophoneOff" Width="20" Height="20"
+                                                              Foreground="#616161" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Tắt mic tất cả" Foreground="#424242" FontSize="13"
+                                               Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <ToggleButton Grid.Column="1" Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                              IsChecked="False"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Learning Tools Group -->
+                        <TextBlock Text="Chế độ học tập" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AppPrimaryBrush}" Margin="0,4,0,2"/>
+
+                        <controls:ToolButton ButtonText="Tạo bài kiểm tra"
+                                              IconKind="ClipboardText"
+                                              IconBackground="{StaticResource AppPrimaryBrush}"
+                                              Click="OpenTestCreation_Click"
+                                              Margin="0,1,0,0"
+                                              ToolTipText="Tạo bài kiểm tra"/>
                     </StackPanel>
-                </Grid>
+                </ScrollViewer>
             </Border>
         </Grid>
-    </Border>
+
+        <!-- ============================================ -->
+        <!-- BOTTOM STATUS BAR -->
+        <!-- ============================================ -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Status Info -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center"/>
+                    <TextBlock Text="Hệ thống sẵn sàng" Foreground="#757575" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                </StackPanel>
+
+                <!-- Actions -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#2196F3" Height="30" Padding="8,0"
+                            Click="OpenLogWindow_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Console" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Debug Log" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#757575" Height="30" Padding="8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Cog" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Cài đặt" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="#F44336" Height="30" Padding="8,0"
+                            Click="ExitButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ExitToApp" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Thoát" Margin="8,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>
