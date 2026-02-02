@@ -20,6 +20,8 @@ namespace ClassroomManagement.Services
         public event EventHandler<ChatMessage>? MessageReceived;
         public event EventHandler<ChatGroup>? GroupCreated;
 
+        public bool IsTeacherMode => _server != null;
+
         public ChatService()
         {
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);

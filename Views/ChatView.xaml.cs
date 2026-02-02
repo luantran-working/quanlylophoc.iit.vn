@@ -64,7 +64,7 @@ namespace ClassroomManagement.Views
             ConversationList.SelectedItem = publicChat;
 
             // Check Mode based on ChatService state
-            IsTeacherMode = ChatService.Instance.IsMyMessage(new ChatMessage { SenderType = "teacher" });
+            IsTeacherMode = ChatService.Instance.IsTeacherMode;
 
             if (IsTeacherMode)
             {

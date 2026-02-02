@@ -306,6 +306,19 @@ namespace ClassroomManagement.Views
                 {
                     case MessageType.ChatMessage:
                     case MessageType.ChatPrivate:
+                        // Trigger ChatService event so ChatView receives the message
+                        if (message.Payload != null)
+                        {
+                            try
+                            {
+                                var chatMsg = System.Text.Json.JsonSerializer.Deserialize<ChatMessage>(message.Payload);
+                                if (chatMsg != null)
+                                {
+                                    ChatService.Instance.OnMessageReceived(chatMsg);
+                                }
+                            }
+                            catch { }
+                        }
                         ShowChatNotification(message.SenderName, message.Payload ?? "");
                         break;
 
