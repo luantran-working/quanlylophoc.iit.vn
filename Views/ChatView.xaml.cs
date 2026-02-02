@@ -50,7 +50,20 @@ namespace ClassroomManagement.Views
             MessageList.ItemsSource = Messages;
             ConversationList.ItemsSource = Conversations;
 
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this)) return;
+            
+            // Only init once
+            if (Conversations.Count > 0) return;
+
+            ChatService.Instance.MessageReceived -= OnMessageReceived;
+            ChatService.Instance.MessageReceived += OnMessageReceived;
+            ChatService.Instance.GroupCreated -= OnGroupCreated;
+            ChatService.Instance.GroupCreated += OnGroupCreated;
 
             // Load Conversations (Default: Public Chat)
             var publicChat = new ChatGroupViewModel
@@ -84,9 +97,6 @@ namespace ClassroomManagement.Views
                      PartnerId = 0 // Convention: 0 or special ID for Teacher
                  });
             }
-
-            ChatService.Instance.MessageReceived += OnMessageReceived;
-            ChatService.Instance.GroupCreated += OnGroupCreated;
 
             // Load initial messages
             LoadMessages();
@@ -229,6 +239,16 @@ namespace ClassroomManagement.Views
              else if (_selectedConversation.Type == ChatGroupType.Private)
              {
                  bool involvesPartner = (msg.SenderId == _selectedConversation.PartnerId) || (msg.ReceiverId == _selectedConversation.PartnerId);
+                 
+                 // Special handling for Student viewing Teacher chat
+                 if (!IsTeacherMode && _selectedConversation.Id == "teacher")
+                 {
+                     // If message is from teacher, show it
+                     if (msg.SenderType == "teacher") involvesPartner = true;
+                     // If message is sent to teacher (ReceiverId=0 or null), show it
+                     if (msg.ReceiverId == 0 || msg.ReceiverId == null) involvesPartner = true;
+                 }
+
                  if (!msg.IsGroup && involvesPartner) show = true;
              }
 
