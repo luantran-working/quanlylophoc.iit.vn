@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using ClassroomManagement.Services;
 
 namespace ClassroomManagement.Views
 {
@@ -19,16 +18,6 @@ namespace ClassroomManagement.Views
                 if (e.ButtonState == MouseButtonState.Pressed)
                     this.DragMove();
             };
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
         }
 
         private void TeacherLogin_Click(object sender, RoutedEventArgs e)

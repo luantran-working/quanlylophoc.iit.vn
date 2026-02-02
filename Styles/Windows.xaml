@@ -1,0 +1,275 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!-- ============================================ -->
+    <!-- WINDOW CONTROL BUTTON STYLES (Shared) -->
+    <!-- ============================================ -->
+    
+    <!-- Base Window Control Button Style -->
+    <Style x:Key="WindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Foreground" Value="#757575"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" CornerRadius="16" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#EEE"/>
+                            <Setter Property="Foreground" Value="#333"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#DDD"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Minimize Button Style -->
+    <Style x:Key="WindowMinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
+        <Setter Property="ToolTip" Value="Thu nhỏ"/>
+    </Style>
+
+    <!-- Maximize Button Style -->
+    <Style x:Key="WindowMaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
+        <Setter Property="ToolTip" Value="Phóng to"/>
+    </Style>
+
+    <!-- Close Button Style (Red hover) -->
+    <Style x:Key="WindowCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Foreground" Value="#757575"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="ToolTip" Value="Đóng"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" CornerRadius="16" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#FF5252"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#E53935"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- MAIN WINDOW STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Main Window Border Style -->
+    <Style x:Key="MainWindowBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="ClipToBounds" Value="True"/>
+        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Dialog Window Border Style -->
+    <Style x:Key="DialogWindowBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="40" Opacity="0.2" ShadowDepth="10" Color="Black"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- HEADER STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Window Header Background -->
+    <Style x:Key="WindowHeaderStyle" TargetType="Grid">
+        <Setter Property="Background" Value="White"/>
+    </Style>
+
+    <!-- App Logo Container -->
+    <Style x:Key="AppLogoContainerStyle" TargetType="Border">
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Margin" Value="0,0,12,0"/>
+        <Setter Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
+    </Style>
+
+    <!-- Window Title Text -->
+    <Style x:Key="WindowTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#212121"/>
+    </Style>
+
+    <!-- Window Subtitle Text -->
+    <Style x:Key="WindowSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryBrush}"/>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- CONTENT CARD STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Main Content Panel Style -->
+    <Style x:Key="ContentPanelStyle" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp1"/>
+    </Style>
+
+    <!-- Panel Header with Primary Color -->
+    <Style x:Key="PanelPrimaryHeaderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="CornerRadius" Value="8,8,0,0"/>
+    </Style>
+
+    <!-- Panel Footer Style -->
+    <Style x:Key="PanelFooterStyle" TargetType="Border">
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Background" Value="#FAFAFA"/>
+        <Setter Property="CornerRadius" Value="0,0,8,8"/>
+        <Setter Property="BorderBrush" Value="#EEEEEE"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- SECTION STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Section Title Style -->
+    <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryBrush}"/>
+        <Setter Property="Margin" Value="0,0,0,2"/>
+    </Style>
+
+    <!-- Section Divider Style -->
+    <Style x:Key="SectionDividerStyle" TargetType="Rectangle">
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Fill" Value="#E0E0E0"/>
+        <Setter Property="Margin" Value="0,16"/>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- STATUS BAR STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Bottom Status Bar Style -->
+    <Style x:Key="BottomStatusBarStyle" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <!-- Status Dot Online -->
+    <Style x:Key="StatusDotOnlineStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Fill" Value="#4CAF50"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Status Dot Offline -->
+    <Style x:Key="StatusDotOfflineStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Fill" Value="#9E9E9E"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- INFO BADGE STYLES -->
+    <!-- ============================================ -->
+    
+    <!-- Info Badge (Light Blue Background) -->
+    <Style x:Key="InfoBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="#E3F2FD"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="10,6"/>
+    </Style>
+
+    <!-- Warning Badge (Light Orange Background) -->
+    <Style x:Key="WarningBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="#FFF3E0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="10,6"/>
+    </Style>
+
+    <!-- Success Badge (Light Green Background) -->
+    <Style x:Key="SuccessBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="#E8F5E9"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="8,4"/>
+    </Style>
+
+    <!-- Error Badge (Light Red Background) -->
+    <Style x:Key="ErrorBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="#FFEBEE"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="8,4"/>
+    </Style>
+
+    <!-- Neutral Badge (Light Gray Background) -->
+    <Style x:Key="NeutralBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="12,6"/>
+    </Style>
+
+    <!-- ============================================ -->
+    <!-- COMPACT SCROLLBAR STYLE -->
+    <!-- ============================================ -->
+    
+    <Style x:Key="CompactScrollBarStyle" TargetType="ScrollBar">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid>
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Margin="1">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Background="#CCCCCC" CornerRadius="4"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

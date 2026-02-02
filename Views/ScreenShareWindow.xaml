@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:controls="clr-namespace:ClassroomManagement.Controls"
         mc:Ignorable="d"
         Title="Trình chiếu màn hình"
         Height="720" Width="1080"
@@ -71,20 +72,7 @@
                     </StackPanel>
 
                     <!-- Window Controls -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
-                                ToolTip="Thu nhỏ" Click="MinimizeButton_Click">
-                            <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#BDBDBD" Width="30" Height="30"
-                                ToolTip="Phóng to" Click="MaximizeButton_Click">
-                            <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="#EF5350" Width="30" Height="30"
-                                ToolTip="Đóng" Click="CloseButton_Click">
-                            <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
-                        </Button>
-                    </StackPanel>
+                    <controls:WindowControlButtons Grid.Column="1"/>
                 </Grid>
             </Border>
 

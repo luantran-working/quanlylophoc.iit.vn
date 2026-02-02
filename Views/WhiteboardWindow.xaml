@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:views="clr-namespace:ClassroomManagement.Views"
+        xmlns:controls="clr-namespace:ClassroomManagement.Controls"
         Title="Bảng Trắng"
         Height="700" Width="1200"
         MinHeight="600" MinWidth="800"
@@ -48,23 +49,7 @@
                                VerticalAlignment="Center"/>
 
                     <!-- Window Controls -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button Style="{StaticResource MaterialDesignIconButton}"
-                                Foreground="White" Width="30" Height="30"
-                                ToolTip="Thu nhỏ" Click="MinimizeButton_Click">
-                            <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}"
-                                Foreground="White" Width="30" Height="30"
-                                ToolTip="Phóng to" Click="MaximizeButton_Click">
-                            <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}"
-                                Foreground="White" Width="30" Height="30"
-                                ToolTip="Đóng" Click="CloseButton_Click">
-                            <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
-                        </Button>
-                    </StackPanel>
+                    <controls:WindowControlButtons Grid.Column="2"/>
                 </Grid>
             </Border>
 

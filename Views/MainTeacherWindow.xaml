@@ -17,43 +17,6 @@
         ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
-        <!-- Window Control Button Styles (Sleek/Minimal) -->
-        <Style x:Key="WindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="4"/>
-            <Setter Property="Foreground" Value="#757575"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" CornerRadius="16" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="WindowCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF5252"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="BorderBrush" Value="#FF5252"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="16" Background="#FF5252">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
         <!-- Tab Style -->
         <Style x:Key="MainTabStyle" TargetType="TabItem" BasedOn="{StaticResource MaterialDesignNavigationRailTabItem}">
             <Setter Property="Height" Value="64"/>
@@ -61,34 +24,9 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
-
-        <!-- Custom ScrollBar Style for Compact and Beautiful Scrollbar -->
-        <Style x:Key="CompactScrollBarStyle" TargetType="ScrollBar">
-            <Setter Property="Width" Value="8"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Grid>
-                            <Track x:Name="PART_Track" IsDirectionReversed="True">
-                                <Track.Thumb>
-                                    <Thumb Margin="1">
-                                        <Thumb.Template>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Border Background="#CCCCCC" CornerRadius="4"/>
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
-    <Border CornerRadius="8" Background="#F5F5F7" ClipToBounds="True" BorderBrush="#E0E0E0" BorderThickness="1">
+    <Border Style="{StaticResource MainWindowBorderStyle}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -168,15 +106,7 @@
                     </Border>
 
                     <!-- Window Controls -->
-                    <Button Style="{StaticResource WindowControlButtonStyle}" Click="MinimizeButton_Click" ToolTip="Thu nhỏ">
-                        <materialDesign:PackIcon Kind="Minus" Width="10" Height="10"/>
-                    </Button>
-                     <Button Style="{StaticResource WindowControlButtonStyle}" Click="MaximizeButton_Click" ToolTip="Phóng to" Margin="4,0">
-                        <materialDesign:PackIcon Kind="SquareOutline" Width="10" Height="10"/>
-                    </Button>
-                    <Button Style="{StaticResource WindowCloseButtonStyle}" Click="CloseWindow_Click" ToolTip="Đóng">
-                        <materialDesign:PackIcon Kind="Close" Width="10" Height="10"/>
-                    </Button>
+                    <controls:WindowControlButtons/>
                 </StackPanel>
             </Grid>
 

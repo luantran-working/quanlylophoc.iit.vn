@@ -108,21 +108,6 @@ namespace ClassroomManagement.Views
                 DragMove();
         }
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
         private void FullscreenButton_Click(object sender, RoutedEventArgs e)
         {
             if (WindowState == WindowState.Maximized && WindowStyle == WindowStyle.None)

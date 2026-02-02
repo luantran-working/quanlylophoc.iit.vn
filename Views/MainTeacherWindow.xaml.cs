@@ -42,24 +42,6 @@ namespace ClassroomManagement.Views
             }
         }
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-                WindowState = WindowState.Normal;
-            else
-                WindowState = WindowState.Maximized;
-        }
-
-        private void CloseWindow_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
         private async void MainTeacherWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await StartSessionAsync();

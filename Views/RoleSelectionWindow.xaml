@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:controls="clr-namespace:ClassroomManagement.Controls"
         mc:Ignorable="d"
         Title="Phần mềm quản lý phòng học" 
         Height="700" Width="1000"
@@ -12,54 +13,6 @@
         AllowsTransparency="True"
         Background="Transparent"
         ResizeMode="CanMinimize">
-
-    <Window.Resources>
-        <!-- Window Control Button Styles (Sleek/Minimal) -->
-        <Style x:Key="WindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="4"/>
-            <Setter Property="Foreground" Value="#757575"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" CornerRadius="16" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#EEE"/>
-                                <Setter Property="Foreground" Value="#333"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#DDD"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="WindowCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF5252"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="BorderBrush" Value="#FF5252"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="16" Background="#FF5252">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
@@ -84,14 +37,7 @@
 
             <!-- Window Controls -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20" Panel.ZIndex="100">
-                <Button Style="{StaticResource WindowControlButtonStyle}" 
-                        Click="MinimizeButton_Click" ToolTip="Thu nhỏ" Margin="0,0,8,0">
-                    <materialDesign:PackIcon Kind="WindowMinimize" Width="12" Height="12"/>
-                </Button>
-                <Button Style="{StaticResource WindowCloseButtonStyle}" 
-                        Click="CloseButton_Click" ToolTip="Đóng">
-                    <materialDesign:PackIcon Kind="Close" Width="12" Height="12"/>
-                </Button>
+                <controls:WindowControlButtons ShowMaximize="False"/>
             </StackPanel>
 
             <!-- Main Content with Animation Wrapper -->

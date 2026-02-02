@@ -6,6 +6,8 @@
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
     <converters:CountToInverseVisibilityConverter x:Key="CountToInverseVisibilityConverter"/>
+    <converters:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     
 </ResourceDictionary>
