@@ -333,6 +333,12 @@ namespace ClassroomManagement.Views
             else
             {
                 await ChatService.Instance.SendChatMessageAsync(msg);
+                
+                // Manually add message to UI for student since server doesn't echo private messages back to sender
+                if (!msg.IsGroup)
+                {
+                    AddMessageIfVisible(msg);
+                }
             }
         }
 

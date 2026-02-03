@@ -170,25 +170,11 @@
                                 <StackPanel>
                                     <TextBlock x:Name="SenderNameTxt" Text="{Binding SenderName}" FontSize="11" Foreground="#9CA3AF" Margin="0,0,0,4"/>
 
-                                    <!-- Content Switcher -->
-                                    <ContentControl Content="{Binding}">
-                                        <ContentControl.ContentTemplate>
-                                            <DataTemplate>
-                                                <StackPanel>
-                                                    <!-- Text Content -->
-                                                    <TextBlock Text="{Binding Content}" TextWrapping="Wrap" Foreground="#1F2937"
-                                                               Visibility="{Binding ContentType, Converter={StaticResource BoolToVis}, ConverterParameter=text}"/> <!-- Note: Need ValueConverter, workaround: CodeBehind logic easier -->
+                                    <!-- Content -->
+                                    <Image x:Name="ImgContent" Source="{Binding AttachmentPath}" MaxHeight="300" MaxWidth="300" Stretch="Uniform" Visibility="Collapsed"/>
+                                    <TextBlock x:Name="TxtContent" Text="{Binding Content}" TextWrapping="Wrap" Foreground="#1F2937"/>
 
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ContentControl.ContentTemplate>
-                                    </ContentControl>
-
-                                     <!-- Image (Hardcoded visibility workaround in code behind or use simple triggers) -->
-                                     <Image x:Name="ImgContent" Source="{Binding AttachmentPath}" MaxHeight="300" MaxWidth="300" Stretch="Uniform" Visibility="Collapsed"/>
-                                     <TextBlock x:Name="TxtContent" Text="{Binding Content}" TextWrapping="Wrap" Foreground="#1F2937"/>
-
-                                     <TextBlock Text="{Binding CreatedAt, StringFormat=HH:mm}" FontSize="10" Foreground="#D1D5DB" HorizontalAlignment="Right" Margin="10,2,0,0"/>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat=HH:mm}" FontSize="10" Foreground="#D1D5DB" HorizontalAlignment="Right" Margin="10,2,0,0"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
