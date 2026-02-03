@@ -16,6 +16,7 @@ namespace ClassroomManagement.Services
         private static DatabaseService? _instance;
         private readonly string _connectionString;
         private readonly string _databasePath;
+        private static readonly object _dbLock = new object();
 
         public static DatabaseService Instance => _instance ??= new DatabaseService();
 
@@ -363,44 +364,47 @@ namespace ClassroomManagement.Services
 
         public Student? GetOrCreateStudent(string machineId, string displayName, string computerName, string ipAddress)
         {
-            using var connection = GetConnection();
-
-            // Try to get existing
-            var selectSql = "SELECT Id FROM Students WHERE MachineId = @machineId";
-            using var selectCmd = new SqliteCommand(selectSql, connection);
-            selectCmd.Parameters.AddWithValue("@machineId", machineId);
-            var existingId = selectCmd.ExecuteScalar();
-
-            if (existingId != null)
+            lock (_dbLock)
             {
-                // Update existing
-                var updateSql = @"UPDATE Students SET
-                    DisplayName = @displayName, ComputerName = @computerName,
-                    IpAddress = @ipAddress, IsOnline = 1, LastSeen = CURRENT_TIMESTAMP
-                    WHERE MachineId = @machineId";
-                using var updateCmd = new SqliteCommand(updateSql, connection);
-                updateCmd.Parameters.AddWithValue("@displayName", displayName);
-                updateCmd.Parameters.AddWithValue("@computerName", computerName);
-                updateCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
-                updateCmd.Parameters.AddWithValue("@machineId", machineId);
-                updateCmd.ExecuteNonQuery();
+                using var connection = GetConnection();
 
-                return GetStudentById(Convert.ToInt32(existingId));
-            }
-            else
-            {
-                // Create new
-                var insertSql = @"INSERT INTO Students (MachineId, DisplayName, ComputerName, IpAddress, IsOnline, LastSeen)
-                    VALUES (@machineId, @displayName, @computerName, @ipAddress, 1, CURRENT_TIMESTAMP);
-                    SELECT last_insert_rowid();";
-                using var insertCmd = new SqliteCommand(insertSql, connection);
-                insertCmd.Parameters.AddWithValue("@machineId", machineId);
-                insertCmd.Parameters.AddWithValue("@displayName", displayName);
-                insertCmd.Parameters.AddWithValue("@computerName", computerName);
-                insertCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
+                // Try to get existing
+                var selectSql = "SELECT Id FROM Students WHERE MachineId = @machineId";
+                using var selectCmd = new SqliteCommand(selectSql, connection);
+                selectCmd.Parameters.AddWithValue("@machineId", machineId);
+                var existingId = selectCmd.ExecuteScalar();
 
-                var newId = Convert.ToInt32(insertCmd.ExecuteScalar());
-                return GetStudentById(newId);
+                if (existingId != null)
+                {
+                    // Update existing
+                    var updateSql = @"UPDATE Students SET
+                        DisplayName = @displayName, ComputerName = @computerName,
+                        IpAddress = @ipAddress, IsOnline = 1, LastSeen = CURRENT_TIMESTAMP
+                        WHERE MachineId = @machineId";
+                    using var updateCmd = new SqliteCommand(updateSql, connection);
+                    updateCmd.Parameters.AddWithValue("@displayName", displayName);
+                    updateCmd.Parameters.AddWithValue("@computerName", computerName);
+                    updateCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
+                    updateCmd.Parameters.AddWithValue("@machineId", machineId);
+                    updateCmd.ExecuteNonQuery();
+
+                    return GetStudentById(Convert.ToInt32(existingId));
+                }
+                else
+                {
+                    // Create new
+                    var insertSql = @"INSERT INTO Students (MachineId, DisplayName, ComputerName, IpAddress, IsOnline, LastSeen)
+                        VALUES (@machineId, @displayName, @computerName, @ipAddress, 1, CURRENT_TIMESTAMP);
+                        SELECT last_insert_rowid();";
+                    using var insertCmd = new SqliteCommand(insertSql, connection);
+                    insertCmd.Parameters.AddWithValue("@machineId", machineId);
+                    insertCmd.Parameters.AddWithValue("@displayName", displayName);
+                    insertCmd.Parameters.AddWithValue("@computerName", computerName);
+                    insertCmd.Parameters.AddWithValue("@ipAddress", ipAddress);
+
+                    var newId = Convert.ToInt32(insertCmd.ExecuteScalar());
+                    return GetStudentById(newId);
+                }
             }
         }
 
@@ -483,23 +487,26 @@ namespace ClassroomManagement.Services
 
         public int SaveChatMessage(ChatMessage message)
         {
-            using var connection = GetConnection();
-            var sql = @"INSERT INTO ChatMessages (SessionId, SenderType, SenderId, ReceiverId, Content, IsGroup, ContentType, AttachmentPath, GroupId)
-                        VALUES (@sessionId, @senderType, @senderId, @receiverId, @content, @isGroup, @contentType, @attachmentPath, @groupId);
-                        SELECT last_insert_rowid();";
+            lock (_dbLock)
+            {
+                using var connection = GetConnection();
+                var sql = @"INSERT INTO ChatMessages (SessionId, SenderType, SenderId, ReceiverId, Content, IsGroup, ContentType, AttachmentPath, GroupId)
+                            VALUES (@sessionId, @senderType, @senderId, @receiverId, @content, @isGroup, @contentType, @attachmentPath, @groupId);
+                            SELECT last_insert_rowid();";
 
-            using var command = new SqliteCommand(sql, connection);
-            command.Parameters.AddWithValue("@sessionId", message.SessionId);
-            command.Parameters.AddWithValue("@senderType", message.SenderType);
-            command.Parameters.AddWithValue("@senderId", message.SenderId);
-            command.Parameters.AddWithValue("@receiverId", message.ReceiverId.HasValue ? message.ReceiverId.Value : DBNull.Value);
-            command.Parameters.AddWithValue("@content", message.Content);
-            command.Parameters.AddWithValue("@isGroup", message.IsGroup ? 1 : 0);
-            command.Parameters.AddWithValue("@contentType", message.ContentType);
-            command.Parameters.AddWithValue("@attachmentPath", message.AttachmentPath ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@groupId", message.GroupId ?? (object)DBNull.Value);
+                using var command = new SqliteCommand(sql, connection);
+                command.Parameters.AddWithValue("@sessionId", message.SessionId);
+                command.Parameters.AddWithValue("@senderType", message.SenderType);
+                command.Parameters.AddWithValue("@senderId", message.SenderId);
+                command.Parameters.AddWithValue("@receiverId", message.ReceiverId.HasValue ? message.ReceiverId.Value : DBNull.Value);
+                command.Parameters.AddWithValue("@content", message.Content);
+                command.Parameters.AddWithValue("@isGroup", message.IsGroup ? 1 : 0);
+                command.Parameters.AddWithValue("@contentType", message.ContentType);
+                command.Parameters.AddWithValue("@attachmentPath", message.AttachmentPath ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@groupId", message.GroupId ?? (object)DBNull.Value);
 
-            return Convert.ToInt32(command.ExecuteScalar());
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
         }
 
         public List<ChatMessage> GetChatMessages(int sessionId, int? studentId = null, int limit = 100)

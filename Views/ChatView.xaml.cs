@@ -197,6 +197,32 @@ namespace ClassroomManagement.Views
 
         private void OnMessageReceived(object? sender, ChatMessage msg)
         {
+            // Save locally for persistence (Student side only, Teacher handles in SessionManager)
+            if (!IsTeacherMode)
+            {
+                try
+                {
+                    // Create copy to force SessionId = 0 for local retrieval compatibility
+                    var msgToSave = new ChatMessage
+                    {
+                        SessionId = 0,
+                        SenderType = msg.SenderType,
+                        SenderId = msg.SenderId,
+                        SenderName = msg.SenderName,
+                        ReceiverId = msg.ReceiverId,
+                        Content = msg.Content,
+                        IsGroup = msg.IsGroup,
+                        IsRead = msg.IsRead,
+                        CreatedAt = msg.CreatedAt,
+                        ContentType = msg.ContentType,
+                        AttachmentPath = msg.AttachmentPath,
+                        GroupId = msg.GroupId
+                    };
+                    DatabaseService.Instance.SaveChatMessage(msgToSave);
+                }
+                catch { }
+            }
+
             Dispatcher.Invoke(() => 
             {
                 // Update Last Message in Sidebar
@@ -334,6 +360,9 @@ namespace ClassroomManagement.Views
             {
                 await ChatService.Instance.SendChatMessageAsync(msg);
                 
+                // Save locally for persistence
+                try { DatabaseService.Instance.SaveChatMessage(msg); } catch { }
+
                 // Manually add message to UI for student since server doesn't echo private messages back to sender
                 if (!msg.IsGroup)
                 {

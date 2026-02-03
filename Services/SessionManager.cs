@@ -412,7 +412,11 @@ namespace ClassroomManagement.Services
                     msg.Id = DatabaseService.Instance.SaveChatMessage(msg);
                     await ChatService.Instance.BroadcastMessageAsync(msg);
                 }
-            } catch {}
+            } 
+            catch (Exception ex)
+            {
+                LogService.Instance.Error("SessionManager", "Error handling chat message", ex);
+            }
         }
 
         private async void HandleChatImageUpload(MessageReceivedEventArgs e)
