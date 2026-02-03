@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,20 +130,6 @@ namespace ClassroomManagement.Services
                     FOREIGN KEY (TestId) REFERENCES Tests(Id)
                 );
 
-                -- ChatMessages table
-                CREATE TABLE IF NOT EXISTS ChatMessages (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    SessionId INTEGER NOT NULL,
-                    SenderType TEXT NOT NULL,
-                    SenderId INTEGER NOT NULL,
-                    ReceiverId INTEGER,
-                    Content TEXT NOT NULL,
-                    IsGroup INTEGER DEFAULT 1,
-                    IsRead INTEGER DEFAULT 0,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (SessionId) REFERENCES Sessions(Id)
-                );
-
                 -- FileRecords table
                 CREATE TABLE IF NOT EXISTS FileRecords (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -182,29 +169,6 @@ namespace ClassroomManagement.Services
 
             using var command = new SqliteCommand(createTables, connection);
             command.ExecuteNonQuery();
-
-            // Migration for Existing Database
-            try { new SqliteCommand("ALTER TABLE ChatMessages ADD COLUMN ContentType TEXT DEFAULT 'text'", connection).ExecuteNonQuery(); } catch { }
-            try { new SqliteCommand("ALTER TABLE ChatMessages ADD COLUMN AttachmentPath TEXT", connection).ExecuteNonQuery(); } catch { }
-            try { new SqliteCommand("ALTER TABLE ChatMessages ADD COLUMN GroupId TEXT", connection).ExecuteNonQuery(); } catch { }
-
-            // New Tables if not exists (in case they were missed above oradded later)
-            var newTables = @"
-                CREATE TABLE IF NOT EXISTS ChatGroups (
-                    Id TEXT PRIMARY KEY,
-                    Name TEXT NOT NULL,
-                    CreatorId INTEGER NOT NULL,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );
-                CREATE TABLE IF NOT EXISTS ChatGroupMembers (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    GroupId TEXT NOT NULL,
-                    StudentId INTEGER NOT NULL,
-                    JoinedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (GroupId) REFERENCES ChatGroups(Id)
-                );
-            ";
-            new SqliteCommand(newTables, connection).ExecuteNonQuery();
 
             // Insert default admin user if not exists
             InsertDefaultUser(connection);
@@ -479,133 +443,6 @@ namespace ClassroomManagement.Services
                 LastSeen = reader.IsDBNull(reader.GetOrdinal("LastSeen")) ? null : reader.GetDateTime(reader.GetOrdinal("LastSeen")),
                 SessionId = reader.IsDBNull(reader.GetOrdinal("SessionId")) ? null : reader.GetInt32(reader.GetOrdinal("SessionId"))
             };
-        }
-
-        #endregion
-
-        #region Chat Methods
-
-        public int SaveChatMessage(ChatMessage message)
-        {
-            lock (_dbLock)
-            {
-                using var connection = GetConnection();
-                var sql = @"INSERT INTO ChatMessages (SessionId, SenderType, SenderId, ReceiverId, Content, IsGroup, ContentType, AttachmentPath, GroupId)
-                            VALUES (@sessionId, @senderType, @senderId, @receiverId, @content, @isGroup, @contentType, @attachmentPath, @groupId);
-                            SELECT last_insert_rowid();";
-
-                using var command = new SqliteCommand(sql, connection);
-                command.Parameters.AddWithValue("@sessionId", message.SessionId);
-                command.Parameters.AddWithValue("@senderType", message.SenderType);
-                command.Parameters.AddWithValue("@senderId", message.SenderId);
-                command.Parameters.AddWithValue("@receiverId", message.ReceiverId.HasValue ? message.ReceiverId.Value : DBNull.Value);
-                command.Parameters.AddWithValue("@content", message.Content);
-                command.Parameters.AddWithValue("@isGroup", message.IsGroup ? 1 : 0);
-                command.Parameters.AddWithValue("@contentType", message.ContentType);
-                command.Parameters.AddWithValue("@attachmentPath", message.AttachmentPath ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@groupId", message.GroupId ?? (object)DBNull.Value);
-
-                return Convert.ToInt32(command.ExecuteScalar());
-            }
-        }
-
-        public List<ChatMessage> GetChatMessages(int sessionId, int? studentId = null, int limit = 100)
-        {
-            using var connection = GetConnection();
-            var sql = studentId.HasValue
-                ? @"SELECT * FROM ChatMessages WHERE SessionId = @sessionId
-                    AND (IsGroup = 1 OR (ReceiverId = @studentId OR SenderId = @studentId))
-                    ORDER BY CreatedAt DESC LIMIT @limit"
-                : @"SELECT * FROM ChatMessages WHERE SessionId = @sessionId AND IsGroup = 1
-                    ORDER BY CreatedAt DESC LIMIT @limit";
-
-            using var command = new SqliteCommand(sql, connection);
-            command.Parameters.AddWithValue("@sessionId", sessionId);
-            command.Parameters.AddWithValue("@limit", limit);
-            if (studentId.HasValue)
-                command.Parameters.AddWithValue("@studentId", studentId.Value);
-
-            var messages = new List<ChatMessage>();
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                messages.Add(new ChatMessage
-                {
-                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                    SessionId = reader.GetInt32(reader.GetOrdinal("SessionId")),
-                    SenderType = reader.GetString(reader.GetOrdinal("SenderType")),
-                    SenderId = reader.GetInt32(reader.GetOrdinal("SenderId")),
-                    ReceiverId = reader.IsDBNull(reader.GetOrdinal("ReceiverId")) ? null : reader.GetInt32(reader.GetOrdinal("ReceiverId")),
-                    Content = reader.GetString(reader.GetOrdinal("Content")),
-                    IsGroup = reader.GetInt32(reader.GetOrdinal("IsGroup")) == 1,
-                    IsRead = reader.GetInt32(reader.GetOrdinal("IsRead")) == 1,
-                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                    ContentType = reader.IsDBNull(reader.GetOrdinal("ContentType")) ? "text" : reader.GetString(reader.GetOrdinal("ContentType")),
-                    AttachmentPath = reader.IsDBNull(reader.GetOrdinal("AttachmentPath")) ? null : reader.GetString(reader.GetOrdinal("AttachmentPath")),
-                    GroupId = reader.IsDBNull(reader.GetOrdinal("GroupId")) ? null : reader.GetString(reader.GetOrdinal("GroupId")),
-                });
-            }
-            messages.Reverse(); // Oldest first
-            return messages;
-        }
-
-        public List<ChatGroup> GetChatGroups()
-        {
-            using var connection = GetConnection();
-            var sql = "SELECT * FROM ChatGroups ORDER BY CreatedAt DESC";
-            using var command = new SqliteCommand(sql, connection);
-
-            var groups = new List<ChatGroup>();
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                groups.Add(new ChatGroup
-                {
-                    Id = reader.GetString(0),
-                    Name = reader.GetString(1),
-                    CreatorId = reader.GetInt32(2),
-                    CreatedAt = reader.GetDateTime(3)
-                });
-            }
-            return groups;
-        }
-
-        public void CreateChatGroup(ChatGroup group)
-        {
-            using var connection = GetConnection();
-            var sql = "INSERT INTO ChatGroups (Id, Name, CreatorId, CreatedAt) VALUES (@id, @name, @creatorId, @createdAt)";
-            using var command = new SqliteCommand(sql, connection);
-            command.Parameters.AddWithValue("@id", group.Id);
-            command.Parameters.AddWithValue("@name", group.Name);
-            command.Parameters.AddWithValue("@creatorId", group.CreatorId);
-            command.Parameters.AddWithValue("@createdAt", group.CreatedAt);
-            command.ExecuteNonQuery();
-        }
-
-        public void AddChatGroupMember(string groupId, int studentId)
-        {
-            using var connection = GetConnection();
-            var sql = "INSERT INTO ChatGroupMembers (GroupId, StudentId) VALUES (@groupId, @studentId)";
-            using var command = new SqliteCommand(sql, connection);
-            command.Parameters.AddWithValue("@groupId", groupId);
-            command.Parameters.AddWithValue("@studentId", studentId);
-            command.ExecuteNonQuery();
-        }
-
-        public List<int> GetChatGroupMemberIds(string groupId)
-        {
-            using var connection = GetConnection();
-            var sql = "SELECT StudentId FROM ChatGroupMembers WHERE GroupId = @groupId";
-            using var command = new SqliteCommand(sql, connection);
-            command.Parameters.AddWithValue("@groupId", groupId);
-
-            var ids = new List<int>();
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                ids.Add(reader.GetInt32(0));
-            }
-            return ids;
         }
 
         #endregion

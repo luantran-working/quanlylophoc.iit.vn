@@ -100,6 +100,27 @@ namespace ClassroomManagement.Services
             return _database.UpdateScreenshotNote(id, note);
         }
 
+        public async void ProcessScreenshot(ScreenDataReceivedEventArgs e)
+        {
+            if (e.ScreenData?.ImageData == null) return;
+
+            try
+            {
+                // Try to look up student info
+                var student = _database.GetOrCreateStudent(e.ClientId, "Unknown", "", "");
+                string name = student?.DisplayName ?? e.ClientId;
+                
+                // For session ID, we might need a way to pass it or query active session
+                // Using 0 as fallback or try to find active session for user
+                int sessionId = 0; 
+                var activeSession = _database.GetActiveSession(1); // Assuming admin user id 1
+                if (activeSession != null) sessionId = activeSession.Id;
+
+                await CaptureAndSaveAsync(e.ClientId, name, sessionId, e.ScreenData.ImageData);
+            }
+            catch { }
+        }
+
         private string SanitizeFileName(string name)
         {
             var invalid = Path.GetInvalidFileNameChars();

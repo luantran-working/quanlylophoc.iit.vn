@@ -22,13 +22,9 @@ namespace ClassroomManagement.Views
                 return;
             }
 
-            var members = StudentList.SelectedItems.Cast<Student>().Select(s => s.Id).ToList();
-
-            await ChatService.Instance.CreateGroupAsync(
-                GroupNameBox.Text,
-                SessionManager.Instance.CurrentUser?.Id ?? 0,
-                members
-            );
+            // Logic removed as ChatService functionality is disabled
+            // var members = StudentList.SelectedItems.Cast<Student>().Select(s => s.Id).ToList();
+            // await ChatService.Instance.CreateGroupAsync(...)
 
             DialogResult = true;
             Close();

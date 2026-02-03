@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -256,31 +257,7 @@ namespace ClassroomManagement.Services
         /// </summary>
         public async Task SendChatMessageAsync(string content, int? studentId = null)
         {
-            if (CurrentSession == null || CurrentUser == null) return;
-
-            var chatMessage = new ChatMessage
-            {
-                SessionId = CurrentSession.Id,
-                SenderType = "teacher",
-                SenderId = CurrentUser.Id,
-                SenderName = CurrentUser.DisplayName,
-                ReceiverId = studentId,
-                Content = content,
-                IsGroup = !studentId.HasValue,
-                CreatedAt = DateTime.Now
-            };
-
-            // Save to DB
-            chatMessage.Id = _db.SaveChatMessage(chatMessage);
-
-            // Use ChatService to broadcast (handles both group and private messages)
-            await ChatService.Instance.BroadcastMessageAsync(chatMessage);
-
-            // Update UI
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ChatMessages.Add(chatMessage);
-            });
+            await Task.CompletedTask;
         }
 
         // Event Handlers
@@ -352,8 +329,6 @@ namespace ClassroomManagement.Services
         {
             switch (e.Message.Type)
             {
-
-
                 case MessageType.RaiseHand:
                     HandleRaiseHand(e);
                     break;
@@ -386,43 +361,8 @@ namespace ClassroomManagement.Services
                     HandlePollVote(e);
                     break;
 
-                case MessageType.ChatMessage:
-                case MessageType.ChatPrivate:
-                    HandleChatMessage(e);
-                    break;
-
-                case MessageType.ChatImageUpload:
-                    HandleChatImageUpload(e);
-                    break;
+                // Chat cases removed
             }
-        }
-
-        private async void HandleChatMessage(MessageReceivedEventArgs e)
-        {
-            if (e.Message.Payload == null) return;
-            try
-            {
-                var msg = System.Text.Json.JsonSerializer.Deserialize<ChatMessage>(e.Message.Payload);
-                if (msg != null)
-                {
-                    // Update Sender Info from Network Info to be safe
-                    msg.SenderType = "student";
-                    msg.SenderId = DatabaseService.Instance.GetOrCreateStudent(e.Message.SenderId, e.Message.SenderName, "", "")?.Id ?? 0;
-
-                    msg.Id = DatabaseService.Instance.SaveChatMessage(msg);
-                    await ChatService.Instance.BroadcastMessageAsync(msg);
-                }
-            } 
-            catch (Exception ex)
-            {
-                LogService.Instance.Error("SessionManager", "Error handling chat message", ex);
-            }
-        }
-
-        private async void HandleChatImageUpload(MessageReceivedEventArgs e)
-        {
-            if (e.Message.Payload == null) return;
-            await ChatService.Instance.HandleImageUploadAsync(e.Message.SenderId, e.Message.Payload);
         }
 
         private async void HandlePollVote(MessageReceivedEventArgs e)
@@ -538,8 +478,41 @@ namespace ClassroomManagement.Services
             }
             catch (Exception ex)
             {
-                 LogService.Instance.Error("SessionManager", "Error handling assignment submission", ex);
+                LogService.Instance.Error("SessionManager", "Error handling assignment submission", ex);
             }
+        }
+
+        private void HandleRaiseHand(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            bool isRaised = e.Message.Payload == "true";
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
+                // Note: Raise Hand visual state logic might be handled elsewhere or we need a property on Student model
+                // For now, just show toast
+                if (student != null && isRaised)
+                {
+                    ToastService.Instance.ShowInfo("Giơ tay", $"Học sinh {student.DisplayName} đang giơ tay!");
+                }
+            });
+        }
+
+        private void HandleFileTransfer(MessageReceivedEventArgs e)
+        {
+            if (e.Message.Payload == null) return;
+            try
+            {
+                var fileInfo = System.Text.Json.JsonSerializer.Deserialize<FileTransferInfo>(e.Message.Payload);
+                if (fileInfo != null)
+                {
+                    // Start file receiver
+                    // This logic might be moved to FileReceiverService entirely
+                    // FileReceiverService.Instance.StartReceive(e.ClientId, fileInfo);
+                }
+            }
+            catch { }
         }
 
         private void HandleSystemSpecsResponse(MessageReceivedEventArgs e)
@@ -547,27 +520,20 @@ namespace ClassroomManagement.Services
             if (e.Message.Payload == null) return;
             try
             {
-                var info = System.Text.Json.JsonSerializer.Deserialize<SystemInfoPackage>(e.Message.Payload);
-                if (info != null)
+                var specs = System.Text.Json.JsonSerializer.Deserialize<SystemInfoPackage>(e.Message.Payload);
+                if (specs != null)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        var existing = OnlineStudentsSystemInfo.FirstOrDefault(s => s.MachineId == info.MachineId);
-                        if (existing != null)
-                        {
-                            OnlineStudentsSystemInfo.Remove(existing);
-                        }
-                        OnlineStudentsSystemInfo.Add(info);
+                        // Add or update system info
+                        var existing = OnlineStudentsSystemInfo.FirstOrDefault(s => s.MachineId == e.ClientId);
+                        if (existing != null) OnlineStudentsSystemInfo.Remove(existing);
+                        OnlineStudentsSystemInfo.Add(specs);
                     });
                 }
             }
-            catch (Exception ex)
-            {
-                LogService.Instance.Error("SessionManager", "Error parsing system specs response", ex);
-            }
+            catch { }
         }
-
-
 
         private void HandleProcessListResponse(MessageReceivedEventArgs e)
         {
@@ -577,41 +543,19 @@ namespace ClassroomManagement.Services
                 var processes = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<ProcessInfo>>(e.Message.Payload);
                 if (processes != null)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    ProcessListReceived?.Invoke(this, new ProcessListReceivedEventArgs
                     {
-                        ProcessListReceived?.Invoke(this, new ProcessListReceivedEventArgs
-                        {
-                            ClientId = e.ClientId,
-                            Processes = processes
-                        });
+                        ClientId = e.ClientId,
+                        Processes = processes
                     });
                 }
             }
-            catch (Exception ex)
-            {
-                LogService.Instance.Error("SessionManager", "Error parsing process list response", ex);
-            }
-        }
-
-
-
-        private void HandleRaiseHand(MessageReceivedEventArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // Show notification
-                MessageBox.Show($"{e.Message.SenderName} giơ tay!", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-            });
-        }
-
-        private void HandleFileTransfer(MessageReceivedEventArgs e)
-        {
-            // Handle file transfer
+            catch { }
         }
 
         private void OnScreenDataReceived(object? sender, ScreenDataReceivedEventArgs e)
         {
+            // Update thumbnail
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
@@ -620,44 +564,24 @@ namespace ClassroomManagement.Services
                     student.ScreenThumbnail = e.ScreenData.ImageData;
                 }
             });
-
-            // Forward to RemoteControlService for remote control window
-            if (RemoteControlService.Instance.IsSessionActive(e.ClientId))
-            {
-                RemoteControlService.Instance.HandleScreenData(e.ClientId, e.ScreenData.ImageData);
-            }
         }
 
-        private async void OnScreenshotReceived(object? sender, ScreenDataReceivedEventArgs e)
+        private void OnScreenshotReceived(object? sender, ScreenDataReceivedEventArgs e)
         {
-            try
-            {
-                var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
-                string studentName = student?.DisplayName ?? "Unknown";
-                int sessionId = CurrentSession?.Id ?? 0;
-
-                var screenshot = await _screenshotService.CaptureAndSaveAsync(e.ClientId, studentName, sessionId, e.ScreenData.ImageData);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ToastService.Instance.ShowSuccess("Chụp ảnh thành công", $"Đã lưu ảnh màn hình của {studentName}");
-                });
-            }
-            catch (Exception ex)
-            {
-                LogService.Instance.Error("SessionManager", "Error saving screenshot", ex);
-            }
+             // Handled by ScreenshotService, but we might want to log or notify
+             // Save to DB via ScreenshotService which calls DatabaseService
+             _screenshotService.ProcessScreenshot(e);
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
     public class ProcessListReceivedEventArgs : EventArgs
     {
-        public string ClientId { get; set; } = string.Empty;
+        public string ClientId { get; set; } = "";
         public System.Collections.Generic.List<ProcessInfo> Processes { get; set; } = new();
     }
 }

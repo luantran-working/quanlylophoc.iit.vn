@@ -1,3 +1,4 @@
+
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -39,9 +40,7 @@ namespace ClassroomManagement.Views
             PollService.Instance.InitializeClient(_networkClient);
             ChatService.Instance.Initialize(null, _networkClient);
 
-            // Explicitly set Student Mode and initialize ChatView
-            StudentChatView.SetStudentMode();
-            StudentChatView.InitializeConversations();
+            // Chat initialization logic removed
 
             // Wire up network events
             _networkClient.Connected += OnConnected;
@@ -144,7 +143,7 @@ namespace ClassroomManagement.Views
                          // Short delay before retry
                          await Task.Delay(1000);
                      }
-                }
+                 }
             }
             catch (Exception ex)
             {
@@ -322,21 +321,6 @@ namespace ClassroomManagement.Views
             {
                 switch (message.Type)
                 {
-                    case MessageType.ChatMessage:
-                    case MessageType.ChatPrivate:
-                        // ChatService.Client_MessageReceived already handles these messages
-                        // We only need to update the badge for unread messages here
-                        if (message.Payload != null)
-                        {
-                            // If not in Chat Tab, show badge
-                            if (MainTabControl.SelectedIndex != 1)
-                            {
-                                _unreadMessages++;
-                                ChatBadge.Badge = _unreadMessages > 0 ? _unreadMessages.ToString() : null;
-                            }
-                        }
-                        break;
-
                     case MessageType.TestStart:
                         ShowTestNotification(message.Payload ?? "");
                         break;

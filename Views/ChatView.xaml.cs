@@ -56,379 +56,48 @@ namespace ClassroomManagement.Views
 
         public void SetMode(bool isTeacher)
         {
-            _explicitMode = isTeacher;
-            IsTeacherMode = isTeacher;
-            
-            if (!isTeacher)
-            {
-                if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Visible;
-            }
+            // Empty Logic
         }
 
-        public void SetStudentMode() => SetMode(false);
+        public void SetStudentMode() { }
 
         public void InitializeConversations()
         {
-            // Only init once
-            if (Conversations.Count > 0) return;
-
-            ChatService.Instance.MessageReceived -= OnMessageReceived;
-            ChatService.Instance.MessageReceived += OnMessageReceived;
-            ChatService.Instance.GroupCreated -= OnGroupCreated;
-            ChatService.Instance.GroupCreated += OnGroupCreated;
-
-            // Load Conversations (Default: Public Chat)
-            var publicChat = new ChatGroupViewModel
-            {
-                Id = "public",
-                Name = "Lớp học chung",
-                Type = ChatGroupType.Public
-            };
-            Conversations.Add(publicChat);
-            _selectedConversation = publicChat;
-            ConversationList.SelectedItem = publicChat;
-
-            // Check Mode
-            if (_explicitMode.HasValue)
-                IsTeacherMode = _explicitMode.Value;
-            else
-                IsTeacherMode = ChatService.Instance.IsTeacherMode;
-
-            if (IsTeacherMode)
-            {
-                 LoadGroups();
-                 LoadOnlineStudents();
-            }
-            else
-            {
-                 if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Collapsed;
-                 
-                 // Student Mode: Add Teacher Conversation
-                 Conversations.Add(new ChatGroupViewModel
-                 {
-                     Id = "teacher",
-                     Name = "Giáo viên",
-                     Type = ChatGroupType.Private,
-                     PartnerId = 0 // Convention: 0 or special ID for Teacher
-                 });
-            }
-
-            // Load initial messages
-            LoadMessages();
+            // Empty Logic - No loading conversations
         }
         
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this)) return;
-            
-            // Delay initialization to ensure ChatService is ready
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                InitializeConversations();
-            }), System.Windows.Threading.DispatcherPriority.Loaded);
+            // Empty Logic
         }
 
         public void SetPrivateChat(Student student, bool select = true)
         {
-            // Find existing private chat
-            var conv = Conversations.FirstOrDefault(c => c.Type == ChatGroupType.Private && c.PartnerId == student.Id);
-            
-            if (conv == null)
-            {
-                conv = new ChatGroupViewModel
-                {
-                    Id = $"private_{student.Id}",
-                    Name = student.DisplayName,
-                    Type = ChatGroupType.Private,
-                    PartnerId = student.Id
-                };
-                Conversations.Add(conv);
-            }
-
-            if (select)
-            {
-                ConversationList.SelectedItem = conv;
-            }
+            // Empty Logic
         }
 
-        private void LoadGroups()
-        {
-            try {
-                var groups = DatabaseService.Instance.GetChatGroups();
-                foreach (var g in groups)
-                {
-                    Conversations.Add(new ChatGroupViewModel 
-                    { 
-                        Id = g.Id.ToString(), 
-                        Name = g.Name,
-                        Type = ChatGroupType.Group
-                    });
-                }
-            } catch {}
-        }
+        private void LoadGroups() { }
 
-        private void LoadOnlineStudents()
-        {
-            try
-            {
-                foreach (var student in SessionManager.Instance.OnlineStudents)
-                {
-                    SetPrivateChat(student, select: false);
-                }
-            }
-            catch { }
-        }
+        private void LoadOnlineStudents() { }
 
-        private void LoadMessages()
-        {
-             Messages.Clear();
-             try {
-                var dbMsgs = DatabaseService.Instance.GetChatMessages(SessionManager.Instance.CurrentSession?.Id ?? 0);
-                foreach (var m in dbMsgs)
-                {
-                    AddMessageIfVisible(m);
-                }
-             } catch {}
-        }
+        private void LoadMessages() { }
 
-        private void OnMessageReceived(object? sender, ChatMessage msg)
-        {
-            // Save locally for persistence (Student side only, Teacher handles in SessionManager)
-            if (!IsTeacherMode)
-            {
-                try
-                {
-                    // Create copy to force SessionId = 0 for local retrieval compatibility
-                    var msgToSave = new ChatMessage
-                    {
-                        SessionId = 0,
-                        SenderType = msg.SenderType,
-                        SenderId = msg.SenderId,
-                        SenderName = msg.SenderName,
-                        ReceiverId = msg.ReceiverId,
-                        Content = msg.Content,
-                        IsGroup = msg.IsGroup,
-                        IsRead = msg.IsRead,
-                        CreatedAt = msg.CreatedAt,
-                        ContentType = msg.ContentType,
-                        AttachmentPath = msg.AttachmentPath,
-                        GroupId = msg.GroupId
-                    };
-                    DatabaseService.Instance.SaveChatMessage(msgToSave);
-                }
-                catch { }
-            }
+        private void OnMessageReceived(object? sender, ChatMessage msg) { }
 
-            Dispatcher.Invoke(() => 
-            {
-                // Update Last Message in Sidebar
-                UpdateConversationLastMessage(msg);
-                
-                // Add to list if it belongs to current view
-                AddMessageIfVisible(msg);
-            });
-        }
+        private void UpdateConversationLastMessage(ChatMessage msg) { }
 
-        private void UpdateConversationLastMessage(ChatMessage msg)
-        {
-            ChatGroupViewModel? conv = null;
-            if (msg.IsGroup)
-            {
-                if (string.IsNullOrEmpty(msg.GroupId))
-                    conv = Conversations.FirstOrDefault(c => c.Type == ChatGroupType.Public);
-                else
-                    conv = Conversations.FirstOrDefault(c => c.Id == msg.GroupId);
-            }
-            else
-            {
-                // Simple logic: find by PartnerId
-                int partnerId = IsTeacherMode 
-                    ? (msg.SenderType == "teacher" ? (msg.ReceiverId ?? 0) : msg.SenderId) 
-                    : (msg.SenderType == "teacher" ? 0 : (msg.ReceiverId ?? 0));
+        private void AddMessageIfVisible(ChatMessage msg) { }
 
-                conv = Conversations.FirstOrDefault(c => c.Type == ChatGroupType.Private && c.PartnerId == partnerId);
-                
-                if (conv == null && IsTeacherMode)
-                {
-                    // For teacher, auto-add private chat if message received
-                    var studentId = msg.SenderType == "teacher" ? (msg.ReceiverId ?? 0) : msg.SenderId;
-                    var student = SessionManager.Instance.OnlineStudents.FirstOrDefault(s => s.Id == studentId);
-                    if (student != null)
-                    {
-                        conv = new ChatGroupViewModel
-                        {
-                            Id = $"private_{student.Id}",
-                            Name = student.DisplayName,
-                            Type = ChatGroupType.Private,
-                            PartnerId = student.Id
-                        };
-                        Conversations.Add(conv);
-                    }
-                }
-            }
+        private void OnGroupCreated(object? sender, ChatGroup group) { }
 
-            if (conv != null)
-            {
-                conv.LastMessage = msg.Content;
-                if (_selectedConversation != conv)
-                    conv.UnreadCount++;
-            }
-        }
+        private void SendBtn_Click(object sender, RoutedEventArgs e) { }
 
-        private void AddMessageIfVisible(ChatMessage msg)
-        {
-             if (_selectedConversation == null) return;
+        private void AttachBtn_Click(object sender, RoutedEventArgs e) { }
 
-             bool show = false;
-             if (_selectedConversation.Type == ChatGroupType.Public)
-             {
-                 if (msg.IsGroup && string.IsNullOrEmpty(msg.GroupId)) show = true;
-             }
-             else if (_selectedConversation.Type == ChatGroupType.Group)
-             {
-                 if (msg.IsGroup && msg.GroupId == _selectedConversation.Id) show = true;
-             }
-             else if (_selectedConversation.Type == ChatGroupType.Private)
-             {
-                 bool involvesPartner = (msg.SenderId == _selectedConversation.PartnerId) || (msg.ReceiverId == _selectedConversation.PartnerId);
-                 
-                 // Special handling for Student viewing Teacher chat
-                 if (!IsTeacherMode && _selectedConversation.Id == "teacher")
-                 {
-                     // If message is from teacher, show it
-                     if (msg.SenderType == "teacher") involvesPartner = true;
-                     // If message is sent to teacher (ReceiverId=0 or null), show it
-                     if (msg.ReceiverId == 0 || msg.ReceiverId == null) involvesPartner = true;
-                 }
+        private void InputBox_KeyDown(object sender, KeyEventArgs e) { }
 
-                 if (!msg.IsGroup && involvesPartner) show = true;
-             }
+        private void CreateGroupBtn_Click(object sender, RoutedEventArgs e) { }
 
-             if (!show) return;
-
-             bool isMine = ChatService.Instance.IsMyMessage(msg);
-             Messages.Add(new ChatMessageViewModel(msg, isMine));
-             
-             // Scroll to bottom
-             if (MessageList.Items.Count > 0)
-                MessageList.ScrollIntoView(MessageList.Items[MessageList.Items.Count - 1]);
-        }
-
-        private void OnGroupCreated(object? sender, ChatGroup group)
-        {
-             Dispatcher.Invoke(() =>
-            {
-                Conversations.Add(new ChatGroupViewModel 
-                { 
-                    Id = group.Id.ToString(), 
-                    Name = group.Name,
-                    Type = ChatGroupType.Group
-                });
-            });
-        }
-
-        private async void SendBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(InputBox.Text) || _selectedConversation == null) return;
-            var content = InputBox.Text;
-            InputBox.Text = "";
-
-            var msg = new ChatMessage
-            {
-                SessionId = SessionManager.Instance.CurrentSession?.Id ?? 0,
-                SenderType = IsTeacherMode ? "teacher" : "student",
-                SenderId = IsTeacherMode ? (SessionManager.Instance.CurrentUser?.Id ?? 0) : 0, // Student side resolving sender id is not implemented here
-                SenderName = IsTeacherMode ? (SessionManager.Instance.CurrentUser?.DisplayName ?? "Teacher") : ChatService.Instance.GetClientName(),
-                Content = content,
-                IsGroup = _selectedConversation.Type != ChatGroupType.Private,
-                GroupId = _selectedConversation.Type == ChatGroupType.Group ? _selectedConversation.Id : null,
-                ReceiverId = _selectedConversation.Type == ChatGroupType.Private ? (int?)_selectedConversation.PartnerId : null,
-                CreatedAt = DateTime.Now
-            };
-
-            if (IsTeacherMode)
-            {
-                msg.Id = DatabaseService.Instance.SaveChatMessage(msg);
-                await ChatService.Instance.BroadcastMessageAsync(msg);
-                // AddMessageIfVisible(msg); // Removed to prevent duplicate, BroadcastMessageAsync triggers MessageReceived event
-            }
-            else
-            {
-                await ChatService.Instance.SendChatMessageAsync(msg);
-                
-                // Save locally for persistence
-                try { DatabaseService.Instance.SaveChatMessage(msg); } catch { }
-
-                // Manually add message to UI for student since server doesn't echo private messages back to sender
-                if (!msg.IsGroup)
-                {
-                    AddMessageIfVisible(msg);
-                }
-            }
-        }
-
-        private async void AttachBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new OpenFileDialog();
-            dlg.Filter = "Images|*.jpg;*.png;*.jpeg|All Files|*.*";
-            if (dlg.ShowDialog() == true)
-            {
-                if (IsTeacherMode)
-                {
-                      try {
-                          var bytes = System.IO.File.ReadAllBytes(dlg.FileName);
-                          var info = System.Text.Json.JsonSerializer.Serialize(new ChatAttachmentInfo
-                          {
-                             FileName = System.IO.Path.GetFileName(dlg.FileName),
-                             Data = bytes
-                          });
-                          await ChatService.Instance.HandleImageUploadAsync(
-                              SessionManager.Instance.CurrentUser?.Id.ToString() ?? "0",
-                              info
-                          );
-                      } catch {}
-                }
-                else
-                {
-                    await ChatService.Instance.SendImageAsync(dlg.FileName);
-                }
-            }
-        }
-
-        private void InputBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                SendBtn_Click(sender, e);
-            }
-        }
-
-        private void CreateGroupBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new CreateChatGroupDialog();
-            dlg.Owner = Window.GetWindow(this);
-            if (dlg.ShowDialog() == true)
-            {
-                // Handled via event
-            }
-        }
-
-        private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            _selectedConversation = ConversationList.SelectedItem as ChatGroupViewModel;
-            if (_selectedConversation != null)
-            {
-                _selectedConversation.UnreadCount = 0;
-                ChatTitleText.Text = _selectedConversation.Name;
-                ChatSubtitleText.Text = _selectedConversation.Type == ChatGroupType.Public ? "• Cả lớp" : 
-                                       (_selectedConversation.Type == ChatGroupType.Private ? "• Trực tuyến" : "• Nhóm");
-                
-                LoadMessages();
-            }
-        }
+        private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
     }
 }
