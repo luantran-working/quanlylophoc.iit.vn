@@ -285,6 +285,9 @@ namespace ClassroomManagement.Services
                         OnlineStudents.Add(student);
                         log.Info("SessionManager", $"Student added to OnlineStudents. Count: {OnlineStudents.Count}");
 
+                        // Add to ChatService for chat functionality
+                        ChatService.Instance.AddOnlineStudent(student);
+
                         StudentConnected?.Invoke(this, student);
 
                         // Show toast notification
@@ -310,6 +313,9 @@ namespace ClassroomManagement.Services
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _db.SetStudentOnline(e.ClientId, false);
+
+                // Remove from ChatService
+                ChatService.Instance.RemoveOnlineStudent(e.ClientId);
 
                 var student = OnlineStudents.FirstOrDefault(s => s.MachineId == e.ClientId);
                 if (student != null)
@@ -361,7 +367,10 @@ namespace ClassroomManagement.Services
                     HandlePollVote(e);
                     break;
 
-                // Chat cases removed
+                case MessageType.ChatMessage:
+                case MessageType.ChatPrivate:
+                    HandleChatMessage(e);
+                    break;
             }
         }
 
@@ -551,6 +560,12 @@ namespace ClassroomManagement.Services
                 }
             }
             catch { }
+        }
+
+        private void HandleChatMessage(MessageReceivedEventArgs e)
+        {
+            // Route to ChatService for handling
+            ChatService.Instance.HandleIncomingMessage(e.Message);
         }
 
         private void OnScreenDataReceived(object? sender, ScreenDataReceivedEventArgs e)

@@ -61,6 +61,9 @@ namespace ClassroomManagement.Views
             
             // Handle Tab Selection
             MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+
+            // Set ChatView to Student mode
+            StudentChatView.SetStudentMode();
         }
 
         private void MainTabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

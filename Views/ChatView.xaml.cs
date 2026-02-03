@@ -43,7 +43,7 @@ namespace ClassroomManagement.Views
         public bool IsTeacherMode { get; set; } = true;
         
         private ChatGroupViewModel? _selectedConversation;
-        private bool? _explicitMode = null;
+        private readonly ChatService _chatService;
 
         public ChatView()
         {
@@ -51,53 +51,395 @@ namespace ClassroomManagement.Views
             MessageList.ItemsSource = Messages;
             ConversationList.ItemsSource = Conversations;
 
+            _chatService = ChatService.Instance;
+            _chatService.MessageReceived += OnMessageReceived;
+            _chatService.StudentOnline += OnStudentOnline;
+            _chatService.StudentOffline += OnStudentOffline;
+
             Loaded += OnLoaded;
         }
 
+        /// <summary>
+        /// Set Teacher or Student mode
+        /// </summary>
         public void SetMode(bool isTeacher)
         {
-            // Empty Logic
+            IsTeacherMode = isTeacher;
+            
+            // Hide create group button for students
+            CreateGroupBtn.Visibility = isTeacher ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void SetStudentMode() { }
+        /// <summary>
+        /// Shorthand for student mode
+        /// </summary>
+        public void SetStudentMode()
+        {
+            SetMode(false);
+        }
 
+        /// <summary>
+        /// Initialize conversations list
+        /// </summary>
         public void InitializeConversations()
         {
-            // Empty Logic - No loading conversations
+            Conversations.Clear();
+
+            // Always add public chat as first conversation
+            var publicChat = new ChatGroupViewModel
+            {
+                Id = ChatService.PUBLIC_CHAT_ID,
+                Name = "Chat chung",
+                Type = ChatGroupType.Public,
+                LastMessage = "Nhấn để chat với cả lớp"
+            };
+            Conversations.Add(publicChat);
+
+            // For teacher mode, add existing online students
+            if (IsTeacherMode)
+            {
+                foreach (var student in _chatService.GetOnlineStudents())
+                {
+                    AddStudentConversation(student, select: false);
+                }
+            }
+            else
+            {
+                // For student mode, add teacher as private chat option
+                var teacherChat = new ChatGroupViewModel
+                {
+                    Id = _chatService.GetPrivateChatKey("teacher"),
+                    Name = "Giáo viên",
+                    Type = ChatGroupType.Private,
+                    LastMessage = "Nhấn để chat riêng với giáo viên"
+                };
+                Conversations.Add(teacherChat);
+            }
+
+            // Select public chat by default
+            ConversationList.SelectedIndex = 0;
         }
         
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Empty Logic
+            InitializeConversations();
         }
 
+        /// <summary>
+        /// Add or focus private chat with a student
+        /// </summary>
         public void SetPrivateChat(Student student, bool select = true)
         {
-            // Empty Logic
+            Dispatcher.Invoke(() =>
+            {
+                AddStudentConversation(student, select);
+            });
         }
 
-        private void LoadGroups() { }
+        private void AddStudentConversation(Student student, bool select)
+        {
+            // Check if conversation already exists
+            var existing = Conversations.FirstOrDefault(c => 
+                c.Type == ChatGroupType.Private && c.Id == _chatService.GetPrivateChatKey(student.MachineId));
+            
+            if (existing == null)
+            {
+                var privateChat = new ChatGroupViewModel
+                {
+                    Id = _chatService.GetPrivateChatKey(student.MachineId),
+                    Name = student.DisplayName,
+                    Type = ChatGroupType.Private,
+                    PartnerId = student.Id,
+                    LastMessage = "Nhấn để chat riêng"
+                };
+                privateChat.Members.Add(student);
+                Conversations.Add(privateChat);
+                existing = privateChat;
+            }
 
-        private void LoadOnlineStudents() { }
+            if (select)
+            {
+                ConversationList.SelectedItem = existing;
+            }
+        }
 
-        private void LoadMessages() { }
+        private void LoadGroups()
+        {
+            // Custom groups not implemented for in-memory chat
+        }
 
-        private void OnMessageReceived(object? sender, ChatMessage msg) { }
+        private void LoadOnlineStudents()
+        {
+            // Handled via events
+        }
 
-        private void UpdateConversationLastMessage(ChatMessage msg) { }
+        private void LoadMessages()
+        {
+            if (_selectedConversation == null) return;
 
-        private void AddMessageIfVisible(ChatMessage msg) { }
+            Messages.Clear();
 
-        private void OnGroupCreated(object? sender, ChatGroup group) { }
+            var conversationId = _selectedConversation.Type == ChatGroupType.Public
+                ? ChatService.PUBLIC_CHAT_ID
+                : _selectedConversation.Id;
 
-        private void SendBtn_Click(object sender, RoutedEventArgs e) { }
+            var messages = _chatService.GetMessages(conversationId);
+            foreach (var msg in messages)
+            {
+                var vm = new ChatMessageViewModel(msg, _chatService.IsMyMessage(msg));
+                Messages.Add(vm);
+            }
 
-        private void AttachBtn_Click(object sender, RoutedEventArgs e) { }
+            // Scroll to bottom
+            ScrollToBottom();
+        }
 
-        private void InputBox_KeyDown(object sender, KeyEventArgs e) { }
+        private void OnMessageReceived(object? sender, ChatMessage msg)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                string msgConversationId;
+                if (msg.IsGroup)
+                {
+                    msgConversationId = ChatService.PUBLIC_CHAT_ID;
+                }
+                else
+                {
+                    // For private messages, determine the conversation key
+                    if (_chatService.IsMyMessage(msg))
+                    {
+                        // Message I sent - use receiver's key
+                        msgConversationId = _chatService.GetPrivateChatKey(msg.ReceiverId?.ToString() ?? "");
+                    }
+                    else
+                    {
+                        // Message received - use sender's key
+                        // For teacher, sender is student machine id
+                        // For student, sender is "teacher"
+                        if (IsTeacherMode)
+                        {
+                            // Find the student by name or sender info
+                            var student = _chatService.GetOnlineStudents()
+                                .FirstOrDefault(s => s.DisplayName == msg.SenderName);
+                            if (student != null)
+                            {
+                                msgConversationId = _chatService.GetPrivateChatKey(student.MachineId);
+                            }
+                            else
+                            {
+                                msgConversationId = _chatService.GetPrivateChatKey(msg.SenderName);
+                            }
+                        }
+                        else
+                        {
+                            msgConversationId = _chatService.GetPrivateChatKey("teacher");
+                        }
+                    }
+                }
 
-        private void CreateGroupBtn_Click(object sender, RoutedEventArgs e) { }
+                // Update conversation last message
+                UpdateConversationLastMessage(msgConversationId, msg);
 
-        private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+                // If current conversation, add to view
+                if (_selectedConversation != null)
+                {
+                    var currentConvId = _selectedConversation.Type == ChatGroupType.Public
+                        ? ChatService.PUBLIC_CHAT_ID
+                        : _selectedConversation.Id;
+
+                    if (currentConvId == msgConversationId)
+                    {
+                        var vm = new ChatMessageViewModel(msg, _chatService.IsMyMessage(msg));
+                        Messages.Add(vm);
+                        ScrollToBottom();
+                    }
+                    else
+                    {
+                        // Increment unread count for other conversations
+                        var conv = Conversations.FirstOrDefault(c => c.Id == msgConversationId);
+                        if (conv != null)
+                        {
+                            conv.UnreadCount++;
+                        }
+                    }
+                }
+            });
+        }
+
+        private void UpdateConversationLastMessage(string conversationId, ChatMessage msg)
+        {
+            var conv = Conversations.FirstOrDefault(c => c.Id == conversationId);
+            if (conv != null)
+            {
+                string preview = msg.Content;
+                if (preview.Length > 30)
+                {
+                    preview = preview.Substring(0, 30) + "...";
+                }
+                conv.LastMessage = $"{msg.SenderName}: {preview}";
+            }
+        }
+
+        private void OnStudentOnline(object? sender, Student student)
+        {
+            if (!IsTeacherMode) return;
+
+            Dispatcher.Invoke(() =>
+            {
+                AddStudentConversation(student, select: false);
+            });
+        }
+
+        private void OnStudentOffline(object? sender, Student student)
+        {
+            if (!IsTeacherMode) return;
+
+            Dispatcher.Invoke(() =>
+            {
+                var conv = Conversations.FirstOrDefault(c => 
+                    c.Type == ChatGroupType.Private && 
+                    c.Members.Any(m => m.MachineId == student.MachineId));
+                
+                if (conv != null)
+                {
+                    conv.LastMessage = "(Offline)";
+                }
+            });
+        }
+
+        private void OnGroupCreated(object? sender, ChatGroup group)
+        {
+            // Custom groups not implemented
+        }
+
+        private async void SendBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await SendMessage();
+        }
+
+        private async void AttachBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Chọn ảnh để gửi",
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    // For simplicity, we'll send the file path as message
+                    // In production, you'd want to send the actual file data
+                    var fileName = System.IO.Path.GetFileName(dialog.FileName);
+                    await SendMessageContent($"[Đính kèm: {fileName}]", "file");
+                    
+                    ToastService.Instance.ShowInfo("Gửi file", $"Đã gửi file: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Instance.ShowError("Lỗi", $"Không thể gửi file: {ex.Message}");
+                }
+            }
+        }
+
+        private async void InputBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                e.Handled = true;
+                await SendMessage();
+            }
+        }
+
+        private async System.Threading.Tasks.Task SendMessage()
+        {
+            var content = InputBox.Text.Trim();
+            if (string.IsNullOrEmpty(content)) return;
+
+            await SendMessageContent(content, "text");
+            InputBox.Text = "";
+        }
+
+        private async System.Threading.Tasks.Task SendMessageContent(string content, string contentType)
+        {
+            if (_selectedConversation == null) return;
+
+            try
+            {
+                if (_selectedConversation.Type == ChatGroupType.Public)
+                {
+                    await _chatService.SendPublicMessageAsync(content, contentType);
+                }
+                else if (_selectedConversation.Type == ChatGroupType.Private)
+                {
+                    // Get target id
+                    string targetId;
+                    if (IsTeacherMode)
+                    {
+                        // Get student machine id from conversation
+                        var student = _selectedConversation.Members.FirstOrDefault();
+                        targetId = student?.MachineId ?? "";
+                    }
+                    else
+                    {
+                        targetId = "teacher";
+                    }
+
+                    if (!string.IsNullOrEmpty(targetId))
+                    {
+                        await _chatService.SendPrivateMessageAsync(targetId, content, contentType);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ToastService.Instance.ShowError("Lỗi gửi tin nhắn", ex.Message);
+            }
+        }
+
+        private void CreateGroupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Custom group creation - for future implementation
+            ToastService.Instance.ShowInfo("Thông báo", "Tính năng tạo nhóm sẽ được cập nhật trong phiên bản sau.");
+        }
+
+        private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ConversationList.SelectedItem is ChatGroupViewModel selected)
+            {
+                _selectedConversation = selected;
+                
+                // Reset unread count
+                selected.UnreadCount = 0;
+
+                // Update header
+                ChatTitleText.Text = selected.Name;
+                
+                if (selected.Type == ChatGroupType.Public)
+                {
+                    ChatSubtitleText.Text = "• Chat chung cả lớp";
+                }
+                else if (selected.Type == ChatGroupType.Private)
+                {
+                    ChatSubtitleText.Text = "• Chat riêng";
+                }
+                else
+                {
+                    ChatSubtitleText.Text = $"• {selected.Members.Count} thành viên";
+                }
+
+                // Load messages for this conversation
+                LoadMessages();
+            }
+        }
+
+        private void ScrollToBottom()
+        {
+            if (MessageList.Items.Count > 0)
+            {
+                MessageList.ScrollIntoView(MessageList.Items[MessageList.Items.Count - 1]);
+            }
+        }
     }
 }

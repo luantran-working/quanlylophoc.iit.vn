@@ -688,6 +688,12 @@ namespace ClassroomManagement.Services
                     }
                     break;
 
+                case MessageType.ChatMessage:
+                case MessageType.ChatPrivate:
+                    // Route to ChatService for handling
+                    ChatService.Instance.HandleIncomingMessage(message);
+                    break;
+
                 default:
                     MessageReceived?.Invoke(this, message);
                     break;
