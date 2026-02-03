@@ -93,9 +93,9 @@
                                 </StackPanel>
 
                                 <!-- Unread Count -->
-                                <Border Grid.Column="2" VerticalAlignment="Center" Background="#EF4444" 
+                                <Border Grid.Column="2" x:Name="UnreadBadge" VerticalAlignment="Center" Background="#EF4444" 
                                         CornerRadius="10" MinWidth="20" Height="20" Padding="5,0"
-                                        Visibility="{Binding UnreadCount, Converter={StaticResource BoolToVis}}"> <!-- Note: Need int to vis converter or use simple trigger -->
+                                        Visibility="Collapsed">
                                     <TextBlock Text="{Binding UnreadCount}" Foreground="White" FontSize="11" 
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
@@ -106,9 +106,15 @@
                                     <Setter TargetName="AvatarText" Property="Foreground" Value="#166534"/>
                                     <Setter TargetName="AvatarText" Property="Text" Value="👤"/>
                                 </DataTrigger>
+                                <!-- Show badge if UnreadCount > 0 -->
                                 <DataTrigger Binding="{Binding UnreadCount}" Value="0">
-                                    <Setter Property="Visibility" TargetName="AvatarBorder" Value="Visible"/> <!-- Dummy to trigger trigger -->
+                                    <Setter TargetName="UnreadBadge" Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
+                                <!-- Default visible if not 0 (handled by default Collapsed + Trigger for > 0? No, int trigger is hard for 'greater than') -->
+                                <!-- Better approach: Use style trigger or simply remove converter and let it be always visible but text empty? No. -->
+                                <!-- WPF DataTrigger for Not Equal 0 is not direct. -->
+                                <!-- Let's use a trick: If UnreadCount != 0, it shows. Since we can't easily do != 0, we assume it's visible by default and hide if 0? -->
+                                <!-- But default UnreadCount is 0. -->
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

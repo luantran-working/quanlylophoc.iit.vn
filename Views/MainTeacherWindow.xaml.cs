@@ -29,6 +29,9 @@ namespace ClassroomManagement.Views
             _session.StudentDisconnected += OnStudentDisconnected;
             _session.ChatMessageReceived += OnChatMessageReceived;
 
+            // Explicitly set Teacher Mode for ChatView
+            MainChatView.SetMode(true);
+
             // Start session automatically
             Loaded += MainTeacherWindow_Loaded;
             Closing += MainTeacherWindow_Closing;

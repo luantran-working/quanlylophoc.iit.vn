@@ -78,7 +78,8 @@ namespace ClassroomManagement.Services
             _networkServer.ScreenDataReceived += OnScreenDataReceived;
             _networkServer.ScreenshotReceived += OnScreenshotReceived;
 
-            ChatService.Instance.Initialize(_networkServer, null);
+            // ChatService initialization moved to StartSessionAsync to prevent side effects
+            // ChatService.Instance.Initialize(_networkServer, null);
         }
 
         /// <summary>
@@ -120,6 +121,9 @@ namespace ClassroomManagement.Services
                 _networkServer.ClassName = className;
                 _networkServer.TeacherName = CurrentUser.DisplayName;
                 await _networkServer.StartAsync(port);
+
+                // Initialize ChatService for Teacher Mode
+                ChatService.Instance.Initialize(_networkServer, null);
 
                 IsRunning = true;
                 return true;

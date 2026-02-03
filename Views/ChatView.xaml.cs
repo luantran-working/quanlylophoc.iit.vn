@@ -43,6 +43,7 @@ namespace ClassroomManagement.Views
         public bool IsTeacherMode { get; set; } = true;
         
         private ChatGroupViewModel? _selectedConversation;
+        private bool? _explicitMode = null;
 
         public ChatView()
         {
@@ -52,6 +53,23 @@ namespace ClassroomManagement.Views
 
             Loaded += OnLoaded;
         }
+
+        public void SetMode(bool isTeacher)
+        {
+            _explicitMode = isTeacher;
+            IsTeacherMode = isTeacher;
+            
+            if (!isTeacher)
+            {
+                if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                if (CreateGroupBtn != null) CreateGroupBtn.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void SetStudentMode() => SetMode(false);
 
         public void InitializeConversations()
         {
@@ -74,8 +92,11 @@ namespace ClassroomManagement.Views
             _selectedConversation = publicChat;
             ConversationList.SelectedItem = publicChat;
 
-            // Check Mode based on ChatService state
-            IsTeacherMode = ChatService.Instance.IsTeacherMode;
+            // Check Mode
+            if (_explicitMode.HasValue)
+                IsTeacherMode = _explicitMode.Value;
+            else
+                IsTeacherMode = ChatService.Instance.IsTeacherMode;
 
             if (IsTeacherMode)
             {
