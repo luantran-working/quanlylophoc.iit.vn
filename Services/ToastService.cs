@@ -4,17 +4,23 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Threading.Tasks;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace ClassroomManagement.Services
 {
     /// <summary>
     /// Service hiển thị Toast Notifications
     /// </summary>
-    public class ToastService
+    public class ToastService : IDisposable
     {
         private static ToastService? _instance;
         public static ToastService Instance => _instance ??= new ToastService();
         private readonly LogService _log = LogService.Instance;
+        
+        public void Dispose()
+        {
+            // No cleanup needed for UWP toasts
+        }
 
         public enum ToastType
         {
@@ -107,6 +113,21 @@ namespace ClassroomManagement.Services
         public void ShowWarning(string title, string message, int durationMs = 3500)
         {
             Show(title, message, ToastType.Warning, durationMs);
+        }
+
+        public void ShowSystemNotification(string title, string message)
+        {
+            try
+            {
+                new ToastContentBuilder()
+                    .AddText(title)
+                    .AddText(message)
+                    .Show();
+            }
+            catch (Exception ex)
+            {
+                _log.Error("ToastService", "Error showing system notification", ex);
+            }
         }
 
         private StackPanel? FindOrCreateToastContainer(Window window)

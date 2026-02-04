@@ -88,7 +88,8 @@ namespace ClassroomManagement.Views
                                      msg.ContentType == "file" ? $"[File] {msg.FileName}" : 
                                      msg.Content;
 
-                    ToastService.Instance.ShowInfo(title, content);
+                    // Use System Notification (Action Center / Tray)
+                    ToastService.Instance.ShowSystemNotification(title, content);
                 }
             });
         }
@@ -122,6 +123,7 @@ namespace ClassroomManagement.Views
             PollService.Instance.PollStarted -= OnPollStarted;
             _networkClient.Disconnect();
             _networkClient.Dispose();
+            ToastService.Instance.Dispose();
         }
 
         private bool _isScanning = false;
