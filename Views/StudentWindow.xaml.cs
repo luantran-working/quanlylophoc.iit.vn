@@ -64,6 +64,21 @@ namespace ClassroomManagement.Views
 
             // Set ChatView to Student mode
             StudentChatView.SetStudentMode();
+            
+            // Listen for unread count changes
+            StudentChatView.UnreadCountChanged += StudentChatView_UnreadCountChanged;
+        }
+
+        private void StudentChatView_UnreadCountChanged(object? sender, int count)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (ChatBadge != null)
+                {
+                    // Show a simple dot/indicator instead of number
+                    ChatBadge.Badge = count > 0 ? "•" : null;
+                }
+            });
         }
 
         private void MainTabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

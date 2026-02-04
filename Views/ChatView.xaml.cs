@@ -159,6 +159,7 @@ namespace ClassroomManagement.Views
                 Type = ChatGroupType.Public,
                 LastMessage = "Nhấn để chat với cả lớp"
             };
+            RestoreLastMessageState(publicChat);
             Conversations.Add(publicChat);
 
             // For teacher mode, add existing online students
@@ -179,6 +180,7 @@ namespace ClassroomManagement.Views
                     Type = ChatGroupType.Private,
                     LastMessage = "Nhấn để chat riêng với giáo viên"
                 };
+                RestoreLastMessageState(teacherChat);
                 Conversations.Add(teacherChat);
             }
 
@@ -210,14 +212,19 @@ namespace ClassroomManagement.Views
             
             if (existing == null)
             {
+                var chatId = _chatService.GetPrivateChatKey(student.MachineId);
                 var privateChat = new ChatGroupViewModel
                 {
-                    Id = _chatService.GetPrivateChatKey(student.MachineId),
+                    Id = chatId,
                     Name = student.DisplayName,
                     Type = ChatGroupType.Private,
                     PartnerId = student.Id,
                     LastMessage = "Nhấn để chat riêng"
                 };
+
+                // Restore last message state
+                RestoreLastMessageState(privateChat);
+
                 privateChat.Members.Add(student);
                 Conversations.Add(privateChat);
                 existing = privateChat;
@@ -226,6 +233,26 @@ namespace ClassroomManagement.Views
             if (select)
             {
                 ConversationList.SelectedItem = existing;
+            }
+        }
+
+        private void RestoreLastMessageState(ChatGroupViewModel group)
+        {
+            var msgs = _chatService.GetMessages(group.Id);
+            var last = msgs.LastOrDefault();
+            if (last != null)
+            {
+                string preview = last.Content;
+                if (preview.Length > 30)
+                {
+                    preview = preview.Substring(0, 30) + "...";
+                }
+                group.LastMessage = $"{last.SenderName}: {preview}";
+                
+                // Calculate unread? 
+                // Since we don't track "Read" status per message in this simple implementation,
+                // we might not be able to fully restore accurate unread count on reload without extra logic.
+                // For now, we accept unread count resets on tab switch/reload, but LastMessage is preserved.
             }
         }
 
