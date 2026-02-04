@@ -9,11 +9,15 @@ using Microsoft.Win32;
 using ClassroomManagement.Models;
 using ClassroomManagement.Services;
 
+using System.Windows.Media.Imaging;
+using System.IO;
+
 namespace ClassroomManagement.Views
 {
     public class ChatMessageViewModel : ChatMessage
     {
         public bool IsMine { get; set; }
+        public BitmapImage? ImageSource { get; set; }
 
         public ChatMessageViewModel(ChatMessage msg, bool isMine)
         {
@@ -29,9 +33,33 @@ namespace ClassroomManagement.Views
             this.CreatedAt = msg.CreatedAt;
             this.ContentType = msg.ContentType;
             this.AttachmentPath = msg.AttachmentPath;
+            this.AttachmentData = msg.AttachmentData; // Base64
+            this.FileName = msg.FileName;
             this.GroupId = msg.GroupId;
 
             this.IsMine = isMine;
+
+            if (ContentType == "image" && !string.IsNullOrEmpty(AttachmentData))
+            {
+                try
+                {
+                    byte[] bytes = Convert.FromBase64String(AttachmentData);
+                    var image = new BitmapImage();
+                    using (var mem = new MemoryStream(bytes))
+                    {
+                        mem.Position = 0;
+                        image.BeginInit();
+                        image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.UriSource = null;
+                        image.StreamSource = mem;
+                        image.EndInit();
+                    }
+                    image.Freeze();
+                    ImageSource = image;
+                }
+                catch { }
+            }
         }
     }
 
@@ -42,6 +70,8 @@ namespace ClassroomManagement.Views
 
         public bool IsTeacherMode { get; set; } = true;
         
+        public event EventHandler<int>? UnreadCountChanged;
+
         private ChatGroupViewModel? _selectedConversation;
         private readonly ChatService _chatService;
 
@@ -51,12 +81,48 @@ namespace ClassroomManagement.Views
             MessageList.ItemsSource = Messages;
             ConversationList.ItemsSource = Conversations;
 
+            // Listen to collection changes to hook up property changed events
+            Conversations.CollectionChanged += Conversations_CollectionChanged;
+
             _chatService = ChatService.Instance;
             _chatService.MessageReceived += OnMessageReceived;
             _chatService.StudentOnline += OnStudentOnline;
             _chatService.StudentOffline += OnStudentOffline;
 
             Loaded += OnLoaded;
+        }
+
+        private void Conversations_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (ChatGroupViewModel item in e.NewItems)
+                {
+                    item.PropertyChanged += Conversation_PropertyChanged;
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (ChatGroupViewModel item in e.OldItems)
+                {
+                    item.PropertyChanged -= Conversation_PropertyChanged;
+                }
+            }
+            CalculateTotalUnread();
+        }
+
+        private void Conversation_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ChatGroupViewModel.UnreadCount))
+            {
+                CalculateTotalUnread();
+            }
+        }
+
+        private void CalculateTotalUnread()
+        {
+            int total = Conversations.Sum(c => c.UnreadCount);
+            UnreadCountChanged?.Invoke(this, total);
         }
 
         /// <summary>
@@ -297,24 +363,71 @@ namespace ClassroomManagement.Views
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Chọn ảnh để gửi",
-                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp"
+                Title = "Chọn file để gửi",
+                Filter = "All Files|*.*|Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp"
             };
 
             if (dialog.ShowDialog() == true)
             {
+                var filePath = dialog.FileName;
+                var ext = System.IO.Path.GetExtension(filePath).ToLower();
+                var isImage = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" }.Contains(ext);
+
                 try
                 {
-                    // For simplicity, we'll send the file path as message
-                    // In production, you'd want to send the actual file data
-                    var fileName = System.IO.Path.GetFileName(dialog.FileName);
-                    await SendMessageContent($"[Đính kèm: {fileName}]", "file");
-                    
-                    ToastService.Instance.ShowInfo("Gửi file", $"Đã gửi file: {fileName}");
+                    string? targetId = null;
+                    if (_selectedConversation?.Type == ChatGroupType.Private)
+                    {
+                        if (IsTeacherMode)
+                        {
+                            targetId = _selectedConversation.Members.FirstOrDefault()?.MachineId;
+                        }
+                        else
+                        {
+                            targetId = "teacher";
+                        }
+                    }
+
+                    if (isImage)
+                    {
+                        await _chatService.SendImageAsync(filePath, targetId);
+                    }
+                    else
+                    {
+                        await _chatService.SendFileAsync(filePath, targetId);
+                    }
                 }
                 catch (Exception ex)
                 {
                     ToastService.Instance.ShowError("Lỗi", $"Không thể gửi file: {ex.Message}");
+                }
+            }
+        }
+
+        private void SaveFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement elem && elem.DataContext is ChatMessageViewModel msg)
+            {
+                if (string.IsNullOrEmpty(msg.AttachmentData)) return;
+
+                var saveDialog = new SaveFileDialog
+                {
+                    FileName = msg.FileName ?? "downloaded_file",
+                    Filter = "All Files|*.*"
+                };
+
+                if (saveDialog.ShowDialog() == true)
+                {
+                    try
+                    {
+                        byte[] bytes = Convert.FromBase64String(msg.AttachmentData);
+                        File.WriteAllBytes(saveDialog.FileName, bytes);
+                        ToastService.Instance.ShowSuccess("Thành công", "Đã lưu file thành công!");
+                    }
+                    catch (Exception ex)
+                    {
+                        ToastService.Instance.ShowError("Lỗi", $"Không thể lưu file: {ex.Message}");
+                    }
                 }
             }
         }

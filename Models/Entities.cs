@@ -164,7 +164,9 @@ namespace ClassroomManagement.Models
 
         // Advanced Chat properties
         public string ContentType { get; set; } = "text"; // text, image, file
-        public string? AttachmentPath { get; set; } // Local path or URL
+        public string? AttachmentPath { get; set; } // Local path (sender)
+        public string? AttachmentData { get; set; } // Base64 data (network transfer)
+        public string? FileName { get; set; } // Original file name
         public string? GroupId { get; set; } // For custom groups
     }
 

@@ -180,7 +180,22 @@
                                     <TextBlock x:Name="SenderNameTxt" Text="{Binding SenderName}" FontSize="11" Foreground="#9CA3AF" Margin="0,0,0,4"/>
 
                                     <!-- Content -->
-                                    <Image x:Name="ImgContent" Source="{Binding AttachmentPath}" MaxHeight="300" MaxWidth="300" Stretch="Uniform" Visibility="Collapsed"/>
+                                    <!-- Image Message -->
+                                    <Image x:Name="ImgContent" Source="{Binding ImageSource}" MaxHeight="300" MaxWidth="300" Stretch="Uniform" Visibility="Collapsed" Margin="0,0,0,4"/>
+                                    
+                                    <!-- File Message -->
+                                    <Button x:Name="FileBtn" Content="{Binding FileName, StringFormat='⬇ {0}'}" 
+                                            HorizontalAlignment="Left" Background="#F3F4F6" Foreground="#2563EB" BorderThickness="0"
+                                            Padding="10,5" Margin="0,0,0,4" Visibility="Collapsed"
+                                            Click="SaveFile_Click" Cursor="Hand">
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="4"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+
+                                    <!-- Text Message -->
                                     <TextBlock x:Name="TxtContent" Text="{Binding Content}" TextWrapping="Wrap" Foreground="#1F2937"/>
 
                                     <TextBlock Text="{Binding CreatedAt, StringFormat=HH:mm}" FontSize="10" Foreground="#D1D5DB" HorizontalAlignment="Right" Margin="10,2,0,0"/>
@@ -194,6 +209,9 @@
                                 <Setter TargetName="BubbleBorder" Property="Background" Value="#3B82F6"/>
                                 <Setter TargetName="TxtContent" Property="Foreground" Value="White"/>
                                 <Setter TargetName="SenderNameTxt" Property="Visibility" Value="Collapsed"/>
+                                <!-- File Button Style for Self -->
+                                <Setter TargetName="FileBtn" Property="Background" Value="#60A5FA"/>
+                                <Setter TargetName="FileBtn" Property="Foreground" Value="White"/>
                             </DataTrigger>
 
                             <!-- Image Message -->
@@ -201,6 +219,12 @@
                                 <Setter TargetName="ImgContent" Property="Visibility" Value="Visible"/>
                                 <Setter TargetName="TxtContent" Property="Visibility" Value="Collapsed"/>
                                 <Setter TargetName="BubbleBorder" Property="Background" Value="Transparent"/>
+                            </DataTrigger>
+
+                            <!-- File Message -->
+                            <DataTrigger Binding="{Binding ContentType}" Value="file">
+                                <Setter TargetName="FileBtn" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="TxtContent" Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>

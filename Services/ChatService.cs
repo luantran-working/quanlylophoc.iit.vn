@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -110,7 +111,7 @@ namespace ClassroomManagement.Services
         /// <summary>
         /// Send message to public chat (broadcast to all)
         /// </summary>
-        public async Task SendPublicMessageAsync(string content, string contentType = "text")
+        public async Task SendPublicMessageAsync(string content, string contentType = "text", string? attachmentData = null, string? fileName = null)
         {
             var msg = new ChatMessage
             {
@@ -120,6 +121,8 @@ namespace ClassroomManagement.Services
                 SenderName = MyName,
                 Content = content,
                 ContentType = contentType,
+                AttachmentData = attachmentData,
+                FileName = fileName,
                 IsGroup = true,
                 GroupId = PUBLIC_CHAT_ID,
                 CreatedAt = DateTime.Now
@@ -155,7 +158,7 @@ namespace ClassroomManagement.Services
         /// <summary>
         /// Send private message to specific student/teacher
         /// </summary>
-        public async Task SendPrivateMessageAsync(string targetId, string content, string contentType = "text")
+        public async Task SendPrivateMessageAsync(string targetId, string content, string contentType = "text", string? attachmentData = null, string? fileName = null)
         {
             var chatKey = GetPrivateChatKey(targetId);
 
@@ -168,6 +171,8 @@ namespace ClassroomManagement.Services
                 ReceiverId = IsTeacherMode ? GetStudentIdFromMachineId(targetId) : 0,
                 Content = content,
                 ContentType = contentType,
+                AttachmentData = attachmentData,
+                FileName = fileName,
                 IsGroup = false,
                 GroupId = chatKey, // IMPORTANT: Set conversation key here for UI routing
                 CreatedAt = DateTime.Now
@@ -201,6 +206,58 @@ namespace ClassroomManagement.Services
 
             // Notify UI
             MessageReceived?.Invoke(this, msg);
+        }
+
+        public async Task SendImageAsync(string filePath, string targetId = null)
+        {
+            try 
+            {
+                byte[] bytes = await File.ReadAllBytesAsync(filePath);
+                string base64 = Convert.ToBase64String(bytes);
+                string fileName = Path.GetFileName(filePath);
+                
+                if (string.IsNullOrEmpty(targetId))
+                {
+                    // Public
+                    await SendPublicMessageAsync("[Hình ảnh]", "image", base64, fileName);
+                }
+                else
+                {
+                    // Private
+                    await SendPrivateMessageAsync(targetId, "[Hình ảnh]", "image", base64, fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("ChatService", "Error sending image", ex);
+                throw;
+            }
+        }
+
+        public async Task SendFileAsync(string filePath, string targetId = null)
+        {
+            try
+            {
+                byte[] bytes = await File.ReadAllBytesAsync(filePath);
+                string base64 = Convert.ToBase64String(bytes);
+                string fileName = Path.GetFileName(filePath);
+
+                if (string.IsNullOrEmpty(targetId))
+                {
+                    // Public
+                    await SendPublicMessageAsync($"[File: {fileName}]", "file", base64, fileName);
+                }
+                else
+                {
+                    // Private
+                    await SendPrivateMessageAsync(targetId, $"[File: {fileName}]", "file", base64, fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("ChatService", "Error sending file", ex);
+                throw;
+            }
         }
 
         /// <summary>
