@@ -32,7 +32,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="White" BorderBrush="White"
                             Content="Xóa ảnh" Click="Delete_Click" Margin="0,0,8,0"/>
-                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                    <Button Style="{StaticResource MaterialDesignRaisedButton}" Foreground="White"
                             Content="Đóng" Click="Close_Click"/>
                 </StackPanel>
             </Grid>
@@ -64,6 +64,7 @@
 
                 <Button Grid.Column="1"
                         Style="{StaticResource MaterialDesignRaisedButton}"
+                        Foreground="White"
                         Content="Lưu ghi chú"
                         Click="SaveNote_Click"
                         VerticalAlignment="Top"/>

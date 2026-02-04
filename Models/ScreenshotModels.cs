@@ -13,7 +13,11 @@ namespace ClassroomManagement.Models
         public string FilePath { get; set; } = "";
         public string ThumbnailPath { get; set; } = "";
         public string? Note { get; set; }
+        
         public List<string> Tags { get; set; } = new();
+
+        // UI Property for selection (not mapped to DB usually, handled manually)
+        public bool IsSelected { get; set; }
     }
 
     public class ScreenshotRequest

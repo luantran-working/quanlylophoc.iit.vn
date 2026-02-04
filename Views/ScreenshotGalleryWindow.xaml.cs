@@ -76,6 +76,43 @@ namespace ClassroomManagement.Views
             await LoadScreenshots();
         }
 
+        private async void DeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedScreenshots = _allScreenshots.Where(s => s.IsSelected).ToList();
+            if (!selectedScreenshots.Any())
+            {
+                MessageBox.Show("Vui lòng chọn ít nhất một ảnh để xóa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa {selectedScreenshots.Count} ảnh đã chọn?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                var service = SessionManager.Instance.ScreenshotService;
+                int deletedCount = 0;
+
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    foreach (var s in selectedScreenshots)
+                    {
+                        if (service.DeleteScreenshot(s.Id))
+                        {
+                            deletedCount++;
+                        }
+                    }
+                });
+
+                Services.ToastService.Instance.ShowSuccess("Đã xóa", $"Đã xóa {deletedCount} ảnh.");
+                await LoadScreenshots();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa ảnh: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void Screenshot_Click(object sender, MouseButtonEventArgs e)
         {
             if (sender is Border border && border.Tag is Screenshot screenshot)

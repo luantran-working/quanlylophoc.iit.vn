@@ -110,9 +110,35 @@ namespace ClassroomManagement.Services
 
             try
             {
-                // Try to look up student info
-                var student = _database.GetOrCreateStudent(e.ClientId, "Unknown", "", "");
-                string name = student?.DisplayName ?? e.ClientId;
+                // 1. Try to get name from OnlineStudents (Memory) - Most accurate/current
+                string name = "Unknown";
+                var onlineStudent = System.Linq.Enumerable.FirstOrDefault(
+                    SessionManager.Instance.OnlineStudents, 
+                    s => s.MachineId == e.ClientId);
+
+                if (onlineStudent != null)
+                {
+                    name = onlineStudent.DisplayName;
+                }
+                else
+                {
+                    // 2. Try to look up in Database
+                    var student = _database.GetStudentById(0); // Helper needed or custom query
+                    // Actually GetOrCreateStudent might overwrite with "Unknown" if not careful.
+                    // Let's rely on what we have or just ClientId if unknown.
+                    // If we use GetOrCreateStudent("Unknown"), it pollutes DB.
+                    // Better verify if student exists first.
+                    
+                    // For now, if not online, use ClientId or try generic lookup
+                    name = e.ClientId; // Default fallback
+                    
+                    // Try to find if we have this machine ID in DB with a real name
+                    var dbStudent = _database.GetOrCreateStudent(e.ClientId, "Unknown", "", "");
+                    if (dbStudent != null && dbStudent.DisplayName != "Unknown")
+                    {
+                        name = dbStudent.DisplayName;
+                    }
+                }
                 
                 // Get SessionId from SessionManager
                 int sessionId = 0;
