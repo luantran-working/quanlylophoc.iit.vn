@@ -39,7 +39,7 @@ namespace ClassroomManagement.Controls
             var student = GetStudent();
             if (student == null) return;
 
-            var screenWindow = new StudentScreenWindow(student);
+            var screenWindow = new RemoteControlWindow(student, isControlMode: false);
             screenWindow.Show();
         }
 
@@ -48,7 +48,7 @@ namespace ClassroomManagement.Controls
             var student = GetStudent();
             if (student == null) return;
 
-            var remoteWindow = new RemoteControlWindow(student);
+            var remoteWindow = new RemoteControlWindow(student, isControlMode: true);
             remoteWindow.Show();
         }
 

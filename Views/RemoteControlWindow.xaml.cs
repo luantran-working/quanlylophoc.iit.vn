@@ -22,11 +22,13 @@ namespace ClassroomManagement.Views
         private WindowState _previousWindowState;
         private DateTime _lastFrameTime = DateTime.Now;
         private int _frameCount;
+        private bool _isControlMode;
 
-        public RemoteControlWindow(Student student)
+        public RemoteControlWindow(Student student, bool isControlMode = true)
         {
             _remoteService = RemoteControlService.Instance;
             _student = student;
+            _isControlMode = isControlMode;
 
             InitializeComponent();
 
@@ -59,6 +61,12 @@ namespace ClassroomManagement.Views
                 System.Windows.Media.Color.FromRgb(76, 175, 80)); // Green
             StatusText.Text = "Đang điều khiển (Full HD)";
             InfoText.Text = $"Đang điều khiển {_student.DisplayName} ({_student.IpAddress})";
+
+            // Set initial control mode
+            ControlToggle.IsChecked = _isControlMode;
+            _remoteService.SetViewOnlyMode(_student.MachineId, !_isControlMode);
+            ViewOnlyBanner.Visibility = _isControlMode ? Visibility.Collapsed : Visibility.Visible;
+            InfoText.Text = _isControlMode ? "Điều khiển đang bật" : "Chế độ chỉ xem";
 
             // Subscribe to screen updates - cả từ RemoteService và NetworkServer
             _remoteService.ScreenReceived += OnScreenReceived;
@@ -114,7 +122,7 @@ namespace ClassroomManagement.Views
                 {
                     TargetStudentId = _student.MachineId,
                     Resolution = "fullhd",
-                    Quality = _session.Quality > 0 ? _session.Quality : 85,
+                    Quality = 85, // Mặc định chất lượng cao
                     RequestType = "remote",
                     SaveToLocal = false
                 };
@@ -340,29 +348,6 @@ namespace ClassroomManagement.Views
                         MessageBox.Show($"Lỗi khi lưu ảnh: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-            }
-        }
-
-        private void SendFile_Click(object sender, RoutedEventArgs e)
-        {
-            var openDialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = "Chọn file để gửi"
-            };
-
-            if (openDialog.ShowDialog() == true)
-            {
-                ToastService.Instance.ShowInfo("Gửi file", $"Đang gửi {Path.GetFileName(openDialog.FileName)}...");
-                // TODO: Implement file sending
-            }
-        }
-
-        private void Quality_Changed(object sender, SelectionChangedEventArgs e)
-        {
-            if (_session != null && QualityCombo.SelectedItem is ComboBoxItem item && item.Tag is string quality)
-            {
-                _session.Quality = int.Parse(quality);
-                InfoText.Text = $"Đã đổi chất lượng: {item.Content}";
             }
         }
 

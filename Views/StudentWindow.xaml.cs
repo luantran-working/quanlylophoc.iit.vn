@@ -446,9 +446,24 @@ namespace ClassroomManagement.Views
             {
                 Services.LogService.Instance.Info("Student", $"Screenshot requested: Resolution={request.Resolution}, Quality={request.Quality}, Type={request.RequestType}");
                 
-                // Chụp màn hình theo yêu cầu độ phân giải
-                var imageData = _screenCapture.CaptureScreenByRequest(request.Resolution, request.Quality);
-                var (screenWidth, screenHeight) = ScreenCaptureService.GetScreenSize();
+                byte[] imageData = Array.Empty<byte>();
+                int screenWidth = 0;
+                int screenHeight = 0;
+
+                // Chụp màn hình trên UI thread để truy cập SystemParameters và GDI+ an toàn
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    imageData = _screenCapture.CaptureScreenByRequest(request.Resolution, request.Quality);
+                    var size = ScreenCaptureService.GetScreenSize();
+                    screenWidth = size.Width;
+                    screenHeight = size.Height;
+                });
+
+                if (imageData == null || imageData.Length == 0)
+                {
+                    Services.LogService.Instance.Warning("Student", "Screenshot capture failed (empty data)");
+                    return;
+                }
 
                 // Xác định loại message dựa trên RequestType
                 MessageType messageType;

@@ -158,8 +158,8 @@ namespace ClassroomManagement.Controls
 
             try
             {
-                // Open fullscreen view
-                var fullscreenWindow = new Views.StudentScreenWindow(_student);
+                // Open fullscreen view (now using RemoteControlWindow in View Only mode)
+                var fullscreenWindow = new Views.RemoteControlWindow(_student, isControlMode: false);
                 fullscreenWindow.Show();
             }
             catch (Exception ex)
@@ -206,7 +206,7 @@ namespace ClassroomManagement.Controls
         private void RemoteControl_Click(object sender, RoutedEventArgs e)
         {
             if (_student == null) return;
-            var remoteWindow = new Views.RemoteControlWindow(_student);
+            var remoteWindow = new Views.RemoteControlWindow(_student, isControlMode: true);
             remoteWindow.Show();
         }
 

@@ -124,27 +124,6 @@
                         Click="Screenshot_Click" ToolTip="Chụp màn hình (Ctrl+S)">
                     <materialDesign:PackIcon Kind="Camera" Width="18" Height="18"/>
                 </Button>
-
-                <!-- Send File Button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}"
-                        Foreground="#9E9E9E" Width="36" Height="36" Margin="4,0"
-                        Click="SendFile_Click" ToolTip="Gửi file">
-                    <materialDesign:PackIcon Kind="FileDocument" Width="18" Height="18"/>
-                </Button>
-
-                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="8,0"/>
-
-                <!-- Quality Selector -->
-                <TextBlock Text="Chất lượng:" Foreground="#9E9E9E" FontSize="12"
-                           VerticalAlignment="Center" Margin="8,0,8,0"/>
-                <ComboBox x:Name="QualityCombo" Width="100" FontSize="12"
-                          SelectionChanged="Quality_Changed"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBoxItem Content="Thấp" Tag="30"/>
-                    <ComboBoxItem Content="Trung bình" Tag="50" IsSelected="True"/>
-                    <ComboBoxItem Content="Cao" Tag="70"/>
-                    <ComboBoxItem Content="Tối đa" Tag="90"/>
-                </ComboBox>
             </StackPanel>
         </Border>
 

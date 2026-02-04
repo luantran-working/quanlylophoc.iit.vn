@@ -110,15 +110,28 @@ namespace ClassroomManagement.Services
                 var student = _database.GetOrCreateStudent(e.ClientId, "Unknown", "", "");
                 string name = student?.DisplayName ?? e.ClientId;
                 
-                // For session ID, we might need a way to pass it or query active session
-                // Using 0 as fallback or try to find active session for user
-                int sessionId = 0; 
-                var activeSession = _database.GetActiveSession(1); // Assuming admin user id 1
-                if (activeSession != null) sessionId = activeSession.Id;
+                // Get SessionId from SessionManager
+                int sessionId = 0;
+                var currentSession = SessionManager.Instance.CurrentSession;
+                if (currentSession != null)
+                {
+                    sessionId = currentSession.Id;
+                }
+                else
+                {
+                    // Fallback to active session in DB if SessionManager doesn't have it (rare)
+                    var activeSession = _database.GetActiveSession(1); // Fallback to admin
+                    if (activeSession != null) sessionId = activeSession.Id;
+                }
 
                 await CaptureAndSaveAsync(e.ClientId, name, sessionId, e.ScreenData.ImageData);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error processing screenshot: {ex.Message}");
+                // Log service might be circular if injected, but static instance is fine
+                // LogService.Instance.Error("ScreenshotService", "ProcessScreenshot failed", ex);
+            }
         }
 
         private string SanitizeFileName(string name)
