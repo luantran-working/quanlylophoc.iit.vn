@@ -2,32 +2,86 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Nhận File" Height="200" Width="400"
+        Title="Nhận File" Height="220" Width="420"
         WindowStyle="None" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="2"
+        AllowsTransparency="True" Topmost="True">
+    <Window.Resources>
+        <Storyboard x:Key="FadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+        </Storyboard>
+    </Window.Resources>
+    
+    <Border CornerRadius="8" Background="White">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-             <materialDesign:PackIcon Kind="CloudDownload" Width="24" Height="24" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-             <TextBlock Text="CÓ FILE MỚI TỪ GIÁO VIÊN" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="8,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
-        </StackPanel>
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal">
+                <Border Width="40" Height="40" CornerRadius="20" Background="#E3F2FD">
+                    <materialDesign:PackIcon Kind="CloudDownload" Width="24" Height="24" 
+                                             Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="ĐANG NHẬN FILE TỪ GIÁO VIÊN" 
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
+                               FontWeight="Bold" Foreground="#424242"/>
+                    <TextBlock Text="File đang được tải về máy của bạn" Foreground="#757575" FontSize="12"/>
+                </StackPanel>
+            </StackPanel>
 
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,16">
-            <TextBlock x:Name="FileNameText" Text="Tai_lieu.docx" Style="{StaticResource MaterialDesignHeadline6TextBlock}" TextTrimming="CharacterEllipsis"/>
-            <TextBlock x:Name="FileSizeText" Text="2.5 MB" Foreground="#757575"/>
-        </StackPanel>
+            <!-- File Info -->
+            <Border Grid.Row="1" Background="#F5F5F5" CornerRadius="8" Padding="16" Margin="0,16,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="FileDocument" Width="32" Height="32" 
+                                             Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                             VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="FileNameText" Text="filename.docx" 
+                                   Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
+                                   TextTrimming="CharacterEllipsis" FontWeight="Medium"/>
+                        <TextBlock x:Name="FileSizeText" Text="2.5 MB" Foreground="#757575" FontSize="13"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="TỪ CHỐI" Click="Decline_Click" Style="{StaticResource MaterialDesignFlatButton}" Foreground="Gray"/>
-            <Button Content="NHẬN FILE" Click="Accept_Click" Style="{StaticResource MaterialDesignRaisedButton}" Margin="8,0,0,0"/>
-        </StackPanel>
-    </Grid>
+            <!-- Progress -->
+            <StackPanel Grid.Row="2" Margin="0,16,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar x:Name="DownloadProgress" Height="6" Value="0" Maximum="100"
+                                 Style="{StaticResource MaterialDesignLinearProgressBar}"/>
+                    <TextBlock x:Name="ProgressText" Grid.Column="1" Text="0%" Margin="12,0,0,0" 
+                               Foreground="#757575" FontSize="12" VerticalAlignment="Center"/>
+                </Grid>
+                <TextBlock x:Name="StatusText" Text="Đang nhận dữ liệu..." Foreground="#757575" 
+                           FontSize="12" Margin="0,8,0,0" FontStyle="Italic"/>
+            </StackPanel>
+
+            <!-- Actions -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                <Button x:Name="BtnCancel" Content="HỦY" Click="Cancel_Click" 
+                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="#757575"/>
+                <Button x:Name="BtnClose" Content="ĐÓNG" Click="Close_Click" 
+                        Style="{StaticResource MaterialDesignRaisedButton}" Margin="8,0,0,0"
+                        Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

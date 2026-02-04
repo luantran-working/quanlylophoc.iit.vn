@@ -106,4 +106,36 @@ namespace ClassroomManagement.Converters
             throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Converts a full name to initials (e.g., "Nguyen Van A" -> "NA")
+    /// </summary>
+    public class InitialsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string name && !string.IsNullOrWhiteSpace(name))
+            {
+                var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
+                {
+                    // Take first letter of first and last name
+                    return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
+                }
+                else if (parts.Length == 1)
+                {
+                    // Just take first two letters or first letter
+                    return parts[0].Length >= 2 
+                        ? parts[0].Substring(0, 2).ToUpper() 
+                        : parts[0].ToUpper();
+                }
+            }
+            return "?";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

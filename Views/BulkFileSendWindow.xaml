@@ -2,50 +2,226 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Gửi File Hàng Loạt" Height="450" Width="600"
+        Title="Gửi File Hàng Loạt" Height="650" Width="850"
         WindowStartupLocation="CenterOwner"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}">
-    <Grid Margin="16">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Text="GỬI FILE CHO HỌC SINH" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
+        <materialDesign:ColorZone Mode="PrimaryMid" Padding="8" materialDesign:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="FileUpload" Foreground="white" Width="32" Height="32" VerticalAlignment="Center"/>
+                    <StackPanel Margin="16,0,0,0">
+                        <TextBlock Text="Gửi file cho học sinh" Foreground="white" FontWeight="Bold" 
+                                   FontSize="15"/>
+                        <TextBlock Text="Gửi file đến tất cả hoặc một số học sinh trong lớp" Foreground="#B3FFFFFF" FontSize="13"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Account" Foreground="white" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="OnlineCountText" Text="0 học sinh trực tuyến" Foreground="white" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </materialDesign:ColorZone>
 
-        <!-- File Selection -->
-        <Grid Grid.Row="1" Margin="0,0,0,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="FilePathBox" materialDesign:HintAssist.Hint="Đường dẫn file" IsReadOnly="True" VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Content="CHỌN FILE" Click="Browse_Click" Margin="16,0,0,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- File Selection Card -->
+            <materialDesign:Card Padding="20" Margin="0,0,0,16" materialDesign:ElevationAssist.Elevation="Dp2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="CHỌN FILE CẦN GỬI" FontWeight="Bold" FontSize="14" Foreground="#424242" Margin="0,0,0,16"/>
+
+                    <!-- File Path Input with Outline -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="FilePathBox"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                                 materialDesign:TextFieldAssist.LeadingIcon="File"
+                                 materialDesign:HintAssist.Hint="Đường dẫn file cần gửi..."
+                                 IsReadOnly="True"/>
+                        <Button Grid.Column="1" Click="Browse_Click" Margin="12,0,0,0"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="{StaticResource AppPrimaryBrush}" Foreground="White"
+                                >
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="FolderOpen" VerticalAlignment="Center" Width="20" Height="20"/>
+                                <TextBlock Text="Chọn file" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- File Info -->
+                    <Border Grid.Row="2" x:Name="FileInfoPanel" Visibility="Collapsed" 
+                            Background="#E3F2FD" CornerRadius="8" Padding="8" Margin="0,16,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="FileDocument" Width="40" Height="40" 
+                                                     Foreground="{StaticResource AppPrimaryBrush}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="SelectedFileName" Text="filename.docx" FontWeight="Medium" FontSize="15"/>
+                                <TextBlock x:Name="SelectedFileSize" Text="2.5 MB" Foreground="#757575" FontSize="13"/>
+                            </StackPanel>
+                            <Button Grid.Column="2" Click="ClearFile_Click" 
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Xóa file đã chọn">
+                                <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Student Selection -->
+            <materialDesign:Card Grid.Row="1" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header with actions -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="CHỌN HỌC SINH NHẬN FILE" FontWeight="Bold" FontSize="14" Foreground="#424242" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="Chọn tất cả" Click="SelectAll_Click" 
+                                    Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,8,0"/>
+                            <Button Content="Bỏ chọn" Click="DeselectAll_Click" 
+                                    Style="{StaticResource MaterialDesignFlatButton}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Search Box -->
+                    <TextBox x:Name="SearchBox" Grid.Row="1"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                             materialDesign:TextFieldAssist.LeadingIcon="Magnify"
+                             materialDesign:HintAssist.Hint="Tìm kiếm học sinh..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Margin="0,0,0,12" TextChanged="SearchBox_TextChanged"/>
+
+                    <!-- Student DataGrid -->
+                    <DataGrid Grid.Row="2" x:Name="StudentGrid" AutoGenerateColumns="False" 
+                              CanUserAddRows="False" SelectionMode="Extended" IsReadOnly="False"
+                              AlternatingRowBackground="#FAFAFA" GridLinesVisibility="Horizontal"
+                              BorderThickness="1" BorderBrush="#E0E0E0" RowHeight="50"
+                              materialDesign:DataGridAssist.CornerRadius="8">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="50"
+                                                    ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                                                    EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+                                <DataGridCheckBoxColumn.Header>
+                                    <CheckBox x:Name="SelectAllCheckBox" Click="SelectAllCheckBox_Click"/>
+                                </DataGridCheckBoxColumn.Header>
+                            </DataGridCheckBoxColumn>
+                            <DataGridTemplateColumn Header="Trạng thái" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Ellipse Width="10" Height="10" VerticalAlignment="Center">
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="Fill" Value="#9E9E9E"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                                <Setter Property="Fill" Value="#4CAF50"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Họ và tên" Width="*" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border Width="36" Height="36" CornerRadius="18" 
+                                                    Background="{StaticResource AppPrimaryBrush}">
+                                                <TextBlock Text="{Binding DisplayName, Converter={StaticResource InitialsConverter}}" 
+                                                           Foreground="White" FontWeight="Bold" FontSize="14"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{Binding DisplayName}" Margin="12,0,0,0" 
+                                                       VerticalAlignment="Center" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Máy tính" Binding="{Binding ComputerName}" Width="150" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IpAddress}" Width="130" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </materialDesign:Card>
         </Grid>
 
-        <!-- Student Selection -->
-        <GroupBox Grid.Row="2" Header="Danh sách nhận" Margin="0,0,0,16">
-            <DataGrid x:Name="StudentGrid" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Extended">
-                <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
-                                            ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
-                                            EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"/>
-                    <DataGridTextColumn Header="Học sinh" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Máy" Binding="{Binding ComputerName}" Width="150" IsReadOnly="True"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </GroupBox>
+        <!-- Footer Actions -->
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Actions -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-             <ProgressBar x:Name="SendProgress" Width="200" Height="10" Margin="0,0,16,0" Visibility="Hidden"/>
-             <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="0,0,16,0" FontStyle="Italic"/>
-             <Button Content="GỬI NGAY" Click="Send_Click" Style="{StaticResource MaterialDesignRaisedButton}"/>
-        </StackPanel>
+                <!-- Progress Area -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <ProgressBar x:Name="SendProgress" Width="300" Height="8" Visibility="Collapsed"
+                                 Style="{StaticResource MaterialDesignLinearProgressBar}"/>
+                    <TextBlock x:Name="StatusText" Text="" Foreground="#757575" Margin="16,0,0,0" 
+                               VerticalAlignment="Center" FontStyle="Italic"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="HỦY BỎ" Click="Cancel_Click"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" 
+                            Margin="0,0,12,0"/>
+                    <Button x:Name="BtnSend" Content="GỬI FILE NGAY" Click="Send_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}" 
+                            Background="{StaticResource AppPrimaryBrush}" Foreground="White"
+                            Height="44" FontWeight="Bold">
+                        <Button.ToolTip>Gửi file đến các học sinh đã chọn</Button.ToolTip>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
