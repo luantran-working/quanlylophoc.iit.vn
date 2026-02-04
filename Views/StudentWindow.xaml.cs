@@ -65,18 +65,30 @@ namespace ClassroomManagement.Views
             // Set ChatView to Student mode
             StudentChatView.SetStudentMode();
             
-            // Listen for unread count changes
-            StudentChatView.UnreadCountChanged += StudentChatView_UnreadCountChanged;
+            // Listen for new chat messages to show Notification
+            ChatService.Instance.MessageReceived += OnChatMessageReceived;
         }
 
-        private void StudentChatView_UnreadCountChanged(object? sender, int count)
+        private void OnChatMessageReceived(object? sender, ChatMessage msg)
         {
+            // Ignore own messages
+            if (ChatService.Instance.IsMyMessage(msg)) return;
+
             Dispatcher.Invoke(() =>
             {
-                if (ChatBadge != null)
+                // Only show notification if we are NOT viewing the chat tab
+                // or if the window is minimized/not active
+                bool isChatTabActive = MainTabControl.SelectedIndex == 1;
+                bool isWindowFocused = this.IsActive && this.WindowState != WindowState.Minimized;
+
+                if (!isChatTabActive || !isWindowFocused)
                 {
-                    // Show a simple dot/indicator instead of number
-                    ChatBadge.Badge = count > 0 ? "•" : null;
+                    string title = msg.IsGroup ? $"Chat chung - {msg.SenderName}" : msg.SenderName;
+                    string content = msg.ContentType == "image" ? "[Hình ảnh]" : 
+                                     msg.ContentType == "file" ? $"[File] {msg.FileName}" : 
+                                     msg.Content;
+
+                    ToastService.Instance.ShowInfo(title, content);
                 }
             });
         }
@@ -106,6 +118,7 @@ namespace ClassroomManagement.Views
 
         private void StudentWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
+            ChatService.Instance.MessageReceived -= OnChatMessageReceived;
             PollService.Instance.PollStarted -= OnPollStarted;
             _networkClient.Disconnect();
             _networkClient.Dispose();

@@ -70,8 +70,6 @@ namespace ClassroomManagement.Views
 
         public bool IsTeacherMode { get; set; } = true;
         
-        public event EventHandler<int>? UnreadCountChanged;
-
         private ChatGroupViewModel? _selectedConversation;
         private readonly ChatService _chatService;
 
@@ -81,48 +79,12 @@ namespace ClassroomManagement.Views
             MessageList.ItemsSource = Messages;
             ConversationList.ItemsSource = Conversations;
 
-            // Listen to collection changes to hook up property changed events
-            Conversations.CollectionChanged += Conversations_CollectionChanged;
-
             _chatService = ChatService.Instance;
             _chatService.MessageReceived += OnMessageReceived;
             _chatService.StudentOnline += OnStudentOnline;
             _chatService.StudentOffline += OnStudentOffline;
 
             Loaded += OnLoaded;
-        }
-
-        private void Conversations_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (ChatGroupViewModel item in e.NewItems)
-                {
-                    item.PropertyChanged += Conversation_PropertyChanged;
-                }
-            }
-            if (e.OldItems != null)
-            {
-                foreach (ChatGroupViewModel item in e.OldItems)
-                {
-                    item.PropertyChanged -= Conversation_PropertyChanged;
-                }
-            }
-            CalculateTotalUnread();
-        }
-
-        private void Conversation_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ChatGroupViewModel.UnreadCount))
-            {
-                CalculateTotalUnread();
-            }
-        }
-
-        private void CalculateTotalUnread()
-        {
-            int total = Conversations.Sum(c => c.UnreadCount);
-            UnreadCountChanged?.Invoke(this, total);
         }
 
         /// <summary>
