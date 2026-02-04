@@ -309,15 +309,24 @@ namespace ClassroomManagement.Views
         {
              try
             {
+                // Tạo request chụp màn hình Full HD
+                var screenshotRequest = new ScreenshotRequest
+                {
+                    Resolution = "fullhd",
+                    Quality = 90,
+                    SaveToLocal = true,
+                    RequestType = "screenshot"
+                };
+
                 var msg = new NetworkMessage
                 {
                     Type = MessageType.ScreenshotCaptureRequest,
                     SenderId = "server",
-                    Payload = System.Text.Json.JsonSerializer.Serialize(new ScreenshotRequest())
+                    Payload = System.Text.Json.JsonSerializer.Serialize(screenshotRequest)
                 };
                 await SessionManager.Instance.NetworkServer.BroadcastToAllAsync(msg);
                 ToastService.Instance.ShowInfo("Đang chụp tất cả",
-                    $"Đang gửi yêu cầu chụp màn hình tới {_session.OnlineStudents.Count} học sinh...");
+                    $"Đang gửi yêu cầu chụp màn hình Full HD tới {_session.OnlineStudents.Count} học sinh...");
             }
             catch (Exception ex)
             {

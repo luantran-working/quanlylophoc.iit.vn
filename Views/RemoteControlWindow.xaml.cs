@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +17,7 @@ namespace ClassroomManagement.Views
         private readonly Student _student;
         private RemoteSession? _session;
         private DispatcherTimer? _refreshTimer;
+        private DispatcherTimer? _screenRequestTimer; // Timer để yêu cầu Full HD liên tục
         private bool _isFullscreen;
         private WindowState _previousWindowState;
         private DateTime _lastFrameTime = DateTime.Now;
@@ -55,11 +57,12 @@ namespace ClassroomManagement.Views
             ConnectingOverlay.Visibility = Visibility.Collapsed;
             StatusDot.Fill = new System.Windows.Media.SolidColorBrush(
                 System.Windows.Media.Color.FromRgb(76, 175, 80)); // Green
-            StatusText.Text = "Đang điều khiển";
+            StatusText.Text = "Đang điều khiển (Full HD)";
             InfoText.Text = $"Đang điều khiển {_student.DisplayName} ({_student.IpAddress})";
 
-            // Subscribe to screen updates
+            // Subscribe to screen updates - cả từ RemoteService và NetworkServer
             _remoteService.ScreenReceived += OnScreenReceived;
+            SessionManager.Instance.NetworkServer.ScreenDataReceived += OnNetworkScreenReceived;
 
             // Start refresh timer for FPS counter
             _refreshTimer = new DispatcherTimer
@@ -69,14 +72,75 @@ namespace ClassroomManagement.Views
             _refreshTimer.Tick += RefreshTimer_Tick;
             _refreshTimer.Start();
 
+            // Start timer yêu cầu Full HD screen liên tục
+            _screenRequestTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(100) // 10 FPS cho điều khiển mượt
+            };
+            _screenRequestTimer.Tick += ScreenRequestTimer_Tick;
+            _screenRequestTimer.Start();
+
             // Request initial screen
-            await RequestScreenUpdate();
+            await RequestFullHDScreen();
+        }
+
+        /// <summary>
+        /// Xử lý ảnh màn hình nhận từ network (Full HD)
+        /// </summary>
+        private void OnNetworkScreenReceived(object? sender, ScreenDataReceivedEventArgs e)
+        {
+            if (e.ClientId != _student.MachineId) return;
+            if (e.ScreenData?.ImageData == null || e.ScreenData.ImageData.Length == 0) return;
+
+            // Forward đến OnScreenReceived để hiển thị
+            OnScreenReceived(sender, e.ScreenData.ImageData);
+        }
+
+        private async void ScreenRequestTimer_Tick(object? sender, EventArgs e)
+        {
+            await RequestFullHDScreen();
+        }
+
+        /// <summary>
+        /// Yêu cầu ảnh Full HD từ máy học sinh
+        /// </summary>
+        private async System.Threading.Tasks.Task RequestFullHDScreen()
+        {
+            if (_session == null) return;
+
+            try
+            {
+                var request = new ScreenshotRequest
+                {
+                    TargetStudentId = _student.MachineId,
+                    Resolution = "fullhd",
+                    Quality = _session.Quality > 0 ? _session.Quality : 85,
+                    RequestType = "remote",
+                    SaveToLocal = false
+                };
+
+                var message = new NetworkMessage
+                {
+                    Type = MessageType.ScreenRequest,
+                    SenderId = "server",
+                    TargetId = _student.MachineId,
+                    Payload = JsonSerializer.Serialize(request)
+                };
+
+                await SessionManager.Instance.NetworkServer.SendToClientAsync(_student.MachineId, message);
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.Warning("RemoteControl", $"Failed to request Full HD screen: {ex.Message}");
+            }
         }
 
         private async void RemoteControlWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             _refreshTimer?.Stop();
+            _screenRequestTimer?.Stop();
             _remoteService.ScreenReceived -= OnScreenReceived;
+            SessionManager.Instance.NetworkServer.ScreenDataReceived -= OnNetworkScreenReceived;
 
             if (_session != null)
             {

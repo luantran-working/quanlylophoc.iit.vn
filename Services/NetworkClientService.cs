@@ -668,6 +668,26 @@ namespace ClassroomManagement.Services
                     }
                     break;
 
+                case MessageType.ScreenRequest:
+                    // Yêu cầu ảnh màn hình chất lượng cao cho preview/remote control
+                    if (message.Payload != null)
+                    {
+                        try
+                        {
+                            var request = JsonSerializer.Deserialize<ScreenshotRequest>(message.Payload);
+                            if (request != null)
+                            {
+                                _log.Info("NetworkClient", $"Screen request received: Resolution={request.Resolution}, Quality={request.Quality}");
+                                ScreenshotRequested?.Invoke(this, request);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warning("NetworkClient", $"Error processing screen request: {ex.Message}");
+                        }
+                    }
+                    break;
+
                 case MessageType.ScreenshotCaptureRequest:
                     try
                     {
@@ -675,10 +695,22 @@ namespace ClassroomManagement.Services
                             ? JsonSerializer.Deserialize<ScreenshotRequest>(message.Payload)
                             : new ScreenshotRequest();
 
+                        // Mặc định chụp Full HD và lưu vào thư viện
+                        if (request != null)
+                        {
+                            // Đảm bảo sử dụng Full HD cho tính năng chụp tất cả
+                            if (string.IsNullOrEmpty(request.Resolution))
+                                request.Resolution = "fullhd";
+                            if (request.Quality <= 0)
+                                request.Quality = 90;
+                            request.SaveToLocal = true;
+                            request.RequestType = "screenshot";
+                        }
+
                         // If TargetStudentId is specified and doesn't match ours, ignore (though usually server filters this)
                         if (request != null && (string.IsNullOrEmpty(request.TargetStudentId) || request.TargetStudentId == MachineId))
                         {
-                            _log.Info("NetworkClient", "Screenshot request received");
+                            _log.Info("NetworkClient", $"Screenshot capture request received: Resolution={request.Resolution}, Quality={request.Quality}");
                             ScreenshotRequested?.Invoke(this, request);
                         }
                     }

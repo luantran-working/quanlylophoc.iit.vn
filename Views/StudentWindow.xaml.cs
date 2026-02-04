@@ -55,6 +55,9 @@ namespace ClassroomManagement.Views
             FileReceiverService.Instance.FileRequestReceived += OnFileRequestReceived;
 
             PollService.Instance.PollStarted += OnPollStarted;
+            
+            // Xử lý yêu cầu chụp màn hình chất lượng cao
+            _networkClient.ScreenshotRequested += OnScreenshotRequested;
 
             Loaded += StudentWindow_Loaded;
             Closing += StudentWindow_Closing;
@@ -121,6 +124,7 @@ namespace ClassroomManagement.Views
         {
             ChatService.Instance.MessageReceived -= OnChatMessageReceived;
             PollService.Instance.PollStarted -= OnPollStarted;
+            _networkClient.ScreenshotRequested -= OnScreenshotRequested;
             _networkClient.Disconnect();
             _networkClient.Dispose();
             ToastService.Instance.Dispose();
@@ -431,6 +435,59 @@ namespace ClassroomManagement.Views
                 // win.Owner = this; // Should be top but maybe not child if fullscreen lock?
                 win.Show();
             });
+        }
+
+        /// <summary>
+        /// Xử lý yêu cầu chụp/gửi màn hình chất lượng cao từ giáo viên
+        /// </summary>
+        private async void OnScreenshotRequested(object? sender, ScreenshotRequest request)
+        {
+            try
+            {
+                Services.LogService.Instance.Info("Student", $"Screenshot requested: Resolution={request.Resolution}, Quality={request.Quality}, Type={request.RequestType}");
+                
+                // Chụp màn hình theo yêu cầu độ phân giải
+                var imageData = _screenCapture.CaptureScreenByRequest(request.Resolution, request.Quality);
+                var (screenWidth, screenHeight) = ScreenCaptureService.GetScreenSize();
+
+                // Xác định loại message dựa trên RequestType
+                MessageType messageType;
+                if (request.RequestType == "screenshot" && request.SaveToLocal)
+                {
+                    // Chụp và lưu - gửi qua ScreenshotCaptureData
+                    messageType = MessageType.ScreenshotCaptureData;
+                }
+                else
+                {
+                    // Preview hoặc remote control - gửi qua ScreenData để cập nhật real-time
+                    messageType = MessageType.ScreenData;
+                }
+
+                var screenData = new ScreenData
+                {
+                    ClientId = _networkClient.MachineId,
+                    ImageData = imageData,
+                    Width = screenWidth,
+                    Height = screenHeight,
+                    CaptureTime = DateTime.Now
+                };
+
+                var message = new NetworkMessage
+                {
+                    Type = messageType,
+                    SenderId = _networkClient.MachineId,
+                    SenderName = _studentName,
+                    Payload = System.Text.Json.JsonSerializer.Serialize(screenData)
+                };
+
+                await _networkClient.SendMessageAsync(message);
+                
+                Services.LogService.Instance.Debug("Student", $"Sent {messageType} response: {imageData.Length} bytes");
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Instance.Error("Student", "Error handling screenshot request", ex);
+            }
         }
 
         private void OnRemoteControlStarted(object? sender, EventArgs e)

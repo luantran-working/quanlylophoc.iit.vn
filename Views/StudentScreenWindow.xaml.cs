@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -18,6 +19,8 @@ namespace ClassroomManagement.Views
         private readonly SessionManager _session;
         private readonly LogService _log = LogService.Instance;
         private readonly DispatcherTimer _refreshTimer;
+        private byte[]? _highQualityScreen; // Ảnh chất lượng cao từ học sinh
+        private DateTime _lastHighQualityRequest = DateTime.MinValue;
 
         public StudentScreenWindow(Student student)
         {
@@ -30,31 +33,86 @@ namespace ClassroomManagement.Views
             StudentNameText.Text = student.DisplayName;
             StudentInfoText.Text = $"IP: {student.IpAddress} • {student.ComputerName}";
             
-            // Setup refresh timer
+            // Setup refresh timer - faster for high quality viewing
             _refreshTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(500)
+                Interval = TimeSpan.FromMilliseconds(200) // 5 FPS for detailed view
             };
             _refreshTimer.Tick += RefreshTimer_Tick;
+            
+            // Subscribe to high quality screen data
+            _session.NetworkServer.ScreenDataReceived += OnHighQualityScreenReceived;
             
             Loaded += OnLoaded;
             Closed += OnClosed;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _refreshTimer.Start();
+            await RequestHighQualityScreen(); // Yêu cầu ảnh Full HD ngay khi mở
             UpdateScreen();
         }
 
         private void OnClosed(object? sender, EventArgs e)
         {
             _refreshTimer.Stop();
+            _session.NetworkServer.ScreenDataReceived -= OnHighQualityScreenReceived;
         }
 
-        private void RefreshTimer_Tick(object? sender, EventArgs e)
+        private async void RefreshTimer_Tick(object? sender, EventArgs e)
         {
+            // Yêu cầu ảnh Full HD định kỳ
+            if ((DateTime.Now - _lastHighQualityRequest).TotalMilliseconds > 300)
+            {
+                await RequestHighQualityScreen();
+            }
             UpdateScreen();
+        }
+
+        /// <summary>
+        /// Yêu cầu ảnh Full HD từ máy học sinh
+        /// </summary>
+        private async System.Threading.Tasks.Task RequestHighQualityScreen()
+        {
+            try
+            {
+                _lastHighQualityRequest = DateTime.Now;
+                
+                var request = new ScreenshotRequest
+                {
+                    TargetStudentId = _student.MachineId,
+                    Resolution = "fullhd",
+                    Quality = 85,
+                    RequestType = "preview",
+                    SaveToLocal = false
+                };
+
+                var message = new NetworkMessage
+                {
+                    Type = MessageType.ScreenRequest,
+                    SenderId = "server",
+                    TargetId = _student.MachineId,
+                    Payload = JsonSerializer.Serialize(request)
+                };
+
+                await _session.NetworkServer.SendToClientAsync(_student.MachineId, message);
+            }
+            catch (Exception ex)
+            {
+                _log.Warning("StudentScreen", $"Failed to request HD screen: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Xử lý ảnh chất lượng cao nhận được từ học sinh
+        /// </summary>
+        private void OnHighQualityScreenReceived(object? sender, ScreenDataReceivedEventArgs e)
+        {
+            if (e.ClientId != _student.MachineId) return;
+            if (e.ScreenData?.ImageData == null || e.ScreenData.ImageData.Length == 0) return;
+
+            _highQualityScreen = e.ScreenData.ImageData;
         }
 
         private void UpdateScreen()
@@ -65,13 +123,15 @@ namespace ClassroomManagement.Views
                 LockedOverlay.Visibility = _student.IsLocked ? Visibility.Visible : Visibility.Collapsed;
                 LockButtonText.Text = _student.IsLocked ? "Mở khóa" : "Khóa máy";
                 
-                // Update screen image
-                if (_student.ScreenThumbnail != null && _student.ScreenThumbnail.Length > 0)
+                // Ưu tiên ảnh chất lượng cao, fallback về thumbnail
+                byte[]? imageData = _highQualityScreen ?? _student.ScreenThumbnail;
+                
+                if (imageData != null && imageData.Length > 0)
                 {
                     try
                     {
                         var bitmap = new BitmapImage();
-                        using (var ms = new MemoryStream(_student.ScreenThumbnail))
+                        using (var ms = new MemoryStream(imageData))
                         {
                             bitmap.BeginInit();
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -81,7 +141,10 @@ namespace ClassroomManagement.Views
                         }
                         ScreenImage.Source = bitmap;
                         LoadingPanel.Visibility = Visibility.Collapsed;
-                        UpdateTimeText.Text = $"Cập nhật: {DateTime.Now:HH:mm:ss}";
+                        
+                        // Hiển thị độ phân giải thực tế
+                        var resText = _highQualityScreen != null ? $"Full HD ({bitmap.PixelWidth}x{bitmap.PixelHeight})" : $"Thumbnail ({bitmap.PixelWidth}x{bitmap.PixelHeight})";
+                        UpdateTimeText.Text = $"Cập nhật: {DateTime.Now:HH:mm:ss} • {resText}";
                     }
                     catch (Exception ex)
                     {
@@ -90,7 +153,7 @@ namespace ClassroomManagement.Views
                 }
 
                 // Update status
-                StatusText.Text = _student.IsOnline ? "Đang xem trực tiếp" : "Học sinh offline";
+                StatusText.Text = _student.IsOnline ? "Đang xem trực tiếp (Full HD)" : "Học sinh offline";
             }
             catch (Exception ex)
             {
