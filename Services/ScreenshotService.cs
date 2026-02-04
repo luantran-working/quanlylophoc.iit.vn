@@ -13,6 +13,8 @@ namespace ClassroomManagement.Services
         private readonly DatabaseService _database;
         private readonly string _baseFolder;
 
+        public event EventHandler<Screenshot>? ScreenshotSaved;
+
         public ScreenshotService()
         {
             _database = DatabaseService.Instance;
@@ -69,6 +71,8 @@ namespace ClassroomManagement.Services
                 };
 
                 _database.SaveScreenshot(screenshot);
+
+                ScreenshotSaved?.Invoke(this, screenshot);
 
                 return screenshot;
             }

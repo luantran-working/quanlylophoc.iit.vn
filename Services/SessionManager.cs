@@ -71,6 +71,7 @@ namespace ClassroomManagement.Services
             _networkServer = new NetworkServerService();
             _screenCapture = new ScreenCaptureService();
             _screenshotService = new ScreenshotService();
+            _screenshotService.ScreenshotSaved += OnScreenshotSaved;
 
             // Wire up network events
             _networkServer.ClientConnected += OnClientConnected;
@@ -586,6 +587,14 @@ namespace ClassroomManagement.Services
              // Handled by ScreenshotService, but we might want to log or notify
              // Save to DB via ScreenshotService which calls DatabaseService
              _screenshotService.ProcessScreenshot(e);
+        }
+
+        private void OnScreenshotSaved(object? sender, Screenshot screenshot)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ToastService.Instance.ShowSuccess("Đã chụp ảnh", $"Đã lưu ảnh màn hình của {screenshot.StudentName}");
+            });
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
