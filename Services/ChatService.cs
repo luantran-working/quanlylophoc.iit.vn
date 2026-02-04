@@ -157,6 +157,8 @@ namespace ClassroomManagement.Services
         /// </summary>
         public async Task SendPrivateMessageAsync(string targetId, string content, string contentType = "text")
         {
+            var chatKey = GetPrivateChatKey(targetId);
+
             var msg = new ChatMessage
             {
                 Id = GenerateMessageId(),
@@ -167,14 +169,16 @@ namespace ClassroomManagement.Services
                 Content = content,
                 ContentType = contentType,
                 IsGroup = false,
+                GroupId = chatKey, // IMPORTANT: Set conversation key here for UI routing
                 CreatedAt = DateTime.Now
             };
 
             // Store locally
-            var chatKey = GetPrivateChatKey(targetId);
             StoreMessage(chatKey, msg);
 
             // Send over network
+            // Note: We don't send the GroupId (chatKey) over network because it differs per side
+            // Teacher sees "private_StudentA", StudentA sees "private_teacher"
             var networkMsg = new NetworkMessage
             {
                 Type = MessageType.ChatPrivate,
@@ -224,9 +228,20 @@ namespace ClassroomManagement.Services
                 }
                 else
                 {
-                    // Private message
-                    chatKey = GetPrivateChatKey(networkMsg.SenderId);
+                    // Private message received
+                    // If I am teacher, key is sender (student)
+                    // If I am student, key is sender (teacher) -> "private_teacher"
+                    if (IsTeacherMode)
+                    {
+                        chatKey = GetPrivateChatKey(networkMsg.SenderId);
+                    }
+                    else
+                    {
+                        chatKey = GetPrivateChatKey("teacher");
+                    }
+                    
                     chatMsg.IsGroup = false;
+                    chatMsg.GroupId = chatKey; // Set for UI routing
                 }
 
                 // Store locally
@@ -250,6 +265,18 @@ namespace ClassroomManagement.Services
             catch (Exception ex)
             {
                 _log.Error("ChatService", "Error handling incoming message", ex);
+            }
+        }
+
+        /// <summary>
+        /// Remove conversation and messages for a specific machine ID
+        /// </summary>
+        public void RemoveConversation(string machineId)
+        {
+            var key = GetPrivateChatKey(machineId);
+            if (_messagesByConversation.TryRemove(key, out _))
+            {
+                _log.Info("ChatService", $"Removed conversation for {machineId}");
             }
         }
 

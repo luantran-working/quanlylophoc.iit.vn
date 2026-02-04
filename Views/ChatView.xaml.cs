@@ -198,44 +198,9 @@ namespace ClassroomManagement.Views
         {
             Dispatcher.Invoke(() =>
             {
-                string msgConversationId;
-                if (msg.IsGroup)
-                {
-                    msgConversationId = ChatService.PUBLIC_CHAT_ID;
-                }
-                else
-                {
-                    // For private messages, determine the conversation key
-                    if (_chatService.IsMyMessage(msg))
-                    {
-                        // Message I sent - use receiver's key
-                        msgConversationId = _chatService.GetPrivateChatKey(msg.ReceiverId?.ToString() ?? "");
-                    }
-                    else
-                    {
-                        // Message received - use sender's key
-                        // For teacher, sender is student machine id
-                        // For student, sender is "teacher"
-                        if (IsTeacherMode)
-                        {
-                            // Find the student by name or sender info
-                            var student = _chatService.GetOnlineStudents()
-                                .FirstOrDefault(s => s.DisplayName == msg.SenderName);
-                            if (student != null)
-                            {
-                                msgConversationId = _chatService.GetPrivateChatKey(student.MachineId);
-                            }
-                            else
-                            {
-                                msgConversationId = _chatService.GetPrivateChatKey(msg.SenderName);
-                            }
-                        }
-                        else
-                        {
-                            msgConversationId = _chatService.GetPrivateChatKey("teacher");
-                        }
-                    }
-                }
+                // Use GroupId as the definitive conversation key
+                // ChatService ensures this is set correctly for both incoming and outgoing messages
+                string msgConversationId = msg.GroupId ?? ChatService.PUBLIC_CHAT_ID;
 
                 // Update conversation last message
                 UpdateConversationLastMessage(msgConversationId, msg);
@@ -296,13 +261,24 @@ namespace ClassroomManagement.Views
 
             Dispatcher.Invoke(() =>
             {
+                // Remove conversation from list
                 var conv = Conversations.FirstOrDefault(c => 
                     c.Type == ChatGroupType.Private && 
                     c.Members.Any(m => m.MachineId == student.MachineId));
                 
                 if (conv != null)
                 {
-                    conv.LastMessage = "(Offline)";
+                    // Clear from memory
+                    _chatService.RemoveConversation(student.MachineId);
+                    
+                    // Remove from UI
+                    Conversations.Remove(conv);
+
+                    // If selected was removed, select public chat
+                    if (_selectedConversation == conv)
+                    {
+                        ConversationList.SelectedIndex = 0;
+                    }
                 }
             });
         }

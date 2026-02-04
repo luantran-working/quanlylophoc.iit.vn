@@ -65,6 +65,10 @@
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="Bd" Property="Background" Value="#F3F4F6"/>
                                             </Trigger>
+                                            <!-- Highlight Unread -->
+                                            <DataTrigger Binding="{Binding IsUnread}" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#FFFBE6"/>
+                                            </DataTrigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -87,8 +91,8 @@
                                 </Border>
 
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Medium" Foreground="#1F2937"/>
-                                    <TextBlock Text="{Binding LastMessage}" FontSize="12" Foreground="#6B7280"
+                                    <TextBlock x:Name="NameTxt" Text="{Binding Name}" FontWeight="Medium" Foreground="#1F2937"/>
+                                    <TextBlock x:Name="MsgTxt" Text="{Binding LastMessage}" FontSize="12" Foreground="#6B7280"
                                                TextTrimming="CharacterEllipsis" MaxWidth="140"/>
                                 </StackPanel>
 
@@ -101,6 +105,11 @@
                                 </Border>
                             </Grid>
                             <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsUnread}" Value="True">
+                                    <Setter TargetName="NameTxt" Property="FontWeight" Value="Bold"/>
+                                    <Setter TargetName="MsgTxt" Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="MsgTxt" Property="Foreground" Value="#111827"/>
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Type}" Value="Private">
                                     <Setter TargetName="AvatarBorder" Property="Background" Value="#DCFCE7"/>
                                     <Setter TargetName="AvatarText" Property="Foreground" Value="#166534"/>

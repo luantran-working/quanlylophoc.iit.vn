@@ -41,8 +41,15 @@ namespace ClassroomManagement.Models
         public int UnreadCount
         {
             get => _unreadCount;
-            set { _unreadCount = value; OnPropertyChanged(); }
+            set 
+            { 
+                _unreadCount = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(IsUnread)); // Notify derived property
+            }
         }
+
+        public bool IsUnread => _unreadCount > 0;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
