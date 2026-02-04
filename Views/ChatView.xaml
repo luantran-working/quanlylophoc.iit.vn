@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="900">
 
@@ -32,18 +33,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="15">
-                    <TextBlock Text="Tin nhắn" FontSize="20" FontWeight="Bold" Foreground="#111827"/>
-                    <Button x:Name="CreateGroupBtn" Content="+ Nhóm mới" Margin="0,10,0,0"
-                            Padding="10,6" Background="#EFF6FF" Foreground="#2563EB" BorderThickness="0"
-                            HorizontalContentAlignment="Left" Cursor="Hand" Click="CreateGroupBtn_Click">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="6"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
+                <!-- Header Area - Updated Style -->
+                <Border Grid.Row="0" Background="{StaticResource AppPrimaryBrush}" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Danh sách tin nhắn" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                        <!-- Create Group Button Removed as requested -->
+                    </StackPanel>
+                </Border>
 
                 <ListBox x:Name="ConversationList" Grid.Row="1" BorderThickness="0" Background="Transparent"
                          SelectionChanged="ConversationList_SelectionChanged">
@@ -52,6 +48,7 @@
                             <Setter Property="Padding" Value="10,8"/>
                             <Setter Property="Margin" Value="5,2"/>
                             <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
@@ -90,10 +87,10 @@
                                                Foreground="#4F46E5" FontWeight="Bold"/>
                                 </Border>
 
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock x:Name="NameTxt" Text="{Binding Name}" FontWeight="Medium" Foreground="#1F2937"/>
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                    <TextBlock x:Name="NameTxt" Text="{Binding Name}" FontWeight="Medium" Foreground="#1F2937" HorizontalAlignment="Left"/>
                                     <TextBlock x:Name="MsgTxt" Text="{Binding LastMessage}" FontSize="12" Foreground="#6B7280"
-                                               TextTrimming="CharacterEllipsis" MaxWidth="140"/>
+                                               TextTrimming="CharacterEllipsis" MaxWidth="150" HorizontalAlignment="Left"/>
                                 </StackPanel>
 
                                 <!-- Unread Count -->
@@ -140,12 +137,17 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="20,0">
+            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="20,0" materialDesign:ElevationAssist.Elevation="Dp2">
                 <Grid>
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock x:Name="ChatTitleText" Text="Lớp học chung" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
-                        <TextBlock x:Name="ChatSubtitleText" Text="• 32 thành viên" Margin="10,0,0,0"
-                                   FontSize="13" Foreground="#10B981" VerticalAlignment="Center"/>
+                        <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource AppPrimaryBrush}" Margin="0,0,12,0">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20" Foreground="White"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="ChatTitleText" Text="Lớp học chung" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock x:Name="ChatSubtitleText" Text="• 32 thành viên" FontSize="13" Foreground="#10B981"/>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -240,14 +242,11 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="AttachBtn" Content="📷" Width="36" Height="36" Margin="0,0,10,0"
-                            Background="Transparent" BorderBrush="#E5E7EB" BorderThickness="1"
-                            Foreground="#6B7280" Click="AttachBtn_Click">
-                         <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="18"/>
-                            </Style>
-                        </Button.Resources>
+                    <Button x:Name="AttachBtn" Width="36" Height="36" Margin="0,0,10,0"
+                            Background="#F3F4F6" BorderThickness="0"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            ToolTip="Gửi file/ảnh" Click="AttachBtn_Click">
+                        <materialDesign:PackIcon Kind="Paperclip" Width="20" Height="20" Foreground="#6B7280"/>
                     </Button>
 
                     <TextBox x:Name="InputBox" Grid.Column="1" Padding="10" VerticalContentAlignment="Center"

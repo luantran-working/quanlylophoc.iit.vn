@@ -27,7 +27,9 @@ namespace ClassroomManagement.Views
             // Wire up events
             _session.StudentConnected += OnStudentConnected;
             _session.StudentDisconnected += OnStudentDisconnected;
-            _session.ChatMessageReceived += OnChatMessageReceived;
+            
+            // Listen to ChatService instead of SessionManager for unified chat handling
+            ChatService.Instance.MessageReceived += OnChatMessageReceived;
 
             // Explicitly set Teacher Mode for ChatView
             MainChatView.SetMode(true);
@@ -66,6 +68,8 @@ namespace ClassroomManagement.Views
                     return;
                 }
 
+                // Cleanup
+                ChatService.Instance.MessageReceived -= OnChatMessageReceived;
                 _session.EndSession();
             }
         }
@@ -142,8 +146,27 @@ namespace ClassroomManagement.Views
 
         private void OnChatMessageReceived(object? sender, ChatMessage message)
         {
-            // Show notification if chat window is not open
-            // TODO: Implement notification system
+            // Ignore own messages
+            if (ChatService.Instance.IsMyMessage(message)) return;
+
+            Dispatcher.Invoke(() =>
+            {
+                // Only show notification if we are NOT viewing the chat tab
+                // or if the window is minimized/not active
+                bool isChatTabActive = MainTabControl.SelectedIndex == 1;
+                bool isWindowFocused = this.IsActive && this.WindowState != WindowState.Minimized;
+
+                if (!isChatTabActive || !isWindowFocused)
+                {
+                    string title = message.IsGroup ? $"Chat chung - {message.SenderName}" : message.SenderName;
+                    string content = message.ContentType == "image" ? "[Hình ảnh]" : 
+                                     message.ContentType == "file" ? $"[File] {message.FileName}" : 
+                                     message.Content;
+
+                    // Use System Notification
+                    ToastService.Instance.ShowSystemNotification(title, content);
+                }
+            });
         }
 
         private void StartPresentation_Click(object sender, RoutedEventArgs e)

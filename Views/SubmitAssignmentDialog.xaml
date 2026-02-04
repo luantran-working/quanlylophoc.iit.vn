@@ -1,4 +1,4 @@
-<Window x:Class="ClassroomManagement.Views.SubmitAssignmentDialog"
+<Window Icon="pack://application:,,,/Resources/app.ico" x:Class="ClassroomManagement.Views.SubmitAssignmentDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Nộp Bài Tập" Height="400" Width="600"

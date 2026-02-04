@@ -95,7 +95,7 @@ namespace ClassroomManagement.Views
             IsTeacherMode = isTeacher;
             
             // Hide create group button for students
-            CreateGroupBtn.Visibility = isTeacher ? Visibility.Visible : Visibility.Collapsed;
+            // Removed create group button
         }
 
         /// <summary>
@@ -474,12 +474,6 @@ namespace ClassroomManagement.Views
             {
                 ToastService.Instance.ShowError("Lỗi gửi tin nhắn", ex.Message);
             }
-        }
-
-        private void CreateGroupBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Custom group creation - for future implementation
-            ToastService.Instance.ShowInfo("Thông báo", "Tính năng tạo nhóm sẽ được cập nhật trong phiên bản sau.");
         }
 
         private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
